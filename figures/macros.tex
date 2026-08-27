@@ -1,0 +1,29 @@
+%% ---------------------------------------------------------------------------
+%% Everything main.tex AND the standalone figures both need.
+%%
+%% \input by main.tex and by figures/preamble.tex, so a macro defined here
+%% renders identically in the body text, in a caption, and inside a figure.
+%% Never define these anywhere else --- a second definition is how figure text
+%% and body text drift apart.
+%%
+%% The rule for what lives here rather than in preamble.tex: if main.tex refers
+%% to it, it belongs here.  \cnum is the reason the colours are here too --- it
+%% is used both inside Figure 1 and in that figure's caption, and captions stay
+%% in main.tex.
+%% ---------------------------------------------------------------------------
+\usepackage{xspace}
+
+\newcommand{\sys}{ActDelta\xspace}
+\newcommand{\pizero}{$\pi_0$\xspace}
+\newcommand{\pizerofive}{$\pi_{0.5}$\xspace}
+\newcommand{\pp}{\,pp\xspace}
+
+\definecolor{cA}{RGB}{31,119,180}
+\definecolor{cB}{RGB}{214,39,40}
+\definecolor{cC}{RGB}{44,160,44}
+\definecolor{cD}{RGB}{255,127,14}
+\definecolor{cE}{RGB}{148,103,189}
+\definecolor{cGrey}{RGB}{120,120,120}
+
+%% circled step number, safe inside captions (no tikz in moving arguments)
+\newcommand{\cnum}[1]{\textcolor{cB}{\textcircled{\raisebox{0.35pt}{\tiny #1}}}}

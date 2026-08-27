@@ -1,0 +1,35 @@
+%% fig:m4 --- what an undetected loss does to a closed loop.
+%% Data: fig-m4-divergence-trace.json.  Build: make (from figures/).
+\documentclass[crop,tikz,10pt]{standalone}
+\input{../preamble}
+
+\begin{document}
+\begin{tikzpicture}
+\begin{axis}[compactplot, height=3.9cm,
+  xlabel={time (s)}, ylabel={two-end divergence},
+  xmin=0, xmax=12, ymin=0, ymax=2.0, ytick={0,0.35,1,1.5,2},
+  yticklabels={0,$\tau^\star$,1,1.5,2},
+  legend style={at={(0.03,0.965)},anchor=north west, font=\scriptsize}]
+%% above the flip threshold the server is acting on a different scene
+\addplot[draw=none, fill=cB!8, forget plot] coordinates
+  {(0,\figval{tauflip})(12,\figval{tauflip})(12,2.0)(0,2.0)} \closedcycle;
+\node[font=\tiny,cB,anchor=north east] at (axis cs:11.85,1.97) {\figlabel{band}};
+\addplot[cA,thick,mark=square*,mark size=1.1pt,mark repeat=2]
+  table[x=t,y=div] {\figdata{noproto}};
+\addlegendentry{\figlabel{noproto}}
+\addplot[cD,thick,dashed] table[x=t,y=div] {\figdata{forced}};
+\addlegendentry{\figlabel{forced}}
+\addplot[cB,very thick] table[x=t,y=div] {\figdata{sys}};
+\addlegendentry{\figlabel{sys}}
+\addplot[cGrey,thick,no markers,forget plot]
+  coordinates {(0,\figval{tauflip})(12,\figval{tauflip})};
+\addplot[cGrey,dotted,line width=0.8pt,no markers,forget plot]
+  coordinates {(\figval{losstime},0)(\figval{losstime},2.0)};
+\node[font=\tiny,cGrey,anchor=south west] at (axis cs:6.72,1.18)
+  {\figlabel{loss}};
+\addplot[only marks,mark=x,mark size=2.6pt,cA,line width=0.9pt,forget plot]
+  coordinates {(\figval{lostat},\figval{lostdiv})};
+\node[font=\tiny,cA,anchor=west] at (axis cs:8.6,0.97) {\figlabel{lost}};
+\end{axis}
+\end{tikzpicture}
+\end{document}

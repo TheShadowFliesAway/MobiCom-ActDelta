@@ -1,0 +1,35 @@
+%% fig:proto --- the protocol state machine that makes silence unambiguous.
+%% Metadata: fig-proto.json (documentation only; not read by LaTeX).
+%% Build: make (from figures/).
+\documentclass[crop,tikz,10pt]{standalone}
+\input{../preamble}
+
+\begin{document}
+\begin{tikzpicture}[font=\scriptsize, node distance=6mm,
+  st/.style={draw, rounded corners=3pt, minimum height=7mm,
+             minimum width=19mm, align=center, font=\scriptsize,
+             line width=0.7pt},
+  ar/.style={-{Latex[length=1.7mm]}, line width=0.7pt},
+  el/.style={font=\tiny, align=center, inner sep=1.2pt}]
+  \node[st, fill=cC!12, draw=cC] (pred) {\textbf{PREDICT}\\ silent, $k_t{+}{+}$};
+  \node[st, fill=cD!14, draw=cD, right=17mm of pred] (send)
+       {\textbf{SEND}\\ frame, seq $n$};
+  \node[st, fill=cA!10, draw=cA, below=10mm of send] (wait)
+       {\textbf{AWAIT}\\ ack of $n$};
+  \node[st, fill=cB!14, draw=cB, below=10mm of pred] (rec)
+       {\textbf{RECOVER}\\ full resync};
+  \draw[ar] (pred) -- node[el,above]
+        {$\hat{\delta}_t\!>\!\tau$ or $k_t\!\ge\!T_r$} (send);
+  \draw[ar] (send) -- (wait);
+  \draw[ar] (wait.west) -- node[el,above,pos=0.45]
+        {ack, $k_t\!\gets\!0$} (pred.south east);
+  \draw[ar] (wait) -- node[el,below,align=center]
+        {timeout, seq gap,\\ or hash mismatch} (rec);
+  \draw[ar] (rec) -- node[el,left] {resynced} (pred);
+  %% heartbeat self-loop: the mechanism that makes silence readable
+  \draw[ar, cB] (pred.north west) to[out=115,in=65,looseness=1.5]
+        node[el,above,cB,pos=0.5] {heartbeat every $T_h$\\
+        $\langle$seq, $\mathrm{h}(a_{t-7..t})$, $\hat{\delta}_t\rangle$, 16\,B}
+        (pred.north east);
+\end{tikzpicture}
+\end{document}

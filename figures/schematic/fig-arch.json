@@ -1,0 +1,19 @@
+{
+  "meta": {
+    "id": "fig:arch",
+    "kind": "schematic",
+    "title": "ActDelta: where the decision head and the trigger sit in the loop",
+    "source": "design, S3; carries no measured data",
+    "placeholder": false,
+    "generated": false,
+    "notes": "Metadata only -- LaTeX never reads this file. Red marks what ActDelta adds; grey is reused unchanged, and that colour convention is the figure's main argument. The six circled step numbers are also used in the caption via \\cnum, which is why \\cnum and the colours live in figures/macros.tex rather than here.",
+    "quantities_shown": [
+      "robot budget 3.6 GFLOP/step",
+      "edge server 4.9 TFLOP/step",
+      "downlink action chunk + NACK < 3 kB",
+      "executor rate 15 Hz"
+    ],
+    "quantities_are_placeholders": false,
+    "consistency": "The GFLOP/TFLOP pair fixes the compute ratio rho = 3.6e-3 / 4.9 that fig-rho-compute-ratio.json sweeps around; the 15 Hz executor rate must agree with Sec. 2. If either FLOP number changes, rho's operating point moves."
+  }
+}

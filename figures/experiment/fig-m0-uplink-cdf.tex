@@ -1,0 +1,45 @@
+%% fig:m0 --- the deployed configuration does not fit the link.
+%% Data: fig-m0-uplink-cdf.json.  Build: make (from figures/).
+\documentclass[crop,tikz,10pt]{standalone}
+\input{../preamble}
+
+\begin{document}
+\begin{tikzpicture}
+\begin{axis}[compactplot, height=4.0cm,
+  xlabel={uplink throughput (Mbps)}, ylabel={CDF},
+  xmin=0, xmax=40, ymin=0, ymax=1, ytick={0,0.25,0.5,0.75,1},
+  legend style={at={(0.985,0.06)},anchor=south east, font=\scriptsize}]
+%% the band the status quo can never reach --- its edge IS the 10 Hz requirement
+\addplot[draw=none, fill=cB!7, forget plot] coordinates
+  {(0,0)(\figval{rate10},0)(\figval{rate10},1)(0,1)} \closedcycle;
+\addplot[cA,thick,mark=*,mark size=0.9pt,mark repeat=3]
+  table[x=mbps,y=cdf] {\figdata{irish}};
+\addlegendentry{\figlabel{irish}}
+\addplot[cC,thick,dashed,mark=square*,mark size=0.9pt,mark repeat=3]
+  table[x=mbps,y=cdf] {\figdata{lumos}};
+\addlegendentry{\figlabel{lumos}}
+\addplot[cE,thick,dotted,line width=1.1pt,mark=triangle*,mark size=1.1pt,
+  mark repeat=3] table[x=mbps,y=cdf] {\figdata{mnwild}};
+\addlegendentry{\figlabel{mnwild}}
+%% requirement lines
+\addplot[cB,thick,no markers,forget plot]
+  coordinates {(\figval{rate10},0)(\figval{rate10},1)};
+\addplot[cB,dashed,no markers,forget plot]
+  coordinates {(\figval{rate15},0)(\figval{rate15},1)};
+\addplot[cB,dotted,line width=1.1pt,no markers,forget plot]
+  coordinates {(\figval{rate30},0)(\figval{rate30},1)};
+\node[font=\tiny,cB,rotate=90,anchor=south east] at (axis cs:10.5,0.99) {10\,Hz};
+\node[font=\tiny,cB,rotate=90,anchor=south east] at (axis cs:15.9,0.99) {15\,Hz};
+\node[font=\tiny,cB,rotate=90,anchor=south east] at (axis cs:32.4,0.99) {30\,Hz};
+\node[font=\tiny,cB,anchor=north west,align=left] at (axis cs:0.6,0.99)
+  {\figlabel{band}};
+%% the headline crossing, plotted from the two scalars it annotates
+\addplot[only marks,mark=*,mark size=1.6pt,cA,forget plot]
+  coordinates {(\figval{rate10},\figval{irishatrate10})};
+\draw[-{Latex[length=1.4mm]},cGrey]
+  (axis cs:15.6,0.70) -- (axis cs:11.4,0.765);
+\node[font=\tiny,cGrey,anchor=west] at (axis cs:15.8,0.685)
+  {\figlabel{crossing}};
+\end{axis}
+\end{tikzpicture}
+\end{document}

@@ -1,0 +1,49 @@
+{
+  "meta": {
+    "id": "fig:pareto",
+    "kind": "experiment",
+    "title": "The byte--success frontier",
+    "source": "E-1 main sweep on LIBERO; the ActDelta curve is a tau sweep",
+    "placeholder": true,
+    "notes": "The claim the caption makes is that the two world-model arms separate by a roughly CONSTANT factor across the whole sweep -- that constancy is the signature of a criterion difference rather than a tuning difference, so check it against the curves after any replacement. The 2.4x annotation bar is drawn between gaplo and gaphi at gapy."
+  },
+  "scalars": {
+    "oracle": 79.4,
+    "gaplo": 4.5,
+    "gaphi": 9.6,
+    "gapy": 78.55,
+    "knee": 4.2
+  },
+  "labels": {
+    "oracle": "unlimited-uplink oracle",
+    "gap": "$2.4\\times$",
+    "sys": "\\sys ($\\tau$ sweep)",
+    "fidelity": "fidelity trigger, same WM",
+    "syscodec": "\\sys $+$ learned codec",
+    "codec": "learned codec alone",
+    "classical": "H.265 / SoD variants",
+    "statusquo": "deployed status quo",
+    "better": "better"
+  },
+  "series": {
+    "oracle": {
+      "columns": ["mb", "succ"],
+      "rows": [[0.6, 79.4], [140, 79.4]]
+    },
+    "sys": {
+      "columns": ["mb", "succ"],
+      "rows": [[2.1, 74.8], [3.0, 77.6], [4.2, 78.9], [6.5, 79.1], [10.0, 79.2]]
+    },
+    "fidelity": {
+      "columns": ["mb", "succ"],
+      "rows": [[4.4, 68.1], [6.8, 74.0], [10.3, 78.2], [15.9, 78.8], [24.0, 79.0]]
+    },
+    "syscodec": { "columns": ["mb", "succ"], "rows": [[0.9, 78.4]] },
+    "codec": { "columns": ["mb", "succ"], "rows": [[7.7, 75.8]] },
+    "classical": {
+      "columns": ["mb", "succ"],
+      "rows": [[11.9, 74.6], [12.3, 73.5], [9.4, 72.9], [14.7, 68.7]]
+    },
+    "statusquo": { "columns": ["mb", "succ"], "rows": [[68.4, 71.2]] }
+  }
+}

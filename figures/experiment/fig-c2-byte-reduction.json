@@ -1,0 +1,38 @@
+{
+  "meta": {
+    "id": "fig:c2",
+    "kind": "experiment",
+    "title": "C-2: the one comparison that isolates the paper's mechanism",
+    "source": "C-2; identical world model, policy, link and protocol. Each arm's threshold tuned so the two match on task success within 0.7 pp (fidelity 78.2% vs. ActDelta 78.9% on LIBERO)",
+    "placeholder": true,
+    "notes": "The percentage annotations above the bars are the reduction of `sys` against `fidelity` for the same benchmark. They are stored as their own scalars rather than recomputed in TeX, so after a data replacement recompute them -- a stale -60% over changed bars is the failure mode to watch for."
+  },
+  "scalars": {
+    "redlspatial": -60,
+    "redlobject": -63,
+    "redlgoal": -59,
+    "redllong": -56,
+    "redsimpler": -55,
+    "redkinetix": -47
+  },
+  "labels": {
+    "fidelity": "fidelity trigger",
+    "sys": "\\sys decision trigger"
+  },
+  "series": {
+    "fidelity": {
+      "columns": ["bench", "mb"],
+      "rows": [
+        ["L-Spatial", 9.1], ["L-Object", 8.4], ["L-Goal", 10.3],
+        ["L-Long", 13.6], ["Simpler", 11.8], ["Kinetix", 15.2]
+      ]
+    },
+    "sys": {
+      "columns": ["bench", "mb"],
+      "rows": [
+        ["L-Spatial", 3.6], ["L-Object", 3.1], ["L-Goal", 4.2],
+        ["L-Long", 6.0], ["Simpler", 5.3], ["Kinetix", 8.1]
+      ]
+    }
+  }
+}

@@ -1,0 +1,902 @@
+%%% -*-BibTeX-*-
+%%% Do NOT edit. File created by BibTeX with style
+%%% ACM-Reference-Format-Journals [18-Jan-2012].
+
+\begin{thebibliography}{69}
+
+%%% ====================================================================
+%%% NOTE TO THE USER: you can override these defaults by providing
+%%% customized versions of any of these macros before the \bibliography
+%%% command.  Each of them MUST provide its own final punctuation,
+%%% except for \shownote{} and \showURL{}.  The latter two
+%%% do not use final punctuation, in order to avoid confusing it with
+%%% the Web address.
+%%%
+%%% To suppress output of a particular field, define its macro to expand
+%%% to an empty string, or better, \unskip, like this:
+%%%
+%%% \newcommand{\showURL}[1]{\unskip}   % LaTeX syntax
+%%%
+%%% \def \showURL #1{\unskip}           % plain TeX syntax
+%%%
+%%% ====================================================================
+
+\ifx \showCODEN    \undefined \def \showCODEN     #1{\unskip}     \fi
+\ifx \showISBNx    \undefined \def \showISBNx     #1{\unskip}     \fi
+\ifx \showISBNxiii \undefined \def \showISBNxiii  #1{\unskip}     \fi
+\ifx \showISSN     \undefined \def \showISSN      #1{\unskip}     \fi
+\ifx \showLCCN     \undefined \def \showLCCN      #1{\unskip}     \fi
+\ifx \shownote     \undefined \def \shownote      #1{#1}          \fi
+\ifx \showarticletitle \undefined \def \showarticletitle #1{#1}   \fi
+\ifx \showURL      \undefined \def \showURL       {\relax}        \fi
+% The following commands are used for tagged output and should be
+% invisible to TeX
+\providecommand\bibfield[2]{#2}
+\providecommand\bibinfo[2]{#2}
+\providecommand\natexlab[1]{#1}
+\providecommand\showeprint[2][]{arXiv:#2}
+
+\bibitem[Agouzoul(2026)]%
+        {asyncbench2026}
+\bibfield{author}{\bibinfo{person}{Ayoub Agouzoul}.}
+  \bibinfo{year}{2026}\natexlab{}.
+\newblock \showarticletitle{Understanding Asynchronous Inference Methods for
+  Vision-Language-Action Models}.
+\newblock \bibinfo{journal}{\emph{arXiv preprint arXiv:2605.08168}}
+  (\bibinfo{year}{2026}).
+\newblock
+
+
+\bibitem[Anderson and Spong(1989)]%
+        {anderson1989bilateral}
+\bibfield{author}{\bibinfo{person}{Robert~J. Anderson} {and}
+  \bibinfo{person}{Mark~W. Spong}.} \bibinfo{year}{1989}\natexlab{}.
+\newblock \showarticletitle{Bilateral Control of Teleoperators with Time
+  Delay}.
+\newblock \bibinfo{journal}{\emph{IEEE Trans. Automat. Control}}
+  \bibinfo{volume}{34}, \bibinfo{number}{5} (\bibinfo{year}{1989}),
+  \bibinfo{pages}{494--501}.
+\newblock
+
+
+\bibitem[{Anonymous}(2027)]%
+        {policyvoi2027}
+\bibfield{author}{\bibinfo{person}{{Anonymous}}.}
+  \bibinfo{year}{2027}\natexlab{}.
+\newblock \showarticletitle{Reading Value of Information off a Learned Policy
+  for Value-Aware Robot Offloading}.
+\newblock \bibinfo{journal}{\emph{Concurrent submission; anonymized for
+  double-blind review}} (\bibinfo{year}{2027}).
+\newblock
+
+
+\bibitem[{\AA}rz{\'e}n(1999)]%
+        {arzen1999pid}
+\bibfield{author}{\bibinfo{person}{Karl-Erik {\AA}rz{\'e}n}.}
+  \bibinfo{year}{1999}\natexlab{}.
+\newblock \showarticletitle{A Simple Event-Based {PID} Controller}. In
+  \bibinfo{booktitle}{\emph{Proc. IFAC World Congress}}.
+  \bibinfo{pages}{423--428}.
+\newblock
+
+
+\bibitem[{\AA}str{\"o}m and Bernhardsson(2002)]%
+        {astrom2002lebesgue}
+\bibfield{author}{\bibinfo{person}{Karl~Johan {\AA}str{\"o}m} {and}
+  \bibinfo{person}{Bo~M. Bernhardsson}.} \bibinfo{year}{2002}\natexlab{}.
+\newblock \showarticletitle{Comparison of {Riemann} and {Lebesgue} Sampling for
+  First Order Stochastic Systems}. In \bibinfo{booktitle}{\emph{Proc. IEEE
+  Conference on Decision and Control (CDC)}}. \bibinfo{pages}{2011--2016}.
+\newblock
+
+
+\bibitem[Bejczy et~al\mbox{.}(1990)]%
+        {bejczy1990phantom}
+\bibfield{author}{\bibinfo{person}{Antal~K. Bejczy}, \bibinfo{person}{Won~S.
+  Kim}, {and} \bibinfo{person}{Steven~C. Venema}.}
+  \bibinfo{year}{1990}\natexlab{}.
+\newblock \showarticletitle{The Phantom Robot: Predictive Displays for
+  Teleoperation with Time Delay}. In \bibinfo{booktitle}{\emph{Proc. IEEE
+  International Conference on Robotics and Automation (ICRA)}}.
+  \bibinfo{pages}{546--551}.
+\newblock
+
+
+\bibitem[Black et~al\mbox{.}(2024)]%
+        {black2024pi0}
+\bibfield{author}{\bibinfo{person}{Kevin Black}, \bibinfo{person}{Noah Brown},
+  \bibinfo{person}{Danny Driess}, \bibinfo{person}{Adnan Esmail},
+  \bibinfo{person}{Michael Equi}, \bibinfo{person}{Chelsea Finn},
+  \bibinfo{person}{Niccolo Fusai}, \bibinfo{person}{Lachy Groom},
+  \bibinfo{person}{Karol Hausman}, \bibinfo{person}{Brian Ichter},
+  {et~al\mbox{.}}} \bibinfo{year}{2024}\natexlab{}.
+\newblock \showarticletitle{\(\pi_0\): A Vision-Language-Action Flow Model for
+  General Robot Control}.
+\newblock \bibinfo{journal}{\emph{arXiv preprint arXiv:2410.24164}}
+  (\bibinfo{year}{2024}).
+\newblock
+
+
+\bibitem[Black et~al\mbox{.}(2025)]%
+        {black2025rtc}
+\bibfield{author}{\bibinfo{person}{Kevin Black}, \bibinfo{person}{Manuel~Y.
+  Galliker}, {and} \bibinfo{person}{Sergey Levine}.}
+  \bibinfo{year}{2025}\natexlab{}.
+\newblock \showarticletitle{Real-Time Execution of Action Chunking Flow
+  Policies}.
+\newblock \bibinfo{journal}{\emph{arXiv preprint arXiv:2506.07339}}
+  (\bibinfo{year}{2025}).
+\newblock
+
+
+\bibitem[Bourtsoulatze et~al\mbox{.}(2019)]%
+        {bourtsoulatze2019deepjscc}
+\bibfield{author}{\bibinfo{person}{Eirina Bourtsoulatze},
+  \bibinfo{person}{David~Burth Kurka}, {and} \bibinfo{person}{Deniz
+  G{\"u}nd{\"u}z}.} \bibinfo{year}{2019}\natexlab{}.
+\newblock \showarticletitle{Deep Joint Source-Channel Coding for Wireless Image
+  Transmission}.
+\newblock \bibinfo{journal}{\emph{IEEE Transactions on Cognitive Communications
+  and Networking}} \bibinfo{volume}{5}, \bibinfo{number}{3}
+  (\bibinfo{year}{2019}), \bibinfo{pages}{567--579}.
+\newblock
+
+
+\bibitem[Bruce et~al\mbox{.}(2024)]%
+        {bruce2024genie}
+\bibfield{author}{\bibinfo{person}{Jake Bruce}, \bibinfo{person}{Michael
+  Dennis}, \bibinfo{person}{Ashley Edwards}, \bibinfo{person}{Jack
+  Parker-Holder}, \bibinfo{person}{Yuge Shi}, \bibinfo{person}{Edward Hughes},
+  \bibinfo{person}{Matthew Lai}, \bibinfo{person}{Aditi Mavalankar},
+  \bibinfo{person}{Richie Steigerwald}, \bibinfo{person}{Chris Apps},
+  {et~al\mbox{.}}} \bibinfo{year}{2024}\natexlab{}.
+\newblock \showarticletitle{Genie: Generative Interactive Environments}. In
+  \bibinfo{booktitle}{\emph{Proc. International Conference on Machine Learning
+  (ICML)}}.
+\newblock
+
+
+\bibitem[Brudnak(2016)]%
+        {brudnak2016predictive}
+\bibfield{author}{\bibinfo{person}{Mark~J. Brudnak}.}
+  \bibinfo{year}{2016}\natexlab{}.
+\newblock \showarticletitle{Predictive Displays for High Latency
+  Teleoperation}.
+\newblock \bibinfo{journal}{\emph{Proc. NDIA Ground Vehicle Systems Engineering
+  and Technology Symposium}} (\bibinfo{year}{2016}).
+\newblock
+
+
+\bibitem[Cadene et~al\mbox{.}(2024)]%
+        {cadene2024lerobot}
+\bibfield{author}{\bibinfo{person}{Remi Cadene}, \bibinfo{person}{Simon
+  Alibert}, \bibinfo{person}{Alexander Soare}, \bibinfo{person}{Quentin
+  Gallouedec}, \bibinfo{person}{Adil Zouitine}, {and} \bibinfo{person}{Thomas
+  Wolf}.} \bibinfo{year}{2024}\natexlab{}.
+\newblock \bibinfo{title}{{LeRobot}: State-of-the-art Machine Learning for
+  Real-World Robotics in {PyTorch}}.
+\newblock \bibinfo{howpublished}{GitHub repository}.
+\newblock
+
+
+\bibitem[Cao et~al\mbox{.}(2026)]%
+        {edgeserving2026}
+\bibfield{author}{\bibinfo{person}{Jiahe Cao}, \bibinfo{person}{Xiaomeng Li},
+  \bibinfo{person}{Qiang Liu}, \bibinfo{person}{Tao Han}, \bibinfo{person}{Ning
+  Zhang}, {and} \bibinfo{person}{Weisong Shi}.}
+  \bibinfo{year}{2026}\natexlab{}.
+\newblock \showarticletitle{{EdgeServing}: Deadline-Aware Multi-{DNN} Serving
+  at the Edge}. In \bibinfo{booktitle}{\emph{Proc. IEEE International
+  Conference on Computer Communications and Networks (ICCCN)}}.
+\newblock
+
+
+\bibitem[Chen et~al\mbox{.}(2015)]%
+        {chen2015glimpse}
+\bibfield{author}{\bibinfo{person}{Tiffany Yu-Han Chen}, \bibinfo{person}{Lenin
+  Ravindranath}, \bibinfo{person}{Shuo Deng}, \bibinfo{person}{Paramvir Bahl},
+  {and} \bibinfo{person}{Hari Balakrishnan}.} \bibinfo{year}{2015}\natexlab{}.
+\newblock \showarticletitle{Glimpse: Continuous, Real-Time Object Recognition
+  on Mobile Devices}. In \bibinfo{booktitle}{\emph{Proc. ACM SenSys}}.
+  \bibinfo{pages}{155--168}.
+\newblock
+
+
+\bibitem[Chen et~al\mbox{.}(2025)]%
+        {genvidcomp2025}
+\bibfield{author}{\bibinfo{person}{Xiangyu Chen}, \bibinfo{person}{Jixiang
+  Luo}, \bibinfo{person}{Jingyu Xu}, \bibinfo{person}{Fangqiu Yi},
+  \bibinfo{person}{Chi Zhang}, {and} \bibinfo{person}{Xuelong Li}.}
+  \bibinfo{year}{2025}\natexlab{}.
+\newblock \showarticletitle{Generative Video Compression: Towards $0.01\%$
+  Compression Rate for Video Transmission}.
+\newblock \bibinfo{journal}{\emph{arXiv preprint arXiv:2512.24300}}
+  (\bibinfo{year}{2025}).
+\newblock
+
+
+\bibitem[Chi et~al\mbox{.}(2023)]%
+        {chi2023diffusion}
+\bibfield{author}{\bibinfo{person}{Cheng Chi}, \bibinfo{person}{Siyuan Feng},
+  \bibinfo{person}{Yilun Du}, \bibinfo{person}{Zhenjia Xu},
+  \bibinfo{person}{Eric Cousineau}, \bibinfo{person}{Benjamin Burchfiel}, {and}
+  \bibinfo{person}{Shuran Song}.} \bibinfo{year}{2023}\natexlab{}.
+\newblock \showarticletitle{Diffusion Policy: Visuomotor Policy Learning via
+  Action Diffusion}. In \bibinfo{booktitle}{\emph{Proc. Robotics: Science and
+  Systems (RSS)}}.
+\newblock
+
+
+\bibitem[Dai et~al\mbox{.}(2025)]%
+        {actionflow2025}
+\bibfield{author}{\bibinfo{person}{Yuntao Dai}, \bibinfo{person}{Hang Gu},
+  \bibinfo{person}{Teng Wang}, \bibinfo{person}{Qianyu Cheng},
+  \bibinfo{person}{Yifei Zheng}, \bibinfo{person}{Zhiyong Qiu},
+  \bibinfo{person}{Lei Gong}, \bibinfo{person}{Wenqi Lou}, {and}
+  \bibinfo{person}{Xuehai Zhou}.} \bibinfo{year}{2025}\natexlab{}.
+\newblock \showarticletitle{{ActionFlow}: A Pipelined Action Acceleration for
+  Vision Language Models on Edge}.
+\newblock \bibinfo{journal}{\emph{arXiv preprint arXiv:2512.20276}}
+  (\bibinfo{year}{2025}).
+\newblock
+
+
+\bibitem[Du et~al\mbox{.}(2020)]%
+        {du2020dds}
+\bibfield{author}{\bibinfo{person}{Kuntai Du}, \bibinfo{person}{Ahsan Pervaiz},
+  \bibinfo{person}{Xin Yuan}, \bibinfo{person}{Aakanksha Chowdhery},
+  \bibinfo{person}{Qizheng Zhang}, \bibinfo{person}{Henry Hoffmann}, {and}
+  \bibinfo{person}{Junchen Jiang}.} \bibinfo{year}{2020}\natexlab{}.
+\newblock \showarticletitle{Server-Driven Video Streaming for Deep Learning
+  Inference}. In \bibinfo{booktitle}{\emph{Proc. ACM SIGCOMM}}.
+  \bibinfo{pages}{557--570}.
+\newblock
+
+
+\bibitem[Gao et~al\mbox{.}(2025)]%
+        {compressorvla2025}
+\bibfield{author}{\bibinfo{person}{Juntao Gao}, \bibinfo{person}{Feiyang Ye},
+  \bibinfo{person}{Jing Zhang}, {and} \bibinfo{person}{Wenjing Qian}.}
+  \bibinfo{year}{2025}\natexlab{}.
+\newblock \showarticletitle{{Compressor-VLA}: Instruction-Guided Visual Token
+  Compression for Efficient Robotic Manipulation}.
+\newblock \bibinfo{journal}{\emph{arXiv preprint arXiv:2511.18950}}
+  (\bibinfo{year}{2025}).
+\newblock
+
+
+\bibitem[Grover et~al\mbox{.}(2026)]%
+        {efmedge2026}
+\bibfield{author}{\bibinfo{person}{Utkarsh Grover}, \bibinfo{person}{Ravi
+  Ranjan}, \bibinfo{person}{Mingyang Mao}, \bibinfo{person}{Trung~Tien Dong},
+  \bibinfo{person}{Satvik Praveen}, \bibinfo{person}{Zhenqi Wu},
+  \bibinfo{person}{J.~Morris Chang}, \bibinfo{person}{Tinoosh Mohsenin},
+  \bibinfo{person}{Yi Sheng}, \bibinfo{person}{Agoritsa Polyzou},
+  \bibinfo{person}{Eiman Kanjo}, {and} \bibinfo{person}{Xiaomin Lin}.}
+  \bibinfo{year}{2026}\natexlab{}.
+\newblock \showarticletitle{Embodied Foundation Models at the Edge: A Survey of
+  Deployment Constraints and Mitigation Strategies}.
+\newblock \bibinfo{journal}{\emph{arXiv preprint arXiv:2603.16952}}
+  (\bibinfo{year}{2026}).
+\newblock
+
+
+\bibitem[G{\"u}nd{\"u}z et~al\mbox{.}(2023)]%
+        {gunduz2023beyond}
+\bibfield{author}{\bibinfo{person}{Deniz G{\"u}nd{\"u}z},
+  \bibinfo{person}{Zhijin Qin}, \bibinfo{person}{In{\~a}ki~Estella Aguerri},
+  \bibinfo{person}{Harpreet~S. Dhillon}, \bibinfo{person}{Zhaohui Yang},
+  \bibinfo{person}{Aylin Yener}, \bibinfo{person}{Kai~Kit Wong}, {and}
+  \bibinfo{person}{Chan-Byoung Chae}.} \bibinfo{year}{2023}\natexlab{}.
+\newblock \showarticletitle{Beyond Transmitting Bits: Context, Semantics, and
+  Task-Oriented Communications}.
+\newblock \bibinfo{journal}{\emph{IEEE Journal on Selected Areas in
+  Communications}} \bibinfo{volume}{41}, \bibinfo{number}{1}
+  (\bibinfo{year}{2023}), \bibinfo{pages}{5--41}.
+\newblock
+
+
+\bibitem[Ha and Schmidhuber(2018)]%
+        {ha2018worldmodels}
+\bibfield{author}{\bibinfo{person}{David Ha} {and} \bibinfo{person}{J{\"u}rgen
+  Schmidhuber}.} \bibinfo{year}{2018}\natexlab{}.
+\newblock \showarticletitle{Recurrent World Models Facilitate Policy
+  Evolution}. In \bibinfo{booktitle}{\emph{Proc. NeurIPS}}.
+\newblock
+
+
+\bibitem[Hafner et~al\mbox{.}(2023)]%
+        {hafner2023dreamerv3}
+\bibfield{author}{\bibinfo{person}{Danijar Hafner}, \bibinfo{person}{Jurgis
+  Pasukonis}, \bibinfo{person}{Jimmy Ba}, {and} \bibinfo{person}{Timothy
+  Lillicrap}.} \bibinfo{year}{2023}\natexlab{}.
+\newblock \showarticletitle{Mastering Diverse Domains through World Models}.
+\newblock \bibinfo{journal}{\emph{arXiv preprint arXiv:2301.04104}}
+  (\bibinfo{year}{2023}).
+\newblock
+
+
+\bibitem[Hannaford and Ryu(2002)]%
+        {hannaford2002passivity}
+\bibfield{author}{\bibinfo{person}{Blake Hannaford} {and}
+  \bibinfo{person}{Jee-Hwan Ryu}.} \bibinfo{year}{2002}\natexlab{}.
+\newblock \showarticletitle{Time-Domain Passivity Control of Haptic
+  Interfaces}.
+\newblock \bibinfo{journal}{\emph{IEEE Transactions on Robotics and
+  Automation}} \bibinfo{volume}{18}, \bibinfo{number}{1}
+  (\bibinfo{year}{2002}), \bibinfo{pages}{1--10}.
+\newblock
+
+
+\bibitem[Heemels et~al\mbox{.}(2012)]%
+        {heemels2012introduction}
+\bibfield{author}{\bibinfo{person}{W.~P. M.~H. Heemels},
+  \bibinfo{person}{Karl~Henrik Johansson}, {and} \bibinfo{person}{Paulo
+  Tabuada}.} \bibinfo{year}{2012}\natexlab{}.
+\newblock \showarticletitle{An Introduction to Event-Triggered and
+  Self-Triggered Control}.
+\newblock \bibinfo{journal}{\emph{Proc. IEEE Conference on Decision and Control
+  (CDC)}} (\bibinfo{year}{2012}), \bibinfo{pages}{3270--3285}.
+\newblock
+
+
+\bibitem[Jiang et~al\mbox{.}(2025)]%
+        {wmsemcom2025}
+\bibfield{author}{\bibinfo{person}{Peiwen Jiang}, \bibinfo{person}{Jiajia Guo},
+  \bibinfo{person}{Chao-Kai Wen}, \bibinfo{person}{Shi Jin}, {and}
+  \bibinfo{person}{Jun Zhang}.} \bibinfo{year}{2025}\natexlab{}.
+\newblock \showarticletitle{Semantic Communications with World Models}.
+\newblock \bibinfo{journal}{\emph{arXiv preprint arXiv:2510.24785}}
+  (\bibinfo{year}{2025}).
+\newblock
+
+
+\bibitem[J{\"u}lg et~al\mbox{.}(2026)]%
+        {vlagents2026}
+\bibfield{author}{\bibinfo{person}{Tobias J{\"u}lg}, \bibinfo{person}{Khaled
+  Gamal}, \bibinfo{person}{Nisarga Nilavadi}, \bibinfo{person}{Pierre Krack},
+  \bibinfo{person}{Seongjin Bien}, \bibinfo{person}{Michael Krawez},
+  \bibinfo{person}{Florian Walter}, {and} \bibinfo{person}{Wolfram Burgard}.}
+  \bibinfo{year}{2026}\natexlab{}.
+\newblock \showarticletitle{{VLAgents}: A Policy Server for Efficient {VLA}
+  Inference}.
+\newblock \bibinfo{journal}{\emph{arXiv preprint arXiv:2601.11250}}
+  (\bibinfo{year}{2026}).
+\newblock
+
+
+\bibitem[Kang et~al\mbox{.}(2017)]%
+        {kang2017neurosurgeon}
+\bibfield{author}{\bibinfo{person}{Yiping Kang}, \bibinfo{person}{Johann
+  Hauswald}, \bibinfo{person}{Cao Gao}, \bibinfo{person}{Austin Rovinski},
+  \bibinfo{person}{Trevor Mudge}, \bibinfo{person}{Jason Mars}, {and}
+  \bibinfo{person}{Lingjia Tang}.} \bibinfo{year}{2017}\natexlab{}.
+\newblock \showarticletitle{Neurosurgeon: Collaborative Intelligence Between
+  the Cloud and Mobile Edge}. In \bibinfo{booktitle}{\emph{Proc. ASPLOS}}.
+  \bibinfo{pages}{615--629}.
+\newblock
+
+
+\bibitem[Khalil and Kwon(2026)]%
+        {genpreddisplay2026}
+\bibfield{author}{\bibinfo{person}{Aws Khalil} {and} \bibinfo{person}{Jaerock
+  Kwon}.} \bibinfo{year}{2026}\natexlab{}.
+\newblock \showarticletitle{Towards Generative Predictive Display for
+  Vision-Based Teleoperation: A Zero-Shot Benchmark of Off-the-Shelf Video
+  Models}.
+\newblock \bibinfo{journal}{\emph{arXiv preprint arXiv:2605.09670}}
+  (\bibinfo{year}{2026}).
+\newblock
+
+
+\bibitem[Khazatsky et~al\mbox{.}(2024)]%
+        {khazatsky2024droid}
+\bibfield{author}{\bibinfo{person}{Alexander Khazatsky}, \bibinfo{person}{Karl
+  Pertsch}, \bibinfo{person}{Suraj Nair}, \bibinfo{person}{Ashwin Balakrishna},
+  \bibinfo{person}{Sudeep Dasari}, \bibinfo{person}{Siddharth Karamcheti},
+  {et~al\mbox{.}}} \bibinfo{year}{2024}\natexlab{}.
+\newblock \showarticletitle{{DROID}: A Large-Scale In-the-Wild Robot
+  Manipulation Dataset}.
+\newblock \bibinfo{journal}{\emph{arXiv preprint arXiv:2403.12945}}
+  (\bibinfo{year}{2024}).
+\newblock
+
+
+\bibitem[Kim et~al\mbox{.}(2026)]%
+        {licvla2026}
+\bibfield{author}{\bibinfo{person}{Hyeonjun Kim}, \bibinfo{person}{Jegwang
+  Ryu}, \bibinfo{person}{Sangbeom Ha}, \bibinfo{person}{Junhyeok Lee},
+  \bibinfo{person}{Jun-Hyuk Kim}, \bibinfo{person}{Hyemin Ahn}, {and}
+  \bibinfo{person}{Jaeho Lee}.} \bibinfo{year}{2026}\natexlab{}.
+\newblock \showarticletitle{Learned Image Compression for
+  Vision-Language-Action Models}.
+\newblock \bibinfo{journal}{\emph{arXiv preprint arXiv:2606.16253}}
+  (\bibinfo{year}{2026}).
+\newblock
+
+
+\bibitem[Kim et~al\mbox{.}(2024)]%
+        {kim2024openvla}
+\bibfield{author}{\bibinfo{person}{Moo~Jin Kim}, \bibinfo{person}{Karl
+  Pertsch}, \bibinfo{person}{Siddharth Karamcheti}, \bibinfo{person}{Ted Xiao},
+  \bibinfo{person}{Ashwin Balakrishna}, \bibinfo{person}{Suraj Nair},
+  \bibinfo{person}{Rafael Rafailov}, \bibinfo{person}{Ethan Foster},
+  \bibinfo{person}{Grace Lam}, \bibinfo{person}{Pannag Sanketi},
+  \bibinfo{person}{Quan Vuong}, \bibinfo{person}{Thomas Kollar},
+  \bibinfo{person}{Benjamin Burchfiel}, \bibinfo{person}{Russ Tedrake},
+  \bibinfo{person}{Dorsa Sadigh}, \bibinfo{person}{Sergey Levine},
+  \bibinfo{person}{Percy Liang}, {and} \bibinfo{person}{Chelsea Finn}.}
+  \bibinfo{year}{2024}\natexlab{}.
+\newblock \showarticletitle{{OpenVLA}: An Open-Source Vision-Language-Action
+  Model}. In \bibinfo{booktitle}{\emph{Proc. Conference on Robot Learning
+  (CoRL)}}.
+\newblock
+
+
+\bibitem[Kountouris and Pappas(2021)]%
+        {kountouris2021semantics}
+\bibfield{author}{\bibinfo{person}{Marios Kountouris} {and}
+  \bibinfo{person}{Nikolaos Pappas}.} \bibinfo{year}{2021}\natexlab{}.
+\newblock \showarticletitle{Semantics-Empowered Communication for Networked
+  Intelligent Systems}.
+\newblock \bibinfo{journal}{\emph{IEEE Communications Magazine}}
+  \bibinfo{volume}{59}, \bibinfo{number}{6} (\bibinfo{year}{2021}),
+  \bibinfo{pages}{96--102}.
+\newblock
+
+
+\bibitem[Li et~al\mbox{.}(2025)]%
+        {gosc2025video}
+\bibfield{author}{\bibinfo{person}{Nan Li}, \bibinfo{person}{Yansha Deng},
+  {and} \bibinfo{person}{Dusit Niyato}.} \bibinfo{year}{2025}\natexlab{}.
+\newblock \showarticletitle{Goal-Oriented Semantic Communication for Wireless
+  Video Transmission via Generative {AI}}.
+\newblock \bibinfo{journal}{\emph{arXiv preprint arXiv:2502.20927}}
+  (\bibinfo{year}{2025}).
+\newblock
+
+
+\bibitem[Li et~al\mbox{.}(2024)]%
+        {li2024simplerenv}
+\bibfield{author}{\bibinfo{person}{Xuanlin Li}, \bibinfo{person}{Kyle Hsu},
+  \bibinfo{person}{Jiayuan Gu}, \bibinfo{person}{Karl Pertsch},
+  \bibinfo{person}{Oier Mees}, \bibinfo{person}{Homer~Rich Walke},
+  \bibinfo{person}{Chuyuan Fu}, \bibinfo{person}{Ishikaa Lunawat},
+  \bibinfo{person}{Isabel Sieh}, \bibinfo{person}{Sean Kirmani},
+  {et~al\mbox{.}}} \bibinfo{year}{2024}\natexlab{}.
+\newblock \showarticletitle{Evaluating Real-World Robot Manipulation Policies
+  in Simulation}.
+\newblock \bibinfo{journal}{\emph{arXiv preprint arXiv:2405.05941}}
+  (\bibinfo{year}{2024}).
+\newblock
+
+
+\bibitem[Li et~al\mbox{.}(2026)]%
+        {oxygen2026}
+\bibfield{author}{\bibinfo{person}{Xiangyu Li}, \bibinfo{person}{Huaizhi Tang},
+  \bibinfo{person}{Xin Ding}, \bibinfo{person}{Weijun Wang},
+  \bibinfo{person}{Ting Cao}, {and} \bibinfo{person}{Yunxin Liu}.}
+  \bibinfo{year}{2026}\natexlab{}.
+\newblock \showarticletitle{{OxyGen}: Unified {KV} Cache Management for {VLA}
+  Inference under Multi-Task Parallelism}.
+\newblock \bibinfo{journal}{\emph{arXiv preprint arXiv:2603.14371}}
+  (\bibinfo{year}{2026}).
+\newblock
+
+
+\bibitem[Li et~al\mbox{.}(2020)]%
+        {li2020reducto}
+\bibfield{author}{\bibinfo{person}{Yuanqi Li}, \bibinfo{person}{Arthi
+  Padmanabhan}, \bibinfo{person}{Pengzhan Zhao}, \bibinfo{person}{Yufei Wang},
+  \bibinfo{person}{Guoqing~Harry Xu}, {and} \bibinfo{person}{Ravi Netravali}.}
+  \bibinfo{year}{2020}\natexlab{}.
+\newblock \showarticletitle{Reducto: On-Camera Filtering for Resource-Efficient
+  Real-Time Video Analytics}. In \bibinfo{booktitle}{\emph{Proc. ACM SIGCOMM}}.
+  \bibinfo{pages}{359--376}.
+\newblock
+
+
+\bibitem[Liu et~al\mbox{.}(2023)]%
+        {liu2023libero}
+\bibfield{author}{\bibinfo{person}{Bo Liu}, \bibinfo{person}{Yifeng Zhu},
+  \bibinfo{person}{Chongkai Gao}, \bibinfo{person}{Yihao Feng},
+  \bibinfo{person}{Qiang Liu}, \bibinfo{person}{Yuke Zhu}, {and}
+  \bibinfo{person}{Peter Stone}.} \bibinfo{year}{2023}\natexlab{}.
+\newblock \showarticletitle{{LIBERO}: Benchmarking Knowledge Transfer for
+  Lifelong Robot Learning}. In \bibinfo{booktitle}{\emph{Proc. NeurIPS Datasets
+  and Benchmarks Track}}.
+\newblock
+
+
+\bibitem[Liu et~al\mbox{.}(2025)]%
+        {resividtok2026}
+\bibfield{author}{\bibinfo{person}{Zhenyu Liu}, \bibinfo{person}{Yi Ma},
+  \bibinfo{person}{Rahim Tafazolli}, {and} \bibinfo{person}{Zhi Ding}.}
+  \bibinfo{year}{2025}\natexlab{}.
+\newblock \showarticletitle{{Resi-VidTok}: An Efficient and Decomposed
+  Progressive Tokenization Framework for Ultra-Low-Rate and Lightweight Video
+  Transmission}.
+\newblock \bibinfo{journal}{\emph{arXiv preprint arXiv:2510.25002}}
+  (\bibinfo{year}{2025}).
+\newblock
+
+
+\bibitem[Ma et~al\mbox{.}(2026)]%
+        {pilworld2026}
+\bibfield{author}{\bibinfo{person}{Chong Ma}, \bibinfo{person}{Taiyi Su},
+  \bibinfo{person}{Jian Zhu}, \bibinfo{person}{Jianjun Zhang},
+  \bibinfo{person}{Zitai Huang}, \bibinfo{person}{Yi Xu}, {and}
+  \bibinfo{person}{Hanli Wang}.} \bibinfo{year}{2026}\natexlab{}.
+\newblock \showarticletitle{{PiL-World}: A Chunk-Wise World Model for {VLA}
+  Policy-in-the-Loop Evaluation}.
+\newblock \bibinfo{journal}{\emph{arXiv preprint arXiv:2606.05773}}
+  (\bibinfo{year}{2026}).
+\newblock
+
+
+\bibitem[Mamduhi et~al\mbox{.}(2017)]%
+        {mamduhi2017error}
+\bibfield{author}{\bibinfo{person}{Mohammad~H. Mamduhi}, \bibinfo{person}{Adam
+  Molin}, \bibinfo{person}{Domagoj Toli{\'c}}, {and} \bibinfo{person}{Sandra
+  Hirche}.} \bibinfo{year}{2017}\natexlab{}.
+\newblock \showarticletitle{Error-dependent data scheduling in resource-aware
+  multi-loop networked control systems}.
+\newblock \bibinfo{journal}{\emph{Automatica}}  \bibinfo{volume}{81}
+  (\bibinfo{year}{2017}), \bibinfo{pages}{209--216}.
+\newblock
+
+
+\bibitem[Matthews et~al\mbox{.}(2025)]%
+        {matthews2025kinetix}
+\bibfield{author}{\bibinfo{person}{Michael Matthews}, \bibinfo{person}{Michael
+  Beukman}, \bibinfo{person}{Benjamin Ellis}, \bibinfo{person}{Mikayel
+  Samvelyan}, \bibinfo{person}{Matthew Jackson}, \bibinfo{person}{Samuel
+  Coward}, {and} \bibinfo{person}{Jakob Foerster}.}
+  \bibinfo{year}{2025}\natexlab{}.
+\newblock \showarticletitle{Kinetix: Investigating the Training of General
+  Agents through Open-Ended Physics-Based Control Tasks}. In
+  \bibinfo{booktitle}{\emph{Proc. International Conference on Learning
+  Representations (ICLR)}}.
+\newblock
+
+
+\bibitem[Miskowicz(2006)]%
+        {miskowicz2006sod}
+\bibfield{author}{\bibinfo{person}{Marek Miskowicz}.}
+  \bibinfo{year}{2006}\natexlab{}.
+\newblock \showarticletitle{Send-on-Delta Concept: An Event-Based Data
+  Reporting Strategy}.
+\newblock \bibinfo{journal}{\emph{Sensors}} \bibinfo{volume}{6},
+  \bibinfo{number}{1} (\bibinfo{year}{2006}), \bibinfo{pages}{49--63}.
+\newblock
+
+
+\bibitem[Miskowicz(2007)]%
+        {miskowicz2007kldiv}
+\bibfield{author}{\bibinfo{person}{Marek Miskowicz}.}
+  \bibinfo{year}{2007}\natexlab{}.
+\newblock \showarticletitle{Asymptotic Effectiveness of the Event-Based
+  Sampling According to the Integral Criterion}.
+\newblock \bibinfo{journal}{\emph{Sensors}} \bibinfo{volume}{7},
+  \bibinfo{number}{1} (\bibinfo{year}{2007}), \bibinfo{pages}{16--37}.
+\newblock
+
+
+\bibitem[Molin and Hirche(2013)]%
+        {molin2013optimal}
+\bibfield{author}{\bibinfo{person}{Adam Molin} {and} \bibinfo{person}{Sandra
+  Hirche}.} \bibinfo{year}{2013}\natexlab{}.
+\newblock \showarticletitle{On the Optimality of Certainty Equivalence for
+  Event-Triggered Control Systems}.
+\newblock \bibinfo{journal}{\emph{IEEE Trans. Automat. Control}}
+  \bibinfo{volume}{58}, \bibinfo{number}{2} (\bibinfo{year}{2013}),
+  \bibinfo{pages}{470--474}.
+\newblock
+
+
+\bibitem[Narayanan et~al\mbox{.}(2020)]%
+        {narayanan2020lumos5g}
+\bibfield{author}{\bibinfo{person}{Arvind Narayanan}, \bibinfo{person}{Eman
+  Ramadan}, \bibinfo{person}{Rishabh Mehta}, \bibinfo{person}{Xinyue Hu},
+  \bibinfo{person}{Qingxu Liu}, \bibinfo{person}{Rostand A.~K. Fezeu},
+  \bibinfo{person}{Udhaya~Kumar Dayalan}, \bibinfo{person}{Saurabh Verma},
+  \bibinfo{person}{Peiqi Ji}, \bibinfo{person}{Tao Li}, \bibinfo{person}{Feng
+  Qian}, {and} \bibinfo{person}{Zhi-Li Zhang}.}
+  \bibinfo{year}{2020}\natexlab{}.
+\newblock \showarticletitle{{Lumos5G}: Mapping and Predicting Commercial mmWave
+  {5G} Throughput}. In \bibinfo{booktitle}{\emph{Proc. ACM Internet Measurement
+  Conference (IMC)}}. \bibinfo{pages}{176--193}.
+\newblock
+
+
+\bibitem[Narayanan et~al\mbox{.}(2021)]%
+        {narayanan2021variegated}
+\bibfield{author}{\bibinfo{person}{Arvind Narayanan}, \bibinfo{person}{Xumiao
+  Zhang}, \bibinfo{person}{Ruiyang Zhu}, \bibinfo{person}{Ahmad Hassan},
+  \bibinfo{person}{Shuowei Jin}, \bibinfo{person}{Xiao Zhu},
+  \bibinfo{person}{Xiaoxuan Zhang}, \bibinfo{person}{Denis Rybkin},
+  \bibinfo{person}{Zhengxuan Yang}, \bibinfo{person}{Zhuoqing~Morley Mao},
+  \bibinfo{person}{Feng Qian}, {and} \bibinfo{person}{Zhi-Li Zhang}.}
+  \bibinfo{year}{2021}\natexlab{}.
+\newblock \showarticletitle{A Variegated Look at {5G} in the Wild: Performance,
+  Power, and {QoE} Implications}. In \bibinfo{booktitle}{\emph{Proc. ACM
+  SIGCOMM}}. \bibinfo{pages}{610--625}.
+\newblock
+
+
+\bibitem[Netravali et~al\mbox{.}(2015)]%
+        {netravali2015mahimahi}
+\bibfield{author}{\bibinfo{person}{Ravi Netravali}, \bibinfo{person}{Anirudh
+  Sivaraman}, \bibinfo{person}{Somak Das}, \bibinfo{person}{Ameesh Goyal},
+  \bibinfo{person}{Keith Winstein}, \bibinfo{person}{James Mickens}, {and}
+  \bibinfo{person}{Hari Balakrishnan}.} \bibinfo{year}{2015}\natexlab{}.
+\newblock \showarticletitle{Mahimahi: Accurate Record-and-Replay for {HTTP}}.
+  In \bibinfo{booktitle}{\emph{Proc. USENIX Annual Technical Conference
+  (ATC)}}. \bibinfo{pages}{417--429}.
+\newblock
+
+
+\bibitem[Nguyen and Suh(2008)]%
+        {nguyen2009stochasticsod}
+\bibfield{author}{\bibinfo{person}{Vinh~Hao Nguyen} {and}
+  \bibinfo{person}{Young~Soo Suh}.} \bibinfo{year}{2008}\natexlab{}.
+\newblock \showarticletitle{Networked Estimation with an Area-Triggered
+  Transmission Method}.
+\newblock \bibinfo{journal}{\emph{Sensors}} \bibinfo{volume}{8},
+  \bibinfo{number}{2} (\bibinfo{year}{2008}), \bibinfo{pages}{897--909}.
+\newblock
+
+
+\bibitem[Nguyen and Suh(2009)]%
+        {suh2009dropouts}
+\bibfield{author}{\bibinfo{person}{Vinh~Hao Nguyen} {and}
+  \bibinfo{person}{Young~Soo Suh}.} \bibinfo{year}{2009}\natexlab{}.
+\newblock \showarticletitle{Networked Estimation for Event-Based Sampling
+  Systems with Packet Dropouts}.
+\newblock \bibinfo{journal}{\emph{Sensors}} \bibinfo{volume}{9},
+  \bibinfo{number}{4} (\bibinfo{year}{2009}), \bibinfo{pages}{3078--3089}.
+\newblock
+
+
+\bibitem[Passenberg et~al\mbox{.}(2010)]%
+        {passenberg2010survey}
+\bibfield{author}{\bibinfo{person}{Carolina Passenberg},
+  \bibinfo{person}{Angelika Peer}, {and} \bibinfo{person}{Martin Buss}.}
+  \bibinfo{year}{2010}\natexlab{}.
+\newblock \showarticletitle{A Survey of Environment-, Operator-, and
+  Task-Adapted Controllers for Teleoperation Systems}.
+\newblock \bibinfo{journal}{\emph{Mechatronics}} \bibinfo{volume}{20},
+  \bibinfo{number}{7} (\bibinfo{year}{2010}), \bibinfo{pages}{787--801}.
+\newblock
+
+
+\bibitem[Peng et~al\mbox{.}(2026)]%
+        {cloudedgevla2026}
+\bibfield{author}{\bibinfo{person}{Daojie Peng}, \bibinfo{person}{Fulong Ma},
+  \bibinfo{person}{Bingtao Wang}, \bibinfo{person}{Sheng Wang}, {and}
+  \bibinfo{person}{Jun Ma}.} \bibinfo{year}{2026}\natexlab{}.
+\newblock \showarticletitle{Latency-Tolerant Cloud-Edge Collaborative
+  Vision-Language-Action Models via Emergent Representational Specialization}.
+\newblock \bibinfo{journal}{\emph{arXiv preprint arXiv:2608.00569}}
+  (\bibinfo{year}{2026}).
+\newblock
+
+
+\bibitem[{Physical Intelligence} et~al\mbox{.}(2025)]%
+        {intelligence2025pi05}
+\bibfield{author}{\bibinfo{person}{{Physical Intelligence}},
+  \bibinfo{person}{Kevin Black}, \bibinfo{person}{Noah Brown},
+  \bibinfo{person}{James Darpinian}, \bibinfo{person}{Karan Dhabalia},
+  \bibinfo{person}{Danny Driess}, \bibinfo{person}{Adnan Esmail},
+  \bibinfo{person}{Michael Equi}, \bibinfo{person}{Chelsea Finn},
+  {et~al\mbox{.}}} \bibinfo{year}{2025}\natexlab{}.
+\newblock \showarticletitle{\(\pi_{0.5}\): A Vision-Language-Action Model with
+  Open-World Generalization}.
+\newblock \bibinfo{journal}{\emph{arXiv preprint arXiv:2504.16054}}
+  (\bibinfo{year}{2025}).
+\newblock
+
+
+\bibitem[Raca et~al\mbox{.}(2020)]%
+        {raca20205g}
+\bibfield{author}{\bibinfo{person}{Darijo Raca}, \bibinfo{person}{Dylan Leahy},
+  \bibinfo{person}{Cormac~J. Sreenan}, {and} \bibinfo{person}{Jason~J.
+  Quinlan}.} \bibinfo{year}{2020}\natexlab{}.
+\newblock \showarticletitle{Beyond throughput, the next generation: a {5G}
+  dataset with channel and context metrics}. In \bibinfo{booktitle}{\emph{Proc.
+  ACM Multimedia Systems Conference (MMSys)}}. \bibinfo{pages}{303--308}.
+\newblock
+
+
+\bibitem[Shukor et~al\mbox{.}(2025)]%
+        {shukor2025smolvla}
+\bibfield{author}{\bibinfo{person}{Mustafa Shukor}, \bibinfo{person}{Dana
+  Aubakirova}, \bibinfo{person}{Francesco Capuano}, \bibinfo{person}{Pepijn
+  Kooijmans}, \bibinfo{person}{Steven Palma}, \bibinfo{person}{Adil Zouitine},
+  \bibinfo{person}{Michel Aractingi}, \bibinfo{person}{Caroline Pascal},
+  \bibinfo{person}{Martino Russi}, \bibinfo{person}{Andres Marafioti},
+  \bibinfo{person}{Simon Alibert}, \bibinfo{person}{Matthieu Cord},
+  \bibinfo{person}{Thomas Wolf}, {and} \bibinfo{person}{Remi Cadene}.}
+  \bibinfo{year}{2025}\natexlab{}.
+\newblock \showarticletitle{{SmolVLA}: A Vision-Language-Action Model for
+  Affordable and Efficient Robotics}.
+\newblock \bibinfo{journal}{\emph{arXiv preprint arXiv:2506.01844}}
+  (\bibinfo{year}{2025}).
+\newblock
+
+
+\bibitem[Suh(2007)]%
+        {suh2007predictor}
+\bibfield{author}{\bibinfo{person}{Young~Soo Suh}.}
+  \bibinfo{year}{2007}\natexlab{}.
+\newblock \showarticletitle{Send-on-Delta Sensor Data Transmission with a
+  Linear Predictor}.
+\newblock \bibinfo{journal}{\emph{Sensors}} \bibinfo{volume}{7},
+  \bibinfo{number}{4} (\bibinfo{year}{2007}), \bibinfo{pages}{537--547}.
+\newblock
+
+
+\bibitem[Sullivan et~al\mbox{.}(2012)]%
+        {sullivan2012hevc}
+\bibfield{author}{\bibinfo{person}{Gary~J. Sullivan},
+  \bibinfo{person}{Jens-Rainer Ohm}, \bibinfo{person}{Woo-Jin Han}, {and}
+  \bibinfo{person}{Thomas Wiegand}.} \bibinfo{year}{2012}\natexlab{}.
+\newblock \showarticletitle{Overview of the High Efficiency Video Coding
+  ({HEVC}) Standard}.
+\newblock \bibinfo{journal}{\emph{IEEE Transactions on Circuits and Systems for
+  Video Technology}} \bibinfo{volume}{22}, \bibinfo{number}{12}
+  (\bibinfo{year}{2012}), \bibinfo{pages}{1649--1668}.
+\newblock
+
+
+\bibitem[Tabuada(2007)]%
+        {tabuada2007eventtriggered}
+\bibfield{author}{\bibinfo{person}{Paulo Tabuada}.}
+  \bibinfo{year}{2007}\natexlab{}.
+\newblock \showarticletitle{Event-Triggered Real-Time Scheduling of Stabilizing
+  Control Tasks}.
+\newblock \bibinfo{journal}{\emph{IEEE Trans. Automat. Control}}
+  \bibinfo{volume}{52}, \bibinfo{number}{9} (\bibinfo{year}{2007}),
+  \bibinfo{pages}{1680--1685}.
+\newblock
+
+
+\bibitem[Tang et~al\mbox{.}(2025)]%
+        {vlash2025}
+\bibfield{author}{\bibinfo{person}{Jiaming Tang}, \bibinfo{person}{Yufei Sun},
+  \bibinfo{person}{Yilong Zhao}, \bibinfo{person}{Shang Yang},
+  \bibinfo{person}{Yujun Lin}, \bibinfo{person}{Zhuoyang Zhang},
+  \bibinfo{person}{James Hou}, \bibinfo{person}{Yao Lu},
+  \bibinfo{person}{Zhijian Liu}, {and} \bibinfo{person}{Song Han}.}
+  \bibinfo{year}{2025}\natexlab{}.
+\newblock \showarticletitle{{VLASH}: Real-Time {VLAs} via Future-State-Aware
+  Asynchronous Inference}.
+\newblock \bibinfo{journal}{\emph{arXiv preprint arXiv:2512.01031}}
+  (\bibinfo{year}{2025}).
+\newblock
+
+
+\bibitem[Tang et~al\mbox{.}(2026)]%
+        {onewmvla2026}
+\bibfield{author}{\bibinfo{person}{Zuojin Tang}, \bibinfo{person}{Shengchao
+  Yuan}, \bibinfo{person}{Xiaoxin Bai}, \bibinfo{person}{Zhiyuan Jing},
+  \bibinfo{person}{De Ma}, \bibinfo{person}{Gang Pan}, {and}
+  \bibinfo{person}{Bin Liu}.} \bibinfo{year}{2026}\natexlab{}.
+\newblock \showarticletitle{One Token Per Frame: Reconsidering Visual Bandwidth
+  in World Models for {VLA} Policy}.
+\newblock \bibinfo{journal}{\emph{arXiv preprint arXiv:2605.07931}}
+  (\bibinfo{year}{2026}).
+\newblock
+
+
+\bibitem[Wang et~al\mbox{.}(2026)]%
+        {cdtsemcom2026}
+\bibfield{author}{\bibinfo{person}{Lingyi Wang}, \bibinfo{person}{Tingyu Shui},
+  \bibinfo{person}{Walid Saad}, {and} \bibinfo{person}{Pascal Adjakple}.}
+  \bibinfo{year}{2026}\natexlab{}.
+\newblock \showarticletitle{World Model-Enabled Causal Digital Twins for
+  Semantic Communications in Physical {AI} Systems}.
+\newblock \bibinfo{journal}{\emph{arXiv preprint arXiv:2605.16547}}
+  (\bibinfo{year}{2026}).
+\newblock
+
+
+\bibitem[Wu et~al\mbox{.}(2024)]%
+        {wu2024ivideogpt}
+\bibfield{author}{\bibinfo{person}{Jialong Wu}, \bibinfo{person}{Shaofeng Yin},
+  \bibinfo{person}{Ningya Feng}, \bibinfo{person}{Xu He},
+  \bibinfo{person}{Chaochao Li}, \bibinfo{person}{Jianye Wang}, {and}
+  \bibinfo{person}{Mingsheng Long}.} \bibinfo{year}{2024}\natexlab{}.
+\newblock \showarticletitle{{iVideoGPT}: Interactive VideoGPTs are Scalable
+  World Models}. In \bibinfo{booktitle}{\emph{Proc. NeurIPS}}.
+\newblock
+
+
+\bibitem[Xu et~al\mbox{.}(2025)]%
+        {vlacache2025}
+\bibfield{author}{\bibinfo{person}{Siyu Xu}, \bibinfo{person}{Yunke Wang},
+  \bibinfo{person}{Chenghao Xia}, \bibinfo{person}{Dihao Zhu},
+  \bibinfo{person}{Tao Huang}, {and} \bibinfo{person}{Chang Xu}.}
+  \bibinfo{year}{2025}\natexlab{}.
+\newblock \showarticletitle{{VLA-Cache}: Efficient Vision-Language-Action
+  Manipulation via Adaptive Token Caching}. In \bibinfo{booktitle}{\emph{Proc.
+  NeurIPS}}.
+\newblock
+
+
+\bibitem[Yang et~al\mbox{.}(2024)]%
+        {agentsemcom2025}
+\bibfield{author}{\bibinfo{person}{Wanting Yang}, \bibinfo{person}{Zehui
+  Xiong}, \bibinfo{person}{Yanli Yuan}, \bibinfo{person}{Wenchao Jiang},
+  \bibinfo{person}{Tony Q.~S. Quek}, {and} \bibinfo{person}{M{\'e}rouane
+  Debbah}.} \bibinfo{year}{2024}\natexlab{}.
+\newblock \showarticletitle{Agent-Driven Generative Semantic Communication with
+  Cross-Modality and Prediction}.
+\newblock \bibinfo{journal}{\emph{arXiv preprint arXiv:2404.06997}}
+  (\bibinfo{year}{2024}).
+\newblock
+
+
+\bibitem[Yin et~al\mbox{.}(2025)]%
+        {genvidfusion2025}
+\bibfield{author}{\bibinfo{person}{Hang Yin}, \bibinfo{person}{Li Qiao},
+  \bibinfo{person}{Yu Ma}, \bibinfo{person}{Shuo Sun}, \bibinfo{person}{Kan
+  Li}, \bibinfo{person}{Zhen Gao}, {and} \bibinfo{person}{Dusit Niyato}.}
+  \bibinfo{year}{2025}\natexlab{}.
+\newblock \showarticletitle{Generative Video Semantic Communication via
+  Multimodal Semantic Fusion with Large Model}.
+\newblock \bibinfo{journal}{\emph{arXiv preprint arXiv:2502.13838}}
+  (\bibinfo{year}{2025}).
+\newblock
+
+
+\bibitem[Yuan et~al\mbox{.}(2025)]%
+        {tofc2025}
+\bibfield{author}{\bibinfo{person}{Cheng Yuan}, \bibinfo{person}{Zhening Liu},
+  \bibinfo{person}{Jiashu Lv}, \bibinfo{person}{Jiawei Shao},
+  \bibinfo{person}{Yufei Jiang}, \bibinfo{person}{Jun Zhang}, {and}
+  \bibinfo{person}{Xuelong Li}.} \bibinfo{year}{2025}\natexlab{}.
+\newblock \showarticletitle{Task-Oriented Feature Compression for Multimodal
+  Understanding via Device-Edge Co-Inference}.
+\newblock \bibinfo{journal}{\emph{IEEE Transactions on Mobile Computing}}
+  (\bibinfo{year}{2025}).
+\newblock
+\href{https://doi.org/10.1109/TMC.2025.3626724}{doi:\nolinkurl{10.1109/TMC.2025.3626724}}
+
+
+\bibitem[Zhang et~al\mbox{.}(2018)]%
+        {zhang2018awstream}
+\bibfield{author}{\bibinfo{person}{Ben Zhang}, \bibinfo{person}{Xin Jin},
+  \bibinfo{person}{Sylvia Ratnasamy}, \bibinfo{person}{John Wawrzynek}, {and}
+  \bibinfo{person}{Edward~A. Lee}.} \bibinfo{year}{2018}\natexlab{}.
+\newblock \showarticletitle{{AWStream}: Adaptive Wide-Area Streaming
+  Analytics}. In \bibinfo{booktitle}{\emph{Proc. ACM SIGCOMM}}.
+  \bibinfo{pages}{236--252}.
+\newblock
+
+
+\bibitem[Zhao et~al\mbox{.}(2023)]%
+        {zhao2023act}
+\bibfield{author}{\bibinfo{person}{Tony~Z. Zhao}, \bibinfo{person}{Vikash
+  Kumar}, \bibinfo{person}{Sergey Levine}, {and} \bibinfo{person}{Chelsea
+  Finn}.} \bibinfo{year}{2023}\natexlab{}.
+\newblock \showarticletitle{Learning Fine-Grained Bimanual Manipulation with
+  Low-Cost Hardware}. In \bibinfo{booktitle}{\emph{Proc. Robotics: Science and
+  Systems (RSS)}}.
+\newblock
+
+
+\bibitem[Zhu et~al\mbox{.}(2026)]%
+        {dinolink2026}
+\bibfield{author}{\bibinfo{person}{Tianle Zhu}, \bibinfo{person}{Haohua Que},
+  \bibinfo{person}{Handong Yao}, \bibinfo{person}{Hongyi Xu}, {and}
+  \bibinfo{person}{Zhipeng Bao}.} \bibinfo{year}{2026}\natexlab{}.
+\newblock \showarticletitle{{DinoLink}: A Token-Centric Representation
+  Compression Framework for Bandwidth-Constrained Collaborative {V2X}
+  Perception}.
+\newblock \bibinfo{journal}{\emph{arXiv preprint arXiv:2606.26398}}
+  (\bibinfo{year}{2026}).
+\newblock
+
+
+\end{thebibliography}

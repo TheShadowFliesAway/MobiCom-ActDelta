@@ -1,0 +1,27 @@
+%% fig:ablation --- each component removed, at 1.2% uplink loss.
+%% Data: fig-ablation.json.  Build: make (from figures/).
+\documentclass[crop,tikz,10pt]{standalone}
+\input{../preamble}
+
+\begin{document}
+\begin{tikzpicture}
+\begin{axis}[compactplot, width=0.78\figlinewidth, height=4.4cm,
+  xbar, bar width=6pt, xmin=58, xmax=83,
+  xlabel={LIBERO success rate (\%)}, xtick={60,65,70,75,80},
+  ymin=0.4, ymax=8.6, ytick={1,2,3,4,5,6,7,8},
+  yticklabels={\figlabel{a1}, \figlabel{a2}, \figlabel{a3}, \figlabel{a4},
+               \figlabel{a5}, \figlabel{a6}, \figlabel{a7}, \figlabel{a8}},
+  yticklabel style={font=\scriptsize}, ymajorgrids=false,
+  nodes near coords, nodes near coords style={font=\tiny},
+  every node near coord/.append style={/pgf/number format/fixed,
+    /pgf/number format/precision=1}]
+%% purple = the protocol rows: they lose success without saving bytes
+\addplot[fill=cE!30,draw=cE,bar shift=0pt] table[x=succ,y=y] {\figdata{protocol}};
+\addplot[fill=cA!35,draw=cA,bar shift=0pt] table[x=succ,y=y] {\figdata{trigger}};
+\addplot[fill=cB!75,draw=cB,bar shift=0pt] table[x=succ,y=y] {\figdata{sys}};
+\addplot[fill=cGrey!35,draw=cGrey,bar shift=0pt] table[x=succ,y=y] {\figdata{oracle}};
+\draw[cB,dashed,line width=0.7pt]
+  (axis cs:\figval{sysline},0.45) -- (axis cs:\figval{sysline},8.55);
+\end{axis}
+\end{tikzpicture}
+\end{document}

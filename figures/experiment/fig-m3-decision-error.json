@@ -1,0 +1,26 @@
+{
+  "meta": {
+    "id": "fig:m3",
+    "kind": "experiment",
+    "title": "M-3(b): success vs. the quantity a trigger can actually observe",
+    "source": "M-3, LIBERO, pi_0, 50 episodes per point",
+    "placeholder": true,
+    "notes": "This panel DEFINES tauflip = 0.35, the policy-flip threshold used throughout the paper: it is the knee of this curve. fig-m1-rollout-error.json and fig-m4-divergence-trace.json both reference the same value, so if the knee moves here, it has to move there too. The circled marker is plotted at (tauflip, the curve's value there) rather than at literal coordinates."
+  },
+  "scalars": {
+    "tauflip": 0.35,
+    "succatflip": 73.8
+  },
+  "labels": {
+    "flip": "policy flips"
+  },
+  "series": {
+    "success": {
+      "columns": ["err", "succ"],
+      "rows": [
+        [0.05, 79.1], [0.15, 78.4], [0.25, 77.0], [0.35, 73.8], [0.45, 66.2],
+        [0.55, 55.1], [0.65, 41.7], [0.75, 29.0]
+      ]
+    }
+  }
+}

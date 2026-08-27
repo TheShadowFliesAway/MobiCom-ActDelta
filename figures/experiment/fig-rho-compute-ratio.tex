@@ -1,0 +1,46 @@
+%% fig:rho --- benefit versus compute ratio, with both failure boundaries.
+%% Data: fig-rho-compute-ratio.json.  Build: make (from figures/).
+%%
+%% The ONLY figure in this paper that cites something in main.tex: its x label
+%% names the equation defining rho.  xr imports main.aux so the standalone
+%% build prints the same equation number the body text does.  Consequence: this
+%% one figure needs main.aux to exist.  If it does not, the reference renders
+%% as `??' --- loudly, not silently --- and one `latexmk -pdf main.tex' in the
+%% paper directory followed by `make' here fixes it.  No other figure has this
+%% dependency, which is why xr is loaded here and not in ../preamble.tex.
+\documentclass[crop,tikz,10pt]{standalone}
+\input{../preamble}
+\usepackage{xr}
+\externaldocument{../../main}
+
+\begin{document}
+\begin{tikzpicture}
+\begin{axis}[compactplot, height=4.0cm, xmode=log,
+  xlabel={compute ratio $\rho$ (Eq.~\ref{eq:rho})},
+  ylabel={\%}, xmin=3e-4, xmax=3, ymin=30, ymax=90, ytick={40,60,80},
+  legend style={at={(0.975,0.04)},anchor=south east, font=\scriptsize}]
+%% left failure boundary: the predictor misses the control deadline
+\addplot[draw=none, fill=cGrey!22, forget plot] coordinates
+  {(3e-4,30)(\figval{rhomin},30)(\figval{rhomin},90)(3e-4,90)} \closedcycle;
+%% right boundary: the robot could just run the policy
+\addplot[draw=none, fill=cC!10, forget plot] coordinates
+  {(\figval{rhomax},30)(3,30)(3,90)(\figval{rhomax},90)} \closedcycle;
+\node[font=\tiny,cGrey,rotate=90,anchor=west] at (axis cs:4.4e-4,32)
+  {\figlabel{deadline}};
+\node[font=\tiny,cC!55!black,rotate=90,anchor=west] at (axis cs:1.35,32)
+  {\figlabel{local}};
+\addplot[cB,very thick,mark=*,mark size=1.4pt]
+  table[x=rho,y=pct] {\figdata{reduction}};
+\addlegendentry{\figlabel{reduction}}
+\addplot[cA,thick,dashed,mark=square*,mark size=1.4pt]
+  table[x=rho,y=pct] {\figdata{success}};
+\addlegendentry{\figlabel{success}}
+%% our operating point, drawn from the two scalars that define it
+\addplot[cGrey,dotted,line width=0.9pt,no markers,forget plot]
+  coordinates {(\figval{rhoours},30)(\figval{rhoours},\figval{succours})};
+\addplot[only marks,mark=*,mark size=1.9pt,cA,forget plot]
+  coordinates {(\figval{rhoours},\figval{succours})};
+\node[font=\tiny,cA,anchor=south] at (axis cs:0.109,80.3) {\figlabel{ours}};
+\end{axis}
+\end{tikzpicture}
+\end{document}

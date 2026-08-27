@@ -1,0 +1,71 @@
+%% fig:arch --- \sys system architecture.
+%% Metadata: fig-arch.json (documentation only; not read by LaTeX).
+%% Build: make (from figures/).
+\documentclass[crop,tikz,10pt]{standalone}
+\input{../preamble}
+
+\begin{document}
+\begin{tikzpicture}[
+  font=\small,
+  box/.style={draw, rounded corners=2pt, minimum height=7.4mm, align=center,
+              inner xsep=4pt, font=\small, line width=0.5pt},
+  reused/.style={box, fill=cGrey!8, draw=cGrey!80},
+  newbox/.style={box, fill=cB!10, draw=cB, line width=0.9pt},
+  lbl/.style={font=\scriptsize, align=center},
+  stp/.style={circle, draw=cB, fill=white, inner sep=0.4pt, minimum size=3.3mm,
+              font=\tiny, line width=0.6pt, text=cB},
+  ar/.style={-{Latex[length=1.9mm]}, line width=0.7pt, gray!75},
+  dar/.style={-{Latex[length=1.9mm]}, line width=0.8pt, cB},
+  ]
+  %% ---- robot side ----
+  \node[reused, minimum width=18mm] (cam) {cameras\\ $o_t$};
+  \node[reused, minimum width=20mm, right=6mm of cam] (enc) {encoder $E$\\ $z_t$};
+  \node[reused, minimum width=23mm, below=6mm of enc] (wmr)
+       {world model $W$\\ $\hat{z}_t \!=\! W(\hat{z}_{t-1},a_{t-1})$};
+  \node[newbox, minimum width=25mm, right=6mm of enc] (head)
+       {\textbf{decision head} $\Phi$\\ $\hat{\delta}_t = \Phi(z_t,\hat{z}_t)$};
+  \node[newbox, minimum width=25mm, below=6mm of head] (trig)
+       {\textbf{trigger} $\hat{\delta}_t \!>\! \tau(\hat{B}_t)$\\ seq $\cdot$ heartbeat};
+  \node[reused, minimum width=18mm, below=6mm of wmr] (exec)
+       {executor\\ (15\,Hz)};
+  %% ---- link ----
+  \node[box, fill=cGrey!16, draw=cGrey, minimum width=15mm,
+        right=7mm of head, minimum height=20mm] (link) {5G\\ uplink\\ (scarce)};
+  %% ---- server side ----
+  \node[reused, minimum width=24mm, right=7mm of link] (wms)
+       {world model $W$\\ $+$ decoder $D$};
+  \node[reused, minimum width=24mm, below=6mm of wms] (vla)
+       {VLA policy\\ OpenVLA / \pizero};
+
+  \draw[ar] (cam) -- (enc);
+  \draw[ar] (enc) -- (head);
+  \draw[ar] (wmr) -- (head.south west);
+  \draw[dar] (head) -- (trig);
+  \draw[dar] (trig.east) -- ++(3mm,0) |- (link.west);
+  \draw[ar] (link.east) -- (wms.west|-link.east);
+  \draw[ar] (wms) -- node[lbl,right=0.5mm] {$o_t$ \emph{or} $\hat{o}_t$} (vla);
+  \draw[ar] (vla.south) -- ++(0,-5.5mm) -| node[lbl,pos=0.23,below]
+        {action chunk $A_t$ $+$ NACK\ \ (downlink, $<3$\,kB)} (exec.south);
+  \draw[ar] (exec.north) -- node[lbl,right=0.5mm] {$a_{t-1}$} (wmr.south);
+
+  %% ---- numbered flow ----
+  \node[stp] at ($(cam.north east)+(1.6mm,0.4mm)$) {1};
+  \node[stp] at ($(wmr.north west)+(-1.6mm,0.4mm)$) {2};
+  \node[stp] at ($(head.north west)+(-1.6mm,1.4mm)$) {3};
+  \node[stp] at ($(trig.north east)+(1.6mm,0.4mm)$) {4};
+  \node[stp] at ($(wms.north west)+(-1.6mm,0.4mm)$) {5};
+  \node[stp] at ($(vla.south east)+(2.8mm,0mm)$) {6};
+
+  \node[lbl, below=1.6mm of link] {carries a resync\\ frame only when\\
+        \cnum{4} fires};
+
+  \begin{scope}[on background layer]
+    \node[draw=cGrey!55, dashed, rounded corners, fit=(cam)(enc)(wmr)(head)(trig)(exec),
+          inner sep=3.2mm, label={[font=\scriptsize\itshape,gray!75]above:robot:
+          budget $B$, 3.6\,GFLOP/step}] {};
+    \node[draw=cGrey!55, dashed, rounded corners, fit=(wms)(vla),
+          inner sep=3.2mm, label={[font=\scriptsize\itshape,gray!75]above:edge
+          server: 4.9\,TFLOP/step}] {};
+  \end{scope}
+\end{tikzpicture}
+\end{document}

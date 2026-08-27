@@ -1,0 +1,40 @@
+{
+  "meta": {
+    "id": "fig:rho",
+    "kind": "experiment",
+    "title": "Benefit versus compute ratio, with both failure boundaries",
+    "source": "E-3, sweep of the compute ratio rho (Eq. 1) across two and a half decades",
+    "placeholder": true,
+    "notes": "Both shaded regions are failure boundaries, not decoration: below rhomin the world model cannot finish inside the control period, above rhomax the robot could just run the policy locally and the whole system is pointless. Both edges are drawn from scalars. The marked operating point is our hardware (Orin NX) and is plotted at (rhoours, the success curve's value there)."
+  },
+  "scalars": {
+    "rhomin": 7.3e-4,
+    "rhomax": 1,
+    "rhoours": 0.109,
+    "succours": 78.9,
+    "period": 66.7
+  },
+  "labels": {
+    "deadline": "WM misses deadline",
+    "local": "policy fits locally",
+    "reduction": "byte reduction vs.\\ fidelity trigger",
+    "success": "LIBERO success rate",
+    "ours": "our hardware (Orin NX)"
+  },
+  "series": {
+    "reduction": {
+      "columns": ["rho", "pct"],
+      "rows": [
+        [1e-3, 36], [3e-3, 45], [1e-2, 52], [3e-2, 56], [0.109, 59],
+        [0.35, 62], [1.0, 63]
+      ]
+    },
+    "success": {
+      "columns": ["rho", "pct"],
+      "rows": [
+        [1e-3, 71.4], [3e-3, 74.9], [1e-2, 77.2], [3e-2, 78.4], [0.109, 78.9],
+        [0.35, 79.1], [1.0, 79.2]
+      ]
+    }
+  }
+}

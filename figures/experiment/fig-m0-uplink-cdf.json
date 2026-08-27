@@ -1,0 +1,50 @@
+{
+  "meta": {
+    "id": "fig:m0",
+    "kind": "experiment",
+    "title": "M-0: the deployed configuration does not fit the link",
+    "source": "M-0, uplink CDFs of three commercial 5G trace sets vs. the sustained rate a policy server needs for three views",
+    "placeholder": true,
+    "notes": "The shaded band and the three vertical rules are all drawn from the rate scalars, so changing a required rate moves the band, the rule and the label together. The highlighted crossing is (rate10, irishatrate10) -- it is plotted from those two scalars, not from literal coordinates, so the '77% of the time' annotation cannot drift away from the curve."
+  },
+  "scalars": {
+    "rate10": 11.0,
+    "rate15": 16.4,
+    "rate30": 32.9,
+    "irishatrate10": 0.77
+  },
+  "labels": {
+    "irish": "Irish 5G",
+    "lumos": "Lumos5G",
+    "mnwild": "MN-Wild",
+    "band": "status quo\\\\ starves in\\\\ this band",
+    "crossing": "77\\% of the time"
+  },
+  "series": {
+    "irish": {
+      "columns": ["mbps", "cdf"],
+      "rows": [
+        [0, 0], [0.5, 0.06], [1, 0.12], [2, 0.22], [3, 0.31], [4, 0.39],
+        [5, 0.46], [6, 0.53], [7, 0.59], [8, 0.65], [9, 0.70], [10, 0.74],
+        [11, 0.77], [12, 0.80], [14, 0.85], [16, 0.89], [18, 0.92], [20, 0.94],
+        [24, 0.97], [28, 0.98], [32, 0.99], [40, 1]
+      ]
+    },
+    "lumos": {
+      "columns": ["mbps", "cdf"],
+      "rows": [
+        [0, 0], [1, 0.05], [2, 0.10], [4, 0.19], [6, 0.28], [8, 0.38],
+        [10, 0.49], [11, 0.55], [12, 0.60], [14, 0.68], [16, 0.75], [18, 0.80],
+        [20, 0.84], [24, 0.90], [28, 0.94], [32, 0.96], [40, 1]
+      ]
+    },
+    "mnwild": {
+      "columns": ["mbps", "cdf"],
+      "rows": [
+        [0, 0], [0.5, 0.10], [1, 0.19], [2, 0.32], [3, 0.43], [4, 0.52],
+        [6, 0.66], [8, 0.76], [10, 0.83], [11, 0.86], [12, 0.88], [14, 0.92],
+        [16, 0.95], [20, 0.97], [24, 0.99], [40, 1]
+      ]
+    }
+  }
+}

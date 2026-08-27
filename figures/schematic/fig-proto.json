@@ -1,0 +1,19 @@
+{
+  "meta": {
+    "id": "fig:proto",
+    "kind": "schematic",
+    "title": "The protocol state machine: making silence unambiguous",
+    "source": "design, S4; carries no measured data",
+    "placeholder": false,
+    "generated": false,
+    "notes": "Metadata only -- LaTeX never reads this file. The figure's job is to show that the receiver can tell 'nothing was sent because the prediction was good' from 'something was sent and lost' -- which Sec. 2.4 (fig:m4) shows published event-triggered designs cannot.",
+    "states": ["PREDICT", "SEND", "AWAIT", "RECOVER"],
+    "quantities_shown": [
+      "heartbeat period T_h = 8 control steps",
+      "heartbeat payload 16 B: <seq, hash(a_{t-7..t}), delta_hat_t>",
+      "protocol cost 240 B/s"
+    ],
+    "quantities_are_placeholders": false,
+    "consistency": "240 B/s must equal 16 B at one heartbeat per 8 steps at 15 Hz; if T_h or the payload changes, recompute it here and in the caption."
+  }
+}

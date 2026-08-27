@@ -1,0 +1,47 @@
+%% fig:m2(a) --- one point = one predicted frame.
+%% Data: fig-m2-fidelity-vs-decision.json.  Build: make (from figures/).
+\documentclass[crop,tikz,10pt]{standalone}
+\input{../preamble}
+
+\begin{document}
+%% lived in subfigure{0.48\textwidth} inside a figure*
+\figcontainer{0.48\figtextwidth}
+\begin{tikzpicture}
+\begin{axis}[widecompact, height=3.9cm,
+  xlabel={normalized pixel reconstruction error ($L_2$)},
+  ylabel={ground-truth action divergence},
+  xmin=0, xmax=1, ymin=0, ymax=1,
+  xtick={0,0.2,0.35,0.6,0.8,1}, xticklabels={0,0.2,,0.6,0.8,1},
+  ytick={0,0.3,0.6,0.8,1}, yticklabels={0,,0.6,0.8,1},
+  title={(a) one point = one predicted frame}]
+%% the two quadrants a fidelity trigger gets wrong; both are bounded by the
+%% two cuts, so the shading can never disagree with the dashed rules below
+\addplot[draw=none, fill=cD!13, forget plot] coordinates
+  {(\figval{cutfidelity},0)(1,0)(1,\figval{cutdecision})
+   (\figval{cutfidelity},\figval{cutdecision})} \closedcycle;
+\addplot[draw=none, fill=cB!13, forget plot] coordinates
+  {(0,\figval{cutdecision})(\figval{cutfidelity},\figval{cutdecision})
+   (\figval{cutfidelity},1)(0,1)} \closedcycle;
+\addplot[only marks, mark=*, mark size=0.75pt, cGrey, opacity=0.75]
+  table[x=pix,y=act] {\figdata{agree}};
+\addplot[only marks, mark=*, mark size=1.1pt, cD]
+  table[x=pix,y=act] {\figdata{wasted}};
+\addplot[only marks, mark=*, mark size=1.6pt, cB]
+  table[x=pix,y=act] {\figdata{missed}};
+\addplot[only marks, mark=*, mark size=0.75pt, cGrey, opacity=0.75]
+  table[x=pix,y=act] {\figdata{agreehigh}};
+\addplot[black,dashed,no markers,forget plot]
+  coordinates {(\figval{cutfidelity},0)(\figval{cutfidelity},1)};
+\addplot[black,dashed,no markers,forget plot]
+  coordinates {(0,\figval{cutdecision})(1,\figval{cutdecision})};
+\node[font=\tiny,anchor=north west] at (axis cs:0.36,0.995) {\figlabel{cutfid}};
+\node[font=\tiny,anchor=south west] at (axis cs:0.005,0.305) {\figlabel{cutdec}};
+\node[font=\scriptsize,cD!72!black,align=center,fill=white,fill opacity=0.93,
+  text opacity=1,inner sep=1.2pt] at (axis cs:0.70,0.215) {\figlabel{wasted}};
+\node[font=\scriptsize,cB,align=center,fill=white,fill opacity=0.82,
+  text opacity=1,inner sep=1pt] at (axis cs:0.63,0.62) {\figlabel{missed}};
+\draw[-{Latex[length=1.4mm]},cB,line width=0.8pt]
+  (axis cs:0.395,0.655) -- (axis cs:0.235,0.755);
+\end{axis}
+\end{tikzpicture}
+\end{document}

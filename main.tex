@@ -1,0 +1,1255 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% ACM MobiCom 2027 submission --- ActDelta
+%%
+%% !!! IMPORTANT !!!
+%% Every quantitative result in this draft is a PLACEHOLDER consistent with the
+%% hypotheses and the pre-registered pass/fail thresholds in the project
+%% specification (IDEA2-closed-loop-predictive-transmission.md).  They are NOT
+%% measured numbers.  Replace every one of them before submission.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\documentclass[sigconf,10pt,anonymous,review]{acmart}
+
+%% ---------------------------------------------------------------------------
+%% Submission-time settings (revert for camera-ready)
+%%
+%% The ACM Reference Format / permission / ISBN / DOI block on page 1 is left
+%% at the acmart default (printed).  Fifteen of the twenty-one MobiCom papers
+%% we measured carry it, acmart prints it unless told not to, and it is
+%% mandatory at camera-ready --- so `printacmref=false' only hides a problem.
+%% In anonymous mode acmart suppresses the author names inside it for us.
+%% ---------------------------------------------------------------------------
+\setcopyright{acmlicensed}
+\settopmatter{printfolios=true}
+
+%% The CFP forbids embedded hyperlinks in the submitted PDF.
+%% Uncomment before generating the PDF you upload to HotCRP.
+% \hypersetup{draft}
+
+%% SIGMOBILE had not announced the 2027 venue as of 2026-08-19 (the site lists
+%% the dates only).  Replace the third argument with the exact string the
+%% organizers publish before camera-ready.
+\acmConference[ACM MobiCom '27]{The 33rd Annual International Conference on
+  Mobile Computing and Networking}{October 18--22, 2027}{To be announced}
+\acmYear{2027}
+\copyrightyear{2027}
+\acmISBN{978-1-4503-XXXX-X/2027/10}
+\acmDOI{10.1145/nnnnnnn.nnnnnnn}
+
+%% ---------------------------------------------------------------------------
+%% Packages
+%% ---------------------------------------------------------------------------
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{subcaption}
+\usepackage{amsmath}
+\usepackage{needspace}
+
+%% ---------------------------------------------------------------------------
+%% Run-in paragraph headings.  acmart/sigconf sets them in italic
+%% (\def\@parfont{\itshape}); every MobiCom paper we measured sets them bold,
+%% and reserves italic for emphasis.  Match the venue, not the class default.
+%% ---------------------------------------------------------------------------
+\makeatletter
+\def\@parfont{\bfseries}
+\makeatother
+
+%% ---------------------------------------------------------------------------
+%% Figures
+%%
+%% Every figure is compiled separately and included here as a PDF.  See
+%% figures/README.md; the short version is that each figure is three files with
+%% the same stem --- <fig>.tex (drawing code), <fig>.json (data), <fig>.pdf ---
+%% and `make` in figures/ rebuilds the PDFs.  This document therefore loads no
+%% TikZ and no pgfplots at all.
+%%
+%% The PDFs are included at their natural size, never scaled: a standalone
+%% figure is built against acmart's own \columnwidth and font sizes, so scaling
+%% it here would be the one thing that makes figure text stop matching body
+%% text.  If a figure is the wrong size, change its width in its own .tex.
+%% ---------------------------------------------------------------------------
+\newcommand{\figexp}[1]{\includegraphics{figures/experiment/#1}}
+\newcommand{\figsch}[1]{\includegraphics{figures/schematic/#1}}
+
+%% Shared with every standalone figure, so figure text and body text cannot
+%% drift.  Holds \sys and friends, the colour palette, and \cnum --- the latter
+%% two because \cnum is used in Figure 1's caption, which lives here.
+\input{figures/macros}
+
+\begin{document}
+
+%% The optional argument is the running head.  Do not put \sys there: the macro
+%% ends in \xspace, which inserts a space before the colon when the title is
+%% re-typeset in the header.  A genuine short title also keeps the header from
+%% running the full width of the page, which is what the MobiCom corpus does.
+\title[ActDelta: Decision-Triggered Predictive Transmission]{\sys:
+  Decision-Triggered Predictive Transmission for Edge-Offloaded Robot Policies}
+
+\author{Anonymous Author(s)}
+
+\begin{abstract}
+A robot that cannot host a $7$B vision-language-action (VLA) policy uploads its
+cameras to an edge server and receives action chunks back. The uplink is the
+bottleneck: the $11$\,Mbps a deployed policy server asks for is available
+$23\%$ of the time on commercial $5$G. The obvious fix is predictive --- run a
+small action-conditioned world model on both ends and send a frame only once
+the prediction has drifted. Two decades of send-on-delta work, and a recent
+line of world-model-aided semantic transmission, both do exactly this, and both
+decide by \emph{reconstruction fidelity}. We show that fidelity is the wrong
+criterion here, because the receiver is not a display but a policy whose
+actions determine the next observation. On LIBERO and DROID they are
+systematically decoupled: pixel error ranks decision impact at Spearman
+$0.31$, and $31.7\%$ of predicted frames are visually wrong yet leave the
+policy's action unchanged. A fidelity trigger spends bytes on those frames and
+loses tasks to the ones it skips. \sys instead triggers on a
+distilled, robot-side estimate of how much a frame would move the policy's
+action, and adds the resynchronization protocol that closed-loop predictive
+transmission requires and that event-triggered sampling has never had: silence
+must be distinguishable from loss. With the same world model and the same task
+success rate, \sys sends $59\%$ fewer uplink bytes than fidelity-triggered
+transmission and $16\times$ fewer than the deployed JPEG-over-TCP status quo,
+and composes with spatial compression for $75\times$ in total.
+\end{abstract}
+
+\ccsdesc[500]{Networks~Cyber-physical networks}
+\ccsdesc[300]{Networks~Network protocols}
+\ccsdesc[300]{Computer systems organization~Robotics}
+
+\keywords{Predictive transmission, event-triggered sampling, world models,
+  vision-language-action models, edge offloading, task-oriented communication,
+  robot networking, uplink scheduling}
+
+\maketitle
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Introduction}
+\label{sec:intro}
+
+The generalist robot policies that made manipulation broadly capable ---
+OpenVLA~\cite{kim2024openvla}, \pizero and \pizerofive~\cite{black2024pi0,
+intelligence2025pi05} --- carry $3$--$8$ billion parameters and need tens of
+gigabytes of accelerator memory. They do not fit on a robot, and the deployment
+that has emerged in response puts the policy on an edge server behind a thin
+client: the robot uploads camera frames, the server returns an \emph{action
+chunk}, the robot executes it while the next request is in flight. The
+reference implementation is explicit about how the observations get there: a
+policy server over TCP RPC, with JPEG compression to shrink the
+payload~\cite{vlagents2026}. Three camera views at the
+resolution the cameras actually produce cost $137$\,kB per upload; at the
+$10$\,Hz such a server requests them, that is $11.0$\,Mbps of sustained uplink,
+per robot, forever.
+
+Commercial cellular uplink does not supply it. Across the $83$ traces of the
+Irish $5$G dataset~\cite{raca20205g} the uplink exceeds $11.0$\,Mbps $23\%$ of
+the time and exceeds the $16.4$\,Mbps that a $15$\,Hz observation rate needs
+$10.5\%$ of the time (\S\ref{sec:m0}). Downscaling client-side helps and does
+not solve it, because the pressure is in the other direction: reactive contact
+phases want \emph{higher} observation rates, newer policies want more views,
+and a single cell is expected to carry more than one robot. The uplink, not the
+GPU and not the downlink, is what limits this deployment.
+
+\paragraph{The obvious fix is old, and it triggers on the wrong quantity.}
+Since Miskowicz's send-on-delta
+formulation~\cite{miskowicz2006sod}, and in its predictive
+variants~\cite{suh2007predictor,nguyen2009stochasticsod} since shortly after,
+event-triggered sampling has known that a transmitter which shares a predictor
+with its receiver need only speak when the prediction has drifted past a
+threshold. Twenty years later the same
+idea reappeared with a neural predictor: world-model-aided semantic
+transmission runs a generative world model at both ends and \emph{omits
+transmission while the prediction remains reliable}, adding a lightweight
+feedback module to decide when the current frame must be sent
+after all~\cite{wmsemcom2025}. Both lines --- the analytic one
+and the generative one --- answer ``should I send this frame?'' with
+\emph{how wrong is the receiver's reconstruction}.
+
+That question is correct when the receiver is an estimator with an error
+covariance, or a display for a human. It is the wrong question when the
+receiver is a policy. A policy does not consume the frame; it consumes the
+action the frame implies, and then \emph{acts}, which determines the next
+observation. The quantity that matters is not how wrong the predicted frame
+looks but whether the true frame would have changed what the robot does. Our
+central measurement (\S\ref{sec:m2}) is that these two quantities come apart,
+systematically and in both directions. Over $2{,}000$ DROID~\cite{khazatsky2024droid}
+episodes and four LIBERO~\cite{liu2023libero} suites, $31.7\%$ of predicted
+frames carry large pixel error while leaving the policy's action essentially
+unchanged, and $12.4\%$ are pixel-accurate while flipping it; pixel error ranks
+decision impact at Spearman $\rho_s = 0.31$. A fidelity trigger spends its
+budget on the first group and fails tasks because of the second. It is not
+mistuned. It is measuring the wrong thing.
+
+\paragraph{Why the policy is on the server in the first place.}
+The premise that the robot can run a world model but not the policy invites an
+objection, which we answer by measurement. The gap is not a factor but orders of
+magnitude: our world model
+costs $3.6$\,GFLOP per control step, against $391$\,GFLOP for the smallest
+serious VLA and $4.90$\,TFLOP for OpenVLA-7B, whose $15.2$\,GB of weights do
+not fit on the robot at all (Table~\ref{tab:asym}). The split we assume is also
+the one the surrounding literature already assumes, independently of us:
+latency-tolerant cloud--edge collaborative VLA~\cite{cloudedgevla2026}, remote
+policy servers~\cite{vlagents2026}, edge inference
+pipelines~\cite{actionflow2025,edgeserving2026,oxygen2026}, and a survey built
+on the same deployment constraint~\cite{efmedge2026}. Most importantly the gap
+is structural rather than incidental: the useful policy is always chosen larger
+than any single robot's budget, while the world model's size is \emph{ours to
+choose}. We make this precise with a compute ratio $\rho$ and report where our
+mechanism starts and stops paying off (\S\ref{sec:rho}, \S\ref{sec:eval-rho}).
+
+\paragraph{Silence needs a protocol.}
+Closing the loop adds a failure mode the open-loop literature does not have. A
+silent transmitter is indistinguishable from a lost one --- event-based sampling
+work states plainly that it cannot detect dropouts, because the two ends share
+no periodic timestamp~\cite{suh2009dropouts}. For a passive receiver that is a
+quality-of-reconstruction issue; for a policy it is a divergence hazard, because
+the server keeps acting on an imagined observation the robot has already
+contradicted, with no alarm. We measure $1.2\%$ uplink loss turning into a
+$34.2\%$ episode catastrophe rate under a protocol lacking the distinction
+(\S\ref{sec:m4}).
+
+\paragraph{\sys.}
+We build the system these measurements imply. A $68$M-parameter
+action-conditioned world model runs on both ends, rolled forward on the action
+chunks the policy has already emitted, so the two sides stay aligned without
+communicating. On the robot, a $2.1$M-parameter \emph{decision-relevance head}
+--- distilled offline from the very divergence signal that cannot be computed
+online, since computing it would need the $7$B policy the robot cannot host ---
+estimates how much the true frame would move the policy's action, and that estimate, not the reconstruction error, is what crosses the
+threshold. The threshold itself tracks available uplink, so the mechanism is a
+network citizen rather than a fixed-rate consumer. And a two-tier protocol ---
+$16$-byte heartbeats carrying sequence numbers and an executed-action hash,
+plus a forced full resynchronization --- makes silence unambiguous and bounds
+divergence. \sys is orthogonal to spatial compression, which decides how many
+bits a frame costs; \sys decides whether the frame is worth sending at all, and
+we evaluate the composition.
+
+\paragraph{What we do not claim.}
+We did not invent predictive transmission~\cite{miskowicz2006sod,
+suh2007predictor}, world-model-aided transmission~\cite{wmsemcom2025}, or
+action-conditioned world models~\cite{pilworld2026,hafner2023dreamerv3}: we
+take the first two as baselines and reuse the third as a tool. We do not claim
+long-horizon prediction --- the mechanism depends on a $5$-step window --- nor
+benefits at every compute ratio, and we compose with spatial compression rather
+than compete with it.
+
+\paragraph{Contributions.}
+(i) A measurement establishing that reconstruction fidelity and decision
+relevance are systematically decoupled on embodied observation streams, which
+makes fidelity-triggered predictive transmission structurally misallocated in
+closed loop and does not depend on our world model being good
+(\S\ref{sec:m2}). (ii) A single-variable demonstration that, at the same world model
+and the same task success, a decision-relevance trigger sends $59\%$ fewer
+uplink bytes than a fidelity trigger (\S\ref{sec:eval-c2}). (iii) A
+resynchronization protocol that distinguishes correct silence from loss, with
+the divergence bound it enforces (\S\ref{sec:protocol},
+\S\ref{sec:eval-proto}). (iv) An explicit regime statement: the compute ratio
+$\rho$, its benefit curve across four decades, and both failure boundaries
+(\S\ref{sec:eval-rho}).
+
+\begin{figure*}[t]
+\centering
+\figsch{fig-arch}
+\caption{\textbf{\sys's closed-loop predictive transmission path.} The robot
+sends a frame only when its distilled head predicts that the true frame would
+change the policy's action; heartbeats keep silence distinguishable from loss.
+Red marks what \sys adds, grey what it reuses unchanged; \S\ref{sec:design}
+walks the numbered path.}
+\label{fig:arch}
+\end{figure*}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Background and Motivation}
+\label{sec:motivation}
+
+\subsection{What Is on the Wire, and What the Link Gives}
+\label{sec:m0}
+
+\begin{figure}[t]
+\centering
+\figexp{fig-m0-uplink-cdf}
+\caption{\textbf{The deployed configuration does not fit the link.} Uplink CDFs
+of three commercial $5$G trace sets against the sustained rate a policy server
+needs for three camera views.}
+\label{fig:m0}
+\end{figure}
+
+A chunked policy maps an observation $o_t$ (two or three camera views plus
+proprioception) and a language instruction to a chunk of $H$ future actions,
+$H\!\in\![8,50]$~\cite{zhao2023act,chi2023diffusion,black2024pi0}. The robot
+executes the chunk at a fixed control rate $f\!=\!15$\,Hz, matching
+DROID~\cite{khazatsky2024droid}, while requesting the next one. The asymmetry
+between the two directions is severe: the downlink chunk is under $3$\,kB, and
+the uplink observation is $137$\,kB for three views at the resolution the
+cameras produce. Deployed policy servers upload at that resolution because the
+client is a thin RPC wrapper that does not know the policy's preprocessing
+pipeline~\cite{vlagents2026}. Downscaling to the policy's $224^2$ input on the
+client cuts the payload to $36$\,kB, which is a real improvement and a
+one-time constant: it buys back a factor of $3.8$ and then the same argument
+applies at $30$\,Hz, or with four cameras, or with four robots on one cell.
+
+Figure~\ref{fig:m0} places the requirement against three commercial trace
+sets~\cite{raca20205g,narayanan2020lumos5g,narayanan2021variegated}. The
+$11.0$\,Mbps that a $10$\,Hz three-view configuration needs is available $23\%$
+of the time on the Irish traces, $45\%$ on Lumos5G --- which is mmWave, and
+therefore the optimistic end of what a deployment can hope for --- and $14\%$ on
+MN-Wild. At the $30$\,Hz an operator would want for reactive contact phases the
+figure is between $1\%$ and $10\%$ everywhere, on every trace set. What we take
+from this is not that offloading is impossible --- it plainly works today,
+badly --- but that the operating point is set by the link rather than by the
+task, and that every byte saved converts into either a higher observation rate
+or another robot on the cell. Replaying the status quo over these traces, $41\%$
+of uploads queue behind their predecessor and the observation the policy acts on
+is on average $310$\,ms old.
+
+\subsection{The Compute Asymmetry Is Real and Structural}
+\label{sec:rho}
+
+\begin{table}[t]
+\centering
+\caption{\textbf{Measured cost of one control step.} Jetson Orin NX ($16$\,GB),
+bf16, batch $1$, median of $10^3$ invocations. OpenVLA does not fit in the
+board's memory at all.}
+\label{tab:asym}
+\footnotesize
+\setlength{\tabcolsep}{3.4pt}
+\begin{tabular}{@{}lcccc@{}}
+\toprule
+ & \textbf{\sys $W$} & \textbf{SmolVLA} & \textbf{\pizero} &
+   \textbf{OpenVLA} \\
+ & \textbf{(68\,M)} & \textbf{(450\,M)} & \textbf{(3.3\,B)} &
+   \textbf{(7.6\,B)} \\
+\midrule
+Weights (bf16)        & 0.14\,GB & 0.90\,GB & 6.6\,GB  & 15.2\,GB \\
+Peak memory           & 0.21\,GB & 1.4\,GB  & 8.1\,GB  & 16.9\,GB \\
+FLOP / control step   & 3.6\,G   & 391\,G   & 2.14\,T  & 4.90\,T \\
+\quad ratio to $W$    & $1\times$ & $109\times$ & $594\times$ & $1361\times$ \\
+Latency, Orin NX      & 11.7\,ms & 128\,ms  & 1.42\,s$^\dagger$ & OOM \\
+Energy / step         & 0.19\,J  & 2.6\,J   & 27\,J$^\dagger$ & --- \\
+Latency, A100 server  & 1.9\,ms  & 14\,ms   & 38\,ms   & 62\,ms \\
+Meets 66.7\,ms period & \textbf{yes} & no & no & no \\
+\bottomrule
+\end{tabular}
+\\[1mm]
+{\scriptsize $^\dagger$ with unified-memory paging; not a deployable
+configuration.}
+\end{table}
+
+Every predictive-transmission system assumes the transmitter can afford the
+predictor. Ours additionally assumes it cannot afford the \emph{consumer}, and
+a reviewer is right to ask why. Table~\ref{tab:asym} answers with measurement.
+The gap between our world model and the smallest serious VLA is $109\times$ in
+per-step arithmetic; against OpenVLA-7B it is $1361\times$, and the more
+decisive number is $15.2$\,GB of weights, which excludes essentially every
+robot-borne platform. The world model is cheap for a structural reason and not
+merely because it is small: its rollout runs in a compact latent space, so
+advancing the prediction one step costs $3.4$\,ms and no pixel processing,
+while a VLA re-encodes every camera view and runs a language-model backbone on
+every query. The robot also never runs the decoder: pixels are reconstructed
+only on the server, where the policy needs them.
+
+This is the system model the surrounding literature already adopts, which
+matters because rejecting it rejects a subfield rather than a
+paper~\cite{cloudedgevla2026,vlagents2026,actionflow2025,edgeserving2026,
+efmedge2026}. But the argument we lean on hardest is monotonicity. The frontier
+policy is always chosen \emph{larger} than any single robot's budget $B$,
+because larger has meant better generalization for three years running; the
+world model's size is ours to choose and fits whatever $B$ is. The mechanism is
+scale-relative, not scale-absolute:
+\begin{equation}
+\rho \;=\; \frac{B \cdot 1/f}{C_{\mathrm{VLA}}},
+\label{eq:rho}
+\end{equation}
+the ratio of the robot's per-control-step FLOP budget to the target policy's
+per-step demand. On our Orin NX, $B\!\approx\!8.0$\,TFLOP/s sustained and
+$C_{\mathrm{VLA}}\!=\!4.90$\,TFLOP give $\rho = 0.109$. We state the regime in
+advance and measure both of its edges in \S\ref{sec:eval-rho}: below
+$\rho_{\min} = C_W/C_{\mathrm{VLA}} = 7.3\times10^{-4}$ the robot cannot run
+the world model within the control period and the mechanism does not apply;
+between $\rho_{\min}$ and $1$ is where we claim benefit; at $\rho \ge 1$ the
+policy can run locally and the motivation changes character
+(\S\ref{sec:discussion}) rather than disappearing.
+
+\subsection{Measurement Setup}
+\label{sec:m-setup}
+
+All measurements use public assets. \emph{Offline streams:} $2{,}000$ episodes
+sampled across the $86$ tasks of DROID~\cite{khazatsky2024droid} and the four
+LIBERO suites~\cite{liu2023libero}, replayed through the policies to collect
+observations, action chunks and world-model rollouts; no robot is moved.
+\emph{Closed loop:} LIBERO as the primary environment, SimplerEnv in both
+Visual Matching and Variant Aggregation settings~\cite{li2024simplerenv}, and
+Kinetix~\cite{matthews2025kinetix} as a high-dynamics stress test.
+\emph{Policies:} OpenVLA-7B, \pizero, \pizerofive and
+SmolVLA~\cite{shukor2025smolvla} at official weights, inference only, never
+fine-tuned. \emph{Links:} the Irish $5$G dataset~\cite{raca20205g} as primary
+because it publishes uplink throughput, plus
+Lumos5G~\cite{narayanan2020lumos5g} and
+MN-Wild~\cite{narayanan2021variegated}, replayed with
+mahimahi~\cite{netravali2015mahimahi}; controlled loss and delay via
+\texttt{tc netem}. \emph{Robot compute:} Jetson Orin NX $16$\,GB.
+Inference-time real-time chunking (IT-RTC)~\cite{black2025rtc} is enabled in
+every arm, ours and baselines alike, so that no result is attributable to
+delay tolerance we did or did not provide.
+
+\subsection{How Far Ahead We Can See}
+\label{sec:m1}
+
+\begin{figure}[t]
+\centering
+\figexp{fig-m1-rollout-error}
+\caption{\textbf{Action conditioning roughly doubles the usable prediction
+window.} Error is measured in the decision space of \S\ref{sec:trigger},
+normalized so that $0.35$ is where the policy's action begins to change
+materially (Figure~\ref{fig:m3}b).}
+\label{fig:m1}
+\end{figure}
+
+Predictive transmission is only interesting if the prediction is usable for
+long enough to skip a meaningful number of frames, and our one genuinely
+embodiment-specific advantage is that we know the future actions: the policy
+has already emitted them, and the downlink has already carried them. B-line
+generative transmission cannot use this, because in a video setting there is no
+action to condition on --- prediction is driven by text or by visual
+extrapolation~\cite{wmsemcom2025,genvidfusion2025}. Figure~\ref{fig:m1}
+quantifies what the difference is worth.
+
+Two readings matter. First, the absolute window: with action conditioning,
+$63\%$ of LIBERO timesteps stay under the flip threshold for at least $5$ steps
+($333$\,ms), comfortably above the $40\%$ we fixed in advance as the minimum
+for the mechanism to have anything to work with, and the usable window grows
+from $2.9$ steps unconditioned to $5.4$ conditioned; on real DROID streams,
+which are teleoperated and therefore jerkier than scripted demonstrations, it
+reaches $4.1$. Second, the differential: at $k\!=\!5$ the conditioned
+predictor's error is $0.31$ against the unconditioned predictor's $0.58$, a
+$46.6\%$ reduction against the $30\%$ we pre-registered as the minimum for
+action conditioning to be worth its complexity. This is the entire quantitative
+case for doing predictive transmission \emph{in the embodied setting} rather
+than importing a video method.
+
+\subsection{Fidelity and Decision Relevance Are Decoupled}
+\label{sec:m2}
+
+\begin{figure*}[t]
+\centering
+\begin{subfigure}{0.48\textwidth}
+\centering
+\figexp{fig-m2-fidelity-vs-decision}
+\end{subfigure}
+\hfill
+\begin{subfigure}{0.48\textwidth}
+\centering
+\figexp{fig-m2-distance-ranking}
+\end{subfigure}
+\caption{\textbf{Fidelity and decision relevance are different quantities.}
+(a)~Predicted frames, by pixel reconstruction error against the divergence
+$\|\pi(o_t)-\pi(\hat{o}_t)\|$ of the policy's action; a fidelity trigger cuts
+vertically, the decision it should make cuts horizontally. (b)~Rank correlation
+of six candidate distances with that same ground truth.}
+\label{fig:m2}
+\end{figure*}
+
+This is the measurement the paper stands on, and it is deliberately independent
+of how good our world model is: it asks only which \emph{distance} on predicted
+frames ranks their decision impact, which a mediocre predictor can answer. For
+every predicted frame from $2{,}000$ DROID episodes and the four LIBERO suites we
+compute five candidate distances to the true frame and the ground truth the
+online system can never have --- the actual divergence of the policy's action,
+$\|\pi(o_t) - \pi(\hat{o}_t)\|$, which costs two \pizero forward passes and is
+therefore an offline instrument, not a mechanism. Both thresholds were fixed
+before we looked at the data: pixel error above $\rho_s = 0.85$ would have
+falsified the paper's premise, our own head below $0.60$ its mechanism.
+
+Figure~\ref{fig:m2} reports the result. Pixel error ranks decision impact at
+$\rho_s\!=\!0.31$, and structural and perceptual distances do no better
+($0.28$--$0.39$); the world model's own latent distance, which is what a
+straightforward adaptation of send-on-delta to high-dimensional observations
+would use, reaches $0.52$, and the distilled head of \S\ref{sec:trigger}
+reaches $0.74$. The scatter shows why the correlation number
+understates the problem. Cut both axes at their operating thresholds and a
+fidelity trigger classifies $55.9\%$ of frames the way the policy would;
+$31.7\%$ of frames are visually wrong in ways the
+policy is indifferent to --- lighting, background texture, the far half of the
+scene, the exact pose of an object the gripper has already passed. A fidelity
+trigger transmits every one of them. Conversely $12.4\%$ of frames are
+reconstructed almost perfectly except in the few pixels that decide the
+action: a contact that has or has not occurred, a gripper that has or has not
+closed, an object that shifted two millimetres. A fidelity trigger skips every
+one of those, and those are the frames whose absence fails the task.
+
+To be precise about what this establishes: not that our trigger is the best
+possible one, and nothing about our world model --- a better predictor moves
+points toward the origin without rotating the axes. It establishes that the
+criterion both the classical and the generative literature use is, in this
+regime, measuring a quantity only weakly related to the one that matters, and
+that the misallocation is $44.1\%$ of frames, in both directions, rather than a
+tail effect. The rest of the paper makes the horizontal cut instead of the
+vertical one.
+
+\subsection{The Closed-Loop Cost of an Imagined Observation}
+\label{sec:m3}
+
+\begin{figure}[t]
+\centering
+\begin{subfigure}{0.49\columnwidth}
+\centering
+\figexp{fig-m3-imagined-steps}
+\end{subfigure}
+\hfill
+\begin{subfigure}{0.49\columnwidth}
+\centering
+\figexp{fig-m3-decision-error}
+\end{subfigure}
+\caption{\textbf{The closed-loop price of an imagined observation.}
+(a)~Success versus the number of consecutive steps the server spends on
+predictions. (b)~The same episodes against the quantity a trigger can actually
+observe; the knee at $\tau^\star\!=\!0.35$ is the policy-flip threshold used
+throughout.}
+\label{fig:m3}
+\end{figure}
+
+The previous section says which frames matter. This one says how much slack the
+mechanism has, by measuring the closed-loop cost directly rather than inferring
+it: we force the server to consume predicted observations for $k$ consecutive
+steps and record task success on LIBERO with \pizero, $50$ episodes per point.
+Figure~\ref{fig:m3}(a) shows a plateau to about
+$4$ steps and a collapse after $8$; panel (b) recasts the same episodes against
+the observable quantity, yielding the knee at $\tau^\star = 0.35$ we use
+throughout as the level at which the policy starts to behave differently. Two design
+consequences follow. The forced-resynchronization interval must be short enough
+to keep the tail out of reach, and the trigger threshold must sit far enough
+below $\tau^\star$ to absorb the error of the trigger's own estimator --- we
+use $\tau_0 = 0.15$ against an estimator whose P99 error is $0.09$.
+
+\subsection{Silence Is Ambiguous, and Dangerously So}
+\label{sec:m4}
+
+\begin{figure}[t]
+\centering
+\figexp{fig-m4-divergence-trace}
+\caption{\textbf{What an undetected loss does to a closed loop.} One dropped
+resync frame at $t\!=\!6.6$\,s under $1.2\%$ uplink loss, under three
+protocols.}
+\label{fig:m4}
+\end{figure}
+
+The final measurement concerns the failure mode the open-loop literature
+identifies and then sets aside. For a passive receiver an undetected loss
+degrades a reconstruction; for a policy it is a divergence that compounds rather
+than decays, because the server generates actions from an imagined observation
+the robot has already contradicted, the robot executes them, and the executed
+actions feed both world models.
+
+Figure~\ref{fig:m4} shows one such event under three protocols. We inject
+$1.2\%$ uplink loss --- a
+mild rate for a congested $5$G uplink --- and drop a single triggered frame.
+Without any protocol the divergence never recovers, crosses $\tau^\star$ and
+the episode fails $1.8$\,s later; across $200$ episodes at this loss rate,
+$34.2\%$ end in a
+collision or timeout. Adding periodic forced resynchronization, which is the
+natural first fix and the analogue of an I-frame, bounds the excursion but does
+nothing about \emph{detection}: the server spends an entire interval acting on
+a state it has no reason to distrust, and in $19.7\%$ of episodes that interval
+contains a contact event. Sequence numbers, which cost two bytes, turn the same
+event into an $84$\,ms excursion. This is why \S\ref{sec:protocol} is a protocol
+contribution and not an implementation detail.
+
+\paragraph{Takeaways.} The deployed configuration needs $11$\,Mbps that
+commercial $5$G supplies $23\%$ of the time; the robot can afford a predictor
+$10^2$--$10^3\times$ cheaper than the policy, structurally so; action
+conditioning roughly doubles the usable window; fidelity ranks decision impact
+at $\rho_s\!=\!0.31$ and misclassifies $44\%$ of frames in both directions;
+imagined observations are free for about $4$ steps and catastrophic after $10$;
+and unprotected silence turns $1.2\%$ loss into $34.2\%$ episode failures.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Design}
+\label{sec:design}
+
+\sys has four parts: a shared action-conditioned world model
+(\S\ref{sec:wm}), a decision-relevance trigger that replaces the fidelity test
+(\S\ref{sec:trigger}), a bandwidth-adaptive threshold (\S\ref{sec:adaptive}),
+and the resynchronization protocol (\S\ref{sec:protocol}).
+Figure~\ref{fig:arch} shows how they compose, and its numbered path is one
+control step. \cnum{1}~The robot encodes the true observation. \cnum{2}~Both
+ends roll the identical world model forward on the action chunks the policy has
+already emitted, so they stay aligned while the uplink is silent. \cnum{3}~A
+distilled head estimates how much the discrepancy between the two would move
+the policy's action, and \cnum{4}~only that estimate --- never a reconstruction
+error --- crosses the threshold. \cnum{5}~When no frame arrives the server
+decodes $\hat{o}_t$ for the policy, and \cnum{6}~the returned chunk drives the
+executor and, through it, both world models. The robot never runs the decoder
+and never runs the policy. The world model is not a contribution:
+action-conditioned predictors that generate policy-consumable observations from
+a rollout of committed actions already exist and match a policy's input
+format~\cite{pilworld2026,hafner2023dreamerv3,wu2024ivideogpt}. We adopt one,
+shrink it, and claim nothing about it; our contributions are the trigger and the
+protocol, both indifferent to which predictor sits underneath.
+
+\subsection{The Shared Predictor}
+\label{sec:wm}
+
+Both ends run identical weights $W$: an encoder $E$ mapping three camera views
+to a $96$-token latent $z_t$, a chunk-wise latent dynamics model
+$\hat{z}_{t} = W(\hat{z}_{t-1}, a_{t-1})$, and --- on the server only --- a
+decoder $D$ that renders $\hat{o}_t$ in the format the policy expects. Total
+$68$M parameters, $0.14$\,GB of weights, $11.7$\,ms per control step on the
+robot (Table~\ref{tab:asym}). We chose the size to serve the argument of
+\S\ref{sec:rho} rather than to maximize prediction quality: a smaller model
+makes the compute-asymmetry claim stronger, and neither the decoupling result
+nor the protocol depends on prediction quality. A large video diffusion model
+would predict better, fail to run on the robot, and invite the objection that
+the robot might as well run the policy.
+
+The two ends agree because they share weights, an initial state and an action
+sequence: the actions travel down the link
+and the robot knows what it executed. Consistency in floating point does not
+follow from consistency in algorithm, and this bit us: the same graph on an Orin
+NX and on an A100 drifts apart by $4\times10^{-4}$ per step in fp16. We quantize
+the recurrent latent to $8$ bits after every step, which makes the rollout
+exactly reproducible across platforms for $0.4$\pp of success.
+
+\subsection{Triggering on Decision Relevance}
+\label{sec:trigger}
+
+\paragraph{The quantity we want, and why we cannot have it.}
+The ideal trigger fires when the true observation would change the policy's
+action, i.e.\ on $\delta_t = \|\pi(o_t) - \pi(\hat{o}_t)\|$. Computing it
+requires two forward passes of the policy on the robot, which is exactly the
+thing the robot cannot do --- this is not an efficiency concern but a
+definitional one, since a robot that could evaluate $\pi$ twice per step would
+not be offloading. So $\delta_t$ is available offline, in quantity, and never
+online.
+
+\paragraph{The distilled head.} We therefore train a small head $\Phi$ to
+predict it. Given the encoded true observation $z_t$ and the predicted latent
+$\hat{z}_t$, both of which the robot already has,
+\begin{equation}
+\hat{\delta}_t \;=\; \Phi\big(z_t,\, \hat{z}_t,\, z_t - \hat{z}_t\big),
+\label{eq:head}
+\end{equation}
+a $2.1$M-parameter MLP over pooled latents, trained by regression on
+$\delta_t$ computed offline over LIBERO and DROID with the policy in the loop
+($1.4$M frame pairs, $9$ GPU-hours, once). At runtime it costs $1.1$\,ms and
+never touches the policy. A concurrent submission applies the same methodology
+--- online-unavailable ground truth, obtainable proxy, offline calibration ---
+to a different quantity in the same deployment~\cite{policyvoi2027}; the two are
+orthogonal, latency against bandwidth.
+
+An obvious alternative is to compare in the policy's own visual-encoder latent
+space, which is decision-relevant by construction. We evaluate it and do not use
+it: a VLA's vision tower costs $214$\,GFLOP per step, $59\times$ the rest of our
+pipeline, which would destroy the argument of \S\ref{sec:rho}. The head is a
+$200\times$ cheaper approximation, and the gap is $1.6$\pp.
+
+\paragraph{The rule.} The robot transmits when
+\begin{equation}
+\hat{\delta}_t > \tau(\hat{B}_t)
+\quad\text{or}\quad
+k_t \ge T_{\mathrm{resync}}
+\quad\text{or}\quad
+\text{NACK received},
+\label{eq:trigger}
+\end{equation}
+where $k_t$ counts steps since the last transmitted frame. The three clauses
+are the mechanism, the safety net, and the protocol respectively, and they are
+deliberately not merged: the first is an estimate and may be wrong, the second
+bounds how wrong it can be for how long, the third handles the link.
+
+\subsection{Making the Threshold a Network Citizen}
+\label{sec:adaptive}
+
+A fixed $\tau$ would make \sys a source that ignores the link, which is the
+mistake the status quo already makes. We set
+\begin{equation}
+\tau(\hat{B}_t) = \mathrm{clip}\!\left(\tau_0
+  \left(\frac{B_{\mathrm{ref}}}{\hat{B}_t}\right)^{\!\alpha},
+  \tau_{\min}, \tau_{\max}\right),
+\label{eq:tau}
+\end{equation}
+with $\tau_0 = 0.15$, $\alpha = 0.5$, $[\tau_{\min},\tau_{\max}] =
+[0.08, 0.30]$ and $\hat{B}_t$ an EWMA of delivered uplink throughput. When the
+link is scarce the threshold relaxes and the robot speaks only about frames
+that would definitely change the action; when the link is generous it tightens
+and the system approaches continuous streaming. The clip at $\tau_{\max}$ is
+what keeps the mechanism honest: the threshold is never allowed above $0.30$,
+which is below the policy-flip level $\tau^\star = 0.35$ of
+Figure~\ref{fig:m3}(b), so degradation under congestion is bounded by
+construction rather than by tuning.
+
+\subsection{The Resynchronization Protocol}
+\label{sec:protocol}
+
+\begin{figure}[t]
+\centering
+\figsch{fig-proto}
+\caption{\textbf{The protocol makes silence unambiguous.} Heartbeats carry a
+sequence number and a rolling hash of the actions the robot actually executed,
+so the server can separate correct silence from loss and demand recovery.}
+\label{fig:proto}
+\end{figure}
+
+Figure~\ref{fig:proto} gives the state machine. Three mechanisms carry it.
+\emph{Sequence numbers} on every transmitted frame let the server detect a gap
+and issue a NACK, which is the distinction \S\ref{sec:m4} shows is missing
+from published event-triggered designs. \emph{Heartbeats} every $T_h = 8$
+control steps carry the current sequence number, the robot's own
+$\hat{\delta}_t$, and a rolling hash of the last eight executed actions; the
+hash catches the second divergence source, in which a lost or late
+\emph{downlink} chunk makes the robot fall back to its safety behaviour so that
+the actions it executed are not the actions the server assumed. \emph{Forced
+resynchronization} every $T_{\mathrm{resync}} = 60$ steps ($4$\,s) bounds drift
+in the case the trigger itself is wrong, which the head's finite accuracy
+guarantees will happen; it is the I-frame of this scheme, and its cost is a
+$1.7\%$ floor on the send rate.
+
+The resulting divergence is empirically bounded by
+\begin{equation}
+d_t \;\le\; \tau(\hat{B}_t) \;+\; \varepsilon_\Phi \;+\;
+  \beta \cdot \min\!\big(k_t,\, T_{\mathrm{resync}}\big)\,
+  \mathbf{1}[\Phi \text{ misses}],
+\label{eq:bound}
+\end{equation}
+where $\varepsilon_\Phi$ is the head's error (P99 $= 0.09$) and
+$\beta = 0.07$/step the measured open-loop drift rate from
+Figure~\ref{fig:m1}. The head misses on $1.3\%$ of steps, so the third term is
+rare; the design rule is to pick $T_{\mathrm{resync}}$ so that the bound stays
+under $\tau^\star$ at the offline-measured miss rate. \S\ref{sec:eval-proto}
+reports P99.9 divergence of $0.21$ against a predicted bound of $0.24$.
+
+\subsection{Composition, and What Breaks}
+\label{sec:compose}
+
+\sys occupies the temporal axis --- whether a frame is sent --- and is
+orthogonal to the spatial axis, which decides what a sent frame costs. We run
+IT-RTC~\cite{black2025rtc} underneath everything as a latency substrate, and we
+compose with a learned VLA-specific frame codec~\cite{licvla2026} on triggered
+frames; \S\ref{sec:eval-main} evaluates both compositions and neither
+interferes.
+
+Three failure modes are handled explicitly. On \emph{cold start} the first two
+frames of every episode are transmitted unconditionally. If the \emph{head is
+unavailable or its input stale}, the trigger degrades to
+$\hat{\delta}_t = \infty$ and the system falls back to continuous transmission
+--- to the status quo, not to something worse. And if the \emph{uplink cannot
+carry even the forced resynchronizations}, measured at sustained uplink below
+$0.6$\,Mbps, the robot stops rather than act on an unbounded-divergence plan;
+this is the convention production teleoperation stacks use and it is enabled in
+every arm of our evaluation, baselines included.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Implementation}
+\label{sec:impl}
+
+\sys is $5{,}200$ lines of Python and $1{,}100$ lines of C++, and reuses four
+public codebases rather than reimplementing them.
+
+\paragraph{World model and policies.} The predictor follows the chunk-wise
+action-conditioned architecture of policy-in-the-loop world
+models~\cite{pilworld2026}, reduced to $68$M parameters ($6$ latent-transformer
+blocks, width $384$, $96$ tokens per step) and trained on the $2{,}000$ LIBERO
+demonstrations plus a $40$k-episode DROID subset for $19$ hours on eight
+RTX~3090s. Policies are served through LeRobot~\cite{cadene2024lerobot}, whose
+\texttt{policies.rtc} module provides the reference IT-RTC implementation for
+\pizero, \pizerofive and SmolVLA; OpenVLA-7B is wrapped behind the same
+interface. The server is organized after the unified policy-server design of
+VLAgents~\cite{vlagents2026}, one process per GPU with a shared request queue,
+which is also our status-quo baseline.
+
+\paragraph{Robot client.} The encoder, rollout, head and trigger run in the
+control thread on a Jetson Orin NX as a single TensorRT engine with the
+$8$-bit latent quantization of \S\ref{sec:wm} applied between steps; this is
+the C++ part, because it is the only code with a real-time deadline. The client
+holds no policy weights.
+
+\paragraph{Transport.} The uplink is a userspace UDP path with a $16$-byte
+control header carrying sequence number, action hash and $\hat{\delta}_t$, and
+a JPEG or learned-codec payload for triggered frames. NACKs and forced-resync
+requests travel on the downlink alongside action chunks. Trace replay uses
+mahimahi~\cite{netravali2015mahimahi} with per-direction link shells driven by
+the Irish, Lumos5G and MN-Wild uplink series; loss and delay injection uses
+\texttt{tc netem}. We deliberately do not run over TCP, unlike the status
+quo~\cite{vlagents2026}: head-of-line blocking on a link this scarce turns one
+lost frame into a multi-hundred-millisecond stall, and our protocol already
+provides the loss detection that TCP would be supplying.
+
+\paragraph{Compute-budget emulation.} The $\rho$ sweep needs robot budgets we
+do not own hardware for. We emulate them by pinning the client to a fraction of
+the Orin's SMs via MPS and capping the clock, calibrating each setting against
+measured FLOP/s so that the reported $\rho$ is achieved rather than nominal.
+The $\rho = 0.109$ point is native hardware and anchors the curve.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Evaluation}
+\label{sec:eval}
+
+We ask five questions: does a decision-relevance trigger beat a fidelity trigger
+when nothing else differs (\S\ref{sec:eval-c2}); where does \sys sit against the
+full range of alternatives (\S\ref{sec:eval-main}); over what compute ratios
+does the mechanism pay (\S\ref{sec:eval-rho}); does the protocol do what
+\S\ref{sec:protocol} claims (\S\ref{sec:eval-proto}); and what does it cost, in
+simulation and on hardware (\S\ref{sec:eval-ablation}--\S\ref{sec:eval-real})?
+
+\paragraph{Setup and baselines.} Environments, policies, traces and hardware
+are as in \S\ref{sec:m-setup}; every configuration runs at least $50$ episodes,
+error bars are $95\%$ bootstrap CIs, and IT-RTC is enabled everywhere. An
+episode is $50$\,s, $750$ control steps, and a transmitted frame is $137$\,kB
+unless a codec says otherwise. The baselines fall into three groups, and
+the grouping is the argument. \emph{Status quo and conventional coding:} (1) the
+deployed policy server, fixed $10$\,Hz JPEG over TCP~\cite{vlagents2026}; (2)
+fixed $10$\,Hz H.265 with rate control~\cite{sullivan2012hevc}; (3)
+pixel-difference change detection. \emph{Classical predictive transmission:} (4)
+send-on-delta with a Taylor predictor on the proprioceptive
+state~\cite{miskowicz2006sod,suh2007predictor}; (5) the same rule lifted to the
+image latent. \emph{Modern generative and spatial competitors:} (6) a
+world-model transmitter with a \emph{fidelity} trigger --- our reproduction
+of~\cite{wmsemcom2025} on \emph{the identical world model as ours}; (7) learned
+image compression for VLA~\cite{licvla2026}; (8) \sys; (9) \sys composed with
+(7).
+
+\subsection{Fidelity vs.\ Decision: The Single-Variable Result}
+\label{sec:eval-c2}
+
+\begin{figure}[t]
+\centering
+\figexp{fig-c2-byte-reduction}
+\caption{\textbf{The one comparison that isolates the paper's mechanism.}
+Identical world model, policy, link and protocol; each arm's threshold is tuned
+so that the two match on task success within $0.7$\pp.}
+\label{fig:c2}
+\end{figure}
+
+We put this first because it is the paper's only clean evidence for the
+mechanism; every other comparison confounds it with something else.
+Figure~\ref{fig:c2} holds the world model, the policy, the
+link, the protocol and the success rate fixed, and varies only the quantity
+that crosses the threshold. Averaged over the four LIBERO suites, triggering on
+estimated decision impact rather than on reconstruction error sends $59.2\%$
+fewer uplink bytes at the same task success.
+
+The number is the direct consequence of Figure~\ref{fig:m2}: the fidelity
+trigger transmits the $31.7\%$ of frames that are visually wrong and
+behaviourally irrelevant, and \sys does not. Worth noting is what \emph{did
+not} happen --- success did not fall. A trigger that merely sent less would have
+paid for it; \sys does not, because it spends part of the saving on the $12.4\%$
+of frames a fidelity trigger skips, so its send rate ($4.1\%$ of control steps)
+is a differently-shaped set rather than a scaled-down version of the fidelity
+trigger's ($10.0\%$). Kinetix is the honest boundary case: its dynamics shorten
+the usable window to $2.6$ steps, both arms transmit far more often, and the
+advantage falls to $46.7\%$. We expect any domain with sub-$200$\,ms scene
+dynamics to behave this way.
+
+\subsection{The Full Frontier}
+\label{sec:eval-main}
+
+\begin{table*}[t]
+\centering
+\caption{\textbf{End-to-end results.} Send rate is the \% of control steps at
+which a frame is transmitted; divergence is measured in the decision space of
+\S\ref{sec:trigger}, where $0.35$ flips the action.}
+\label{tab:main}
+\scriptsize
+\begin{tabular}{@{}llccccccc@{}}
+\toprule
+& \textbf{Transmission policy} & \textbf{LIBERO} & \textbf{SimplerEnv} &
+  \textbf{Kinetix} & \textbf{Uplink} & \textbf{Send rate} &
+  \textbf{P99.9 div.} & \textbf{vs.\ status quo} \\
+\midrule
+& Unlimited-uplink oracle (upper bound) & 79.4 & 70.6 & 68.2 & --- & 100\% &
+  --- & --- \\
+\midrule
+\multirow{3}{*}{\rotatebox{90}{\tiny status quo}}
+& (1) Policy server, 10\,Hz JPEG/TCP~\cite{vlagents2026} & 71.2 & 62.8 & 55.1 &
+  68.4 & 66.7\% & --- & $1\times$ \\
+& (2) Fixed 10\,Hz H.265, rate-controlled & 74.6 & 65.9 & 58.7 & 11.9 & 66.7\% &
+  --- & $5.7\times$ \\
+& (3) Pixel-difference change detection & 72.9 & 64.1 & 57.0 & 9.4 & 9.1\% &
+  0.61 & $7.3\times$ \\
+\midrule
+\multirow{2}{*}{\rotatebox{90}{\tiny classic}}
+& (4) Send-on-delta + Taylor, proprioceptive~\cite{suh2007predictor} & 68.7 &
+  60.3 & 52.4 & 14.7 & 14.3\% & 0.74 & $4.7\times$ \\
+& (5) Send-on-delta lifted to image latent & 73.5 & 65.0 & 58.1 & 12.3 &
+  12.0\% & 0.44 & $5.6\times$ \\
+\midrule
+\multirow{4}{*}{\rotatebox{90}{\tiny modern}}
+& (6) World model + fidelity trigger~\cite{wmsemcom2025} & 78.2 & 69.1 & 63.4 &
+  10.3 & 10.0\% & 0.29 & $6.6\times$ \\
+& (7) Learned image compression for VLA~\cite{licvla2026} & 75.8 & 67.2 & 60.8 &
+  7.7 & 66.7\% & --- & $8.9\times$ \\
+& \textbf{(8) \sys} & \textbf{78.9} & \textbf{69.8} & \textbf{64.6} &
+  \textbf{4.2} & \textbf{4.1\%} & \textbf{0.21} & $\mathbf{16.3\times}$ \\
+& \textbf{(9) \sys $+$ (7)} & 78.4 & 69.4 & 64.0 & \textbf{0.9} & 4.1\% & 0.21 &
+  $\mathbf{75.2\times}$ \\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+\begin{figure}[t]
+\centering
+\figexp{fig-pareto}
+\caption{\textbf{The byte--success frontier.} \sys dominates every baseline at
+every operating point; each curve is a sweep of that arm's own threshold.}
+\label{fig:pareto}
+\end{figure}
+
+Table~\ref{tab:main} and Figure~\ref{fig:pareto} place that mechanism in
+context. Both report \pizero with IT-RTC over the Irish $5$G traces; uplink is
+MB per episode and the LIBERO column averages the four suites. Four
+observations. First,
+the classical baselines behave exactly as
+their assumptions predict: send-on-delta on the proprioceptive state (4) is the
+worst arm in the table, because a threshold on joint positions is blind to
+everything the cameras exist to see, and lifting the same rule to the image
+latent (5) recovers most of the loss but inherits the fidelity criterion and with
+it the misallocation of \S\ref{sec:m2}. Second, conventional video coding (2) is
+stronger than one might expect --- H.265 exploits the same temporal redundancy
+with no model at all --- and remains $2.8\times$ more expensive than \sys
+because it still pays for every frame. Third, the spatial competitor (7) is
+genuinely good and genuinely orthogonal, and the combination (9) reaches
+$0.9$\,MB per episode, $75\times$ below the status quo, at a $0.5$\pp success
+cost we attribute to codec artifacts on the frames that matter most.
+
+Fourth, and least expected: \sys \emph{improves} on the status quo's success
+rate by $7.7$\pp while sending $16\times$ less. The status quo is not merely
+wasteful but self-harming --- at $11$\,Mbps demanded from a link that supplies
+it $23\%$ of the time, $41\%$ of its uploads arrive stale (\S\ref{sec:m0}).
+Sending less, when what you send is chosen well, makes it arrive on time.
+
+The frontier adds what the table cannot show: across the whole sweep the two
+world-model arms stay separated by a roughly constant factor of $2.4$ in bytes,
+the signature of a criterion difference rather than of a tuning difference --- no
+threshold setting moves the fidelity arm onto our curve. We operate at the
+$4.2$\,MB knee; pushing $\tau$ below $0.15$ buys $0.3$\pp for $55\%$ more
+bytes.
+
+\subsection{Where the Mechanism Applies}
+\label{sec:eval-rho}
+
+\begin{figure}[t]
+\centering
+\figexp{fig-rho-compute-ratio}
+\caption{\textbf{Benefit versus compute ratio, with both failure boundaries.}
+Shading marks the region in which the world model cannot finish inside the
+control period and \sys degrades to fixed-rate transmission.}
+\label{fig:rho}
+\end{figure}
+
+Figure~\ref{fig:rho} answers the question this system model always provokes.
+The benefit is not a knife-edge property of one hardware configuration: it stays
+above $50\%$ across two and a half decades of $\rho$ and saturates rather than
+peaks, because past a point the world model is good enough and more compute buys
+prediction quality the decision trigger does not need. The rise is steepest up to
+$\rho \approx 10^{-2}$, the point at which a model large enough for a $5$-step
+window fits inside the budget. The lower boundary is
+sharp: at $\rho < \rho_{\min} = 7.3\times10^{-4}$ the predictor misses the
+$66.7$\,ms control deadline
+and the right engineering answer is a fixed-rate encoder, not this paper. The
+upper boundary is soft and is not where the value goes to zero --- at $\rho = 1$
+the byte reduction is still $63\%$, and only the reason to want it changes
+(\S\ref{sec:discussion}). What the sweep says, in one sentence, is that the
+mechanism is scale-relative: what matters is that the policy is larger than the
+robot's budget, not how large either one is.
+
+\subsection{Does the Protocol Earn Its Complexity?}
+\label{sec:eval-proto}
+
+We sweep uplink loss from $0$ to $5\%$ with \texttt{tc netem} at a fixed
+trigger. Without sequence numbers or forced resynchronization --- the
+configuration published event-triggered designs describe --- the episode
+catastrophe rate (collision or timeout) rises from $1.8\%$ at zero loss to
+$34.2\%$ at $1.2\%$ loss and $71.5\%$ at $5\%$. Forced resynchronization alone
+cuts these to $9.4\%$ and $22.1\%$: it bounds the damage but cannot detect it,
+so the server acts on a diverged state for up to a full interval. The full
+protocol reaches $2.1\%$ and $4.6\%$ with a median detect-to-recover time of
+$84$\,ms, for $240$\,B/s of heartbeat traffic --- $0.02\%$ of what it
+protects.
+
+The divergence bound of Equation~\ref{eq:bound} also holds: over $2{,}400$
+episodes the P99.9 decision-space divergence is $0.21$ against a predicted
+bound of $0.24$ and a policy-flip threshold of $0.35$, and the maximum observed
+value, $0.33$, occurred in the one configuration where the head's miss rate
+exceeded its offline estimate. Sensitivity to $T_{\mathrm{resync}}$ is mild
+between $30$ and $120$ steps ($\pm 0.9$\pp success, $\pm 1.4\%$ bytes) and
+degrades sharply past $180$ steps, where Equation~\ref{eq:bound} predicts the
+bound crossing $\tau^\star$ and success duly falls by $6.1$\pp.
+
+\subsection{Ablations}
+\label{sec:eval-ablation}
+
+\begin{figure}[t]
+\centering
+\figexp{fig-ablation}
+\caption{\textbf{Ablation} at $1.2\%$ uplink loss, so that the protocol
+components are exercised. Purple marks the two protocol rows, which lose success
+\emph{without} saving bytes.}
+\label{fig:ablation}
+\end{figure}
+
+Figure~\ref{fig:ablation} separates the components, and the ordering is
+informative. The largest single loss comes from removing sequence numbers
+($-17.7$\pp), which is not a performance knob but the difference between a
+protocol that can detect divergence and one that cannot; removing action
+conditioning costs $7.6$\pp and $64\%$ more bytes, confirming
+Figure~\ref{fig:m1}. Replacing the distilled head with the world model's own
+latent distance --- the most natural way to build this system without our
+measurement --- costs $2.5$\pp and $69\%$ more bytes, and replacing it with a
+fidelity criterion costs $145\%$ more bytes, the same $59\%$ reduction seen
+from the other direction. A static $\tau$ costs $4.3$\pp and $38\%$ more bytes.
+
+Two rows must be read with their uplink volumes, which the figure does not draw.
+The protocol ablations send $4.0$ and $3.4$\,MB against the full system's $4.2$,
+so their $17.7$ and $10.0$\pp losses buy nothing --- a correctness bug rather
+than a trade-off, and the reason we treat the protocol as part of the mechanism.
+The oracle row, which substitutes the ground-truth divergence of
+\S\ref{sec:m2} for the head, bounds what a better estimator could add at
+$0.4$\pp and $10\%$ of bytes: the head is close enough to its own ceiling that
+the headroom is elsewhere.
+
+Three further sweeps. \emph{World-model size:} at $18$M the prediction window
+shrinks to $3.1$ steps and success falls to $76.1\%$; at $210$M it reaches
+$79.2\%$ but misses the control period on the Orin --- precisely the trade
+$\rho$ describes. \emph{Latent quantization:} the $8$-bit state that buys exact
+cross-platform reproducibility costs $0.4$\pp, and without it $3.1\%$ of
+episodes accumulate silent numerical divergence. \emph{Head transfer:} a head
+distilled on \pizero and applied unchanged to OpenVLA-7B costs $2.3$\pp and
+$8\%$ more bytes, and one trained jointly on three policies recovers all but
+$0.6$\pp: the calibration is policy-sensitive, not policy-specific.
+
+\subsection{Cost on the Robot}
+\label{sec:eval-overhead}
+
+\begin{table}[t]
+\centering
+\caption{\textbf{Robot-side cost per control step}, Orin NX, median of $10^5$
+invocations; the $15$\,Hz control period is $66.7$\,ms.}
+\label{tab:overhead}
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{@{}lccc@{}}
+\toprule
+\textbf{Component} & \textbf{Latency} & \textbf{Memory} & \textbf{Energy} \\
+\midrule
+Encoder $E$, three views       & 6.9\,ms & 0.11\,GB & 0.11\,J \\
+Latent rollout $W$, one step   & 3.4\,ms & 0.06\,GB & 0.05\,J \\
+Decision head $\Phi$ + trigger & 1.1\,ms & 0.02\,GB & 0.02\,J \\
+Protocol (seq, hash, framing)  & 0.3\,ms & $<$0.01\,GB & 0.01\,J \\
+\midrule
+\textbf{Total}                 & \textbf{11.7\,ms} & \textbf{0.21\,GB} &
+  \textbf{0.19\,J} \\
+\quad as \% of control period  & 17.5\% & --- & --- \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Table~\ref{tab:overhead} reports the price of running a predictor on the robot,
+in full, because the honest accounting is less flattering than the byte numbers.
+\sys costs $17.5\%$ of the control period and $2.85$\,W of sustained compute. It
+saves radio energy --- the status quo's $10$ uploads per second cost $5.2$\,W of
+$5$G transmission against $0.32$\,W for ours --- so the net is $5.5$\,W down to
+$3.2$\,W, a $1.7\times$ reduction rather than the $16\times$ the byte numbers
+suggest. Evaluating the trigger at $7.5$\,Hz halves the compute to $1.42$\,W for
+$0.4$\pp of success, bringing the net to $2.6\times$. \sys trades robot compute
+for uplink capacity, and on a shared cell the uplink is the scarce resource, not
+the robot's watts.
+
+\subsection{Physical-Robot Evaluation}
+\label{sec:eval-real}
+
+\begin{figure}[t]
+\centering
+\figexp{fig-real-franka}
+\caption{\textbf{Franka Panda, $160$ trials.} Two tasks against five shaped
+uplink capacities; bars are $95\%$ CIs.}
+\label{fig:real}
+\end{figure}
+
+Simulated contact dynamics are only as trustworthy as the simulator, so we ran a
+controlled hardware experiment on a Franka Panda --- the DROID platform, chosen
+so that the offline analysis and the hardware share an embodiment --- with two
+tasks (peg insertion and cluttered pick-and-place), five shaped uplink capacities
+and $160$ trials. This is a variable sweep,
+not a data collection: nothing is trained and no dataset is built. The result we
+care about in Figure~\ref{fig:real} is not the peak but the shape. The two arms
+converge above $8$\,Mbps, as they must; below $4$\,Mbps the status quo degrades
+steeply while \sys stays nearly flat, because its send rate is set by what the
+scene does rather than by a clock. At $2$\,Mbps --- a congested commercial
+uplink --- the status quo succeeds on $35\%$ of trials and \sys on $75\%$,
+sending $0.44$\,MB per episode against $5.8$\,MB. That measured byte ratio,
+$13.2\times$, is within $20\%$ of simulation's $16.3\times$.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Related Work}
+\label{sec:related}
+
+\paragraph{Send-on-delta and event-triggered sampling.} We did not invent this
+mechanism class. Lebesgue sampling~\cite{astrom2002lebesgue,arzen1999pid} and
+Miskowicz's send-on-delta~\cite{miskowicz2006sod} established transmitting on
+signal deviation rather than on a clock; predictive variants transmit when the
+signal departs from an extrapolation the receiver can reproduce, with truncated
+Taylor~\cite{suh2007predictor} or linear~\cite{nguyen2009stochasticsod}
+predictors, and derive thresholds from error
+bounds~\cite{miskowicz2007kldiv}; controlled-communication policies solve for an
+optimal transmission policy against a local copy of the remote
+estimate~\cite{molin2013optimal,mamduhi2017error,
+heemels2012introduction,tabuada2007eventtriggered}. Every element of that
+setting differs from ours in the same direction: the payload is a
+low-dimensional state, not multi-camera video; the predictor is analytic, not
+learned; the receiver is an estimator with an error covariance, not a black-box
+$7$B policy; and the trigger comes from an estimation bound rather than from a
+decision. We take this line as baseline group (4)--(5) rather than as
+background, and inherit its open problem: that event-based sampling cannot
+detect dropouts for want of a shared periodic timestamp~\cite{suh2009dropouts}
+is what \S\ref{sec:protocol} addresses.
+
+\paragraph{World models and generative semantic communication.} The nearest
+neighbour is world-model-aided semantic transmission, which runs a generative
+world model at both ends, omits transmission while prediction stays reliable,
+and adds a feedback module to decide when the current frame must be
+sent~\cite{wmsemcom2025}, and a broader literature transmits sketches,
+keyframes or tokens and reconstructs generatively~\cite{gosc2025video,
+genvidfusion2025,resividtok2026,agentsemcom2025,genvidcomp2025,gunduz2023beyond,
+kountouris2021semantics,bourtsoulatze2019deepjscc}. What
+unites them is a \emph{passive} receiver: the reconstruction is rendered, scored
+by PSNR or perceptual or semantic consistency, and does not act. Ours acts, and
+its actions determine the next observation, which is what makes reconstruction
+fidelity the wrong trigger (\S\ref{sec:m2}) rather than an imperfect one. We
+reproduce \cite{wmsemcom2025}'s design as baseline (6), with our world model,
+so that the comparison isolates the criterion.
+
+The exception is a world-model digital twin that selects semantic tokens by
+their marginal contribution to expected long-term return, normalized per
+bit~\cite{cdtsemcom2026}: the closest anyone comes to our criterion, and
+explicit that a one-shot fidelity metric is the wrong one for a closed loop. It
+differs in what it estimates and in what it decides --- a learned long-horizon
+return, from an actor--critic it trains inside the twin, against our one-step
+divergence in the action space of a policy we never retrain; and \emph{which
+tokens} a transmission carries, against \emph{whether to transmit at all}, the
+decision that makes silence ambiguous and forces \S\ref{sec:protocol}.
+
+\paragraph{Predictive display and model-mediated teleoperation.} Predicting the
+remote scene to hide delay is the oldest line here, from the phantom
+robot~\cite{bejczy1990phantom} and passivity-based teleoperation~\cite{
+anderson1989bilateral,hannaford2002passivity} through environment-adapted
+controllers~\cite{passenberg2010survey,brudnak2016predictive} to recent
+zero-shot benchmarks of video models as predictive
+displays~\cite{genpreddisplay2026}. The prediction there is for a human, the
+purpose is to compensate perceived latency, and the evaluation is operator
+performance and cognitive load. We predict for a model, to avoid sending bytes,
+which makes our criterion automatable and calibratable in a way theirs cannot
+be.
+
+\paragraph{Observation compression for VLA.} A fast-growing line compresses
+what an offloaded policy consumes. Learned image compression tuned for VLA
+notes that general-purpose codecs optimize perceptual fidelity rather than
+downstream control and that visual importance is highly non-uniform across
+cameras and regions~\cite{licvla2026}; token-level methods distil each frame to
+a single latent token~\cite{onewmvla2026}, cache or prune visual
+tokens~\cite{compressorvla2025,vlacache2025}, or compress task-oriented features
+for device--edge and vehicle-to-everything collaboration~\cite{tofc2025,
+dinolink2026}. All
+allocate bits \emph{within} a frame; none decides whether the frame is worth
+sending. The axes are orthogonal and Table~\ref{tab:main} row (9) shows they
+multiply. The same holds for video-analytics systems that filter on-camera or
+let the server drive region
+selection~\cite{li2020reducto,du2020dds,zhang2018awstream,chen2015glimpse}: their
+consumer scores per-frame accuracy, not a closed loop in which its next input is
+a consequence of its own output.
+
+\paragraph{Action-conditioned world models.} Policy-in-the-loop world models
+generate futures chunk by chunk from a policy's own action rollout and match the
+policy's input format~\cite{pilworld2026}, building on a line of learned
+simulators~\cite{ha2018worldmodels,hafner2023dreamerv3,bruce2024genie,
+wu2024ivideogpt}. We use one as a component: our results are stated relative to
+a fixed predictor and would move with a better one without changing sign, the
+property \S\ref{sec:m2} was designed to guarantee.
+
+\paragraph{Edge serving and latency tolerance for VLA.} Splitting inference
+between device and edge is long established~\cite{kang2017neurosurgeon}; recent
+systems specialize it for policies with latency-tolerant cloud--edge
+collaboration~\cite{cloudedgevla2026}, policy
+servers~\cite{vlagents2026}, KV-cache management~\cite{oxygen2026}, pipelined
+edge inference~\cite{actionflow2025} and deadline-aware
+scheduling~\cite{edgeserving2026}, all under the deployment constraint a recent
+survey takes as given~\cite{efmedge2026}. A parallel line makes the policy
+tolerate delay rather than reduce it~\cite{black2025rtc,vlash2025,
+asyncbench2026}; we run IT-RTC underneath every arm because it is a substrate,
+not a competitor. Closest in method is a concurrent submission that reads a
+value-of-information signal off a policy's own action chunks to decide
+\emph{when} an inference is worth requesting~\cite{policyvoi2027}: same
+calibration methodology, latency axis instead of bandwidth.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Discussion and Limitations}
+\label{sec:discussion}
+
+\paragraph{The upper bound is the world model.} Everything \sys saves is
+bounded by how long the shared predictor stays useful, and
+Figure~\ref{fig:c2}'s Kinetix column is the honest version of this: when scene
+dynamics outrun the prediction window, both triggers converge toward continuous
+transmission and our advantage shrinks from $59\%$ to $47\%$. We expect the
+mechanism to suit fast locomotion and scenes with independently moving agents
+poorly --- precisely the settings where the action conditioning of
+Figure~\ref{fig:m1} stops paying.
+
+\paragraph{At $\rho \ge 1$ the mechanism survives; the motivation changes.}
+Figure~\ref{fig:rho} shows the byte reduction holding at $63\%$ when the robot
+could run the policy locally, and it is fair to ask why anyone would then
+offload. Compute is not the only reason to centralize: pushing $15$\,GB of
+weights to every robot for every version is an operational cost a task-agnostic
+$0.14$\,GB world model does not incur; frontier weights are often not
+distributed at all; centralized execution is what lets fleet experience be
+aggregated; and one server amortized over $N$
+robots is the deployment in which uplink is genuinely contended. We did not
+evaluate the multi-robot case and consider it the most interesting missing
+experiment.
+
+\paragraph{What the head is, and is not.} $\Phi$ estimates a quantity defined
+by a specific policy, so it inherits that policy's blind spots: if the policy
+is indifferent to something it should attend to, \sys will happily not transmit
+it. The head is also trained, which sits uneasily beside our claim that the
+world model's quality does not matter --- it does not matter for
+\emph{Figure~\ref{fig:m2}}, which is measurement, but it does matter for the
+system. A head miscalibrated for a new embodiment degrades toward the
+world-model-latent trigger, which \S\ref{sec:eval-ablation} measures at
+$-2.5$\pp rather than at collapse, so the failure is graceful; we would still
+want an online confidence check before deploying on hardware we have not
+calibrated.
+
+\paragraph{What we did not evaluate.} A compromised client can suppress
+transmission by reporting low $\hat{\delta}_t$; server-side plausibility checks
+against the heartbeat's own divergence estimate would catch it and are
+unimplemented. Every closed-loop result is a $7$-DoF arm.
+And our physical experiment shapes uplink capacity rather than replaying a live
+cellular link, so it validates the response to scarcity and not the interaction
+with real radio dynamics.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Conclusion}
+\label{sec:conclusion}
+
+Predictive transmission has been asking the same question for twenty years: how
+wrong is the receiver's reconstruction? That question is right when the receiver
+renders what it receives, and wrong when the receiver is a policy that acts on
+what it receives and thereby chooses what it receives next. We measured the
+difference --- fidelity ranks decision impact at $\rho_s = 0.31$ and
+misclassifies $44\%$ of frames in both directions --- and built the transmitter
+that asks the other question: a shared action-conditioned world model, a
+distilled robot-side estimate of how much a frame would move the policy's
+action, a bandwidth-adaptive threshold, and the resynchronization protocol that
+closed-loop prediction needs and event-triggered sampling never had. At the same
+world model and the same task success, that change of criterion alone is worth
+$59\%$ of the uplink, $16\times$ against the deployed status quo and $75\times$
+composed with spatial compression. The general claim is shorter: when the
+consumer of a stream is a decision-maker, the transmitter should be measuring
+decisions, not pixels --- and it can, cheaply, without ever running the
+decision-maker.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% References do not count against the 12-page limit.
+\bibliographystyle{ACM-Reference-Format}
+\bibliography{references}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Appendices go AFTER the bibliography and do not count against the 12 pages.
+% \appendix
+% \section{Additional Results}
+
+\end{document}
