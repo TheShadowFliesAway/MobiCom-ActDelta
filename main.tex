@@ -75,10 +75,10 @@ not transfer online. Against rate-matched periodic sampling, the learned
 trigger changes success by $+3.13$\pp{} at a 25\% budget and $-3.75$\pp{} at
 50\%, with both intervals including zero; a true-divergence oracle also fails,
 and \claimTBD{Bernoulli sampling is not separated from the learned trigger
-across the sweep.} Threshold triggering instead creates a heavier observation-
-age tail, and episode outcomes track age more strongly than instantaneous
-divergence. Decision relevance is therefore learnable but insufficient for
-closed-loop scheduling.
+across the sweep.} Threshold triggering instead creates a heavier
+observation-age tail, and outcomes track age more strongly than instantaneous
+divergence. Decision relevance is learnable but insufficient for closed-loop
+scheduling.
 \end{abstract}
 
 \begin{CCSXML}
@@ -127,15 +127,13 @@ Spearman $0.684$ (95\% CI $[0.637, 0.726]$), AUROC $0.833$, and AUPRC
 $0.833$. Third, this offline skill does not establish a closed-loop
 advantage. At matched target budgets, the learned trigger differs from
 periodic sampling by $+3.13$\pp{} (CI $[-1.25, +7.50]$) at 25\% and
-$-3.75$\pp{} (CI $[-8.13, 0]$) at 50\%, and neither an oracle trigger that
-observes true runtime divergence nor a sweep of the full budget range moves
-the learned arm outside the control's confidence band.
+$-3.75$\pp{} (CI $[-8.13, 0]$) at 50\%, and neither an oracle trigger that observes true divergence nor a full budget
+sweep moves the learned arm outside the control's confidence band.
 
-Two controls diagnose the gap. \claimTBD{Content-blind Bernoulli sampling
-tracks the learned arm within experimental resolution while both beat a
+Two controls diagnose the gap. \claimTBD{Content-blind Bernoulli sampling tracks the learned arm within
+resolution while both beat a
 fidelity trigger,} and threshold triggering has a heavier age tail than
-periodic sampling at equal mean rate. The loop rewards refresh spacing more
-than selected-frame identity.
+periodic sampling at equal mean rate. The loop rewards refresh spacing over frame identity.
 
 We contribute a multi-suite fidelity measurement, a frozen-latent relevance
 predictor, a matched-rate closed-loop test with an oracle, and age-tail and
@@ -174,9 +172,9 @@ Recent semantic-communication systems extend this idea with learned
 predictors or generative world
 models~\cite{jiang2025semworld,wang2026worldtwin,yang2024agentdriven,yin2025genvideo}.
 Although their predictors differ, the triggering rule remains
-fidelity-centered: transmit when observation error becomes large. This
-transfers an estimator objective to a policy receiver without testing whether
-observation error predicts action change.
+fidelity-centered: transmit when observation error grows. This transfers an
+estimator objective to a policy receiver without asking whether observation
+error predicts action change.
 
 \paragraph{Compute asymmetry and the proposed correction.}
 The frozen policy has billions of parameters while the predictor has 13.5M
@@ -203,8 +201,8 @@ server input,
 where this notation denotes selection rather than pixel interpolation. The
 frozen policy maps $\tilde o_t$, the real wrist view, proprioception, and
 instruction to an action chunk. The executed action changes the environment,
-so the scheduling decision affects both the current action and the future
-observation distribution.
+so the decision affects the current action and the future observation
+distribution.
 
 For an episode of length $T$, a scheduler $g$ produces decisions $u_{1:T}$
 from information locally available at the robot. Its realized agent-view send
@@ -215,7 +213,7 @@ task success $S$ subject to the realized communication constraint,
 \max_{g}\ \mathbb{E}[S(g)] \quad\text{s.t.}\quad \mathbb{E}[R(g)]\le b.
 \label{eq:obj}
 \end{equation}
-This objective makes periodic sampling indispensable. A relevance trigger is
+This makes periodic sampling indispensable. A relevance trigger is
 useful only if it improves success at the same realized $R$, or reduces $R$ at
 matched success. Comparing methods at different send fractions does not
 answer \cref{eq:obj}.
@@ -300,17 +298,15 @@ The action-conditioned world model has $13{,}518{,}723$ parameters, two camera
 views, 96 tokens per step, width 384, six latent transformer blocks, and 7-D
 action conditioning. In all closed-loop runs, real 8-D proprioception and the
 real wrist-camera view remain available. Only the agent view is predicted on
-steps without transmission. The claim is therefore about agent-view
-suppression with a real wrist fallback, not full visual replacement;
-\cref{sec:recovery} tests how much that fallback matters.
+steps without transmission. The claim is about agent-view suppression with a real wrist fallback, not
+full visual replacement; \cref{sec:recovery} tests how much it matters.
 
 The predictor starts from the last synchronized observation and advances with
 the committed action sequence. A transmitted frame replaces the imagined
 agent view and resets the rollout state; a suppressed step advances the
 latent prediction. \Cref{fig:timeline} shows one such interval step by step.
 The evaluated scope is explicit: the server owns policy inference, the
-robot-side path owns encoding, latent dynamics, and triggering, and no local
-policy call is permitted in the deployable arm.
+robot-side path owns encoding, latent dynamics, and triggering, and the deployable arm makes no policy call.
 
 \begin{table}[t]
 \caption{The frozen trajectory base spans ten tasks per suite and five fixed
@@ -383,13 +379,12 @@ initial states across arms and records success, send decisions, observation
 age, and payload.
 
 \paragraph{Reproducibility of the figures.}
-Every figure in this paper is generated from a single tagged data module. No
+Every figure is generated from a single tagged data module. No
 number is typed into a plotting script or into the prose twice: quantities
 that appear in both are injected into the text at build time. A build-time
 self-check asserts each cross-panel identity---that success values lie on the
 grid their episode count can emit, that both binnings in
-\cref{fig:target} partition the same episodes, and that every age
-distribution integrates to the realized send fraction.
+\cref{fig:target} partition the same episodes, and that age distributions integrate to the send fraction.
 
 % ===================================================================
 \section{Selecting the Shared Predictor}
@@ -453,9 +448,8 @@ ActDelta uses a fixed system architecture: the robot and server share an
 action-conditioned world model; the robot estimates whether the real
 observation would change the remote policy's action; a controller maps that
 score to the available transmission budget; and periodic resynchronization
-prevents indefinite open-loop prediction. Our evaluation distinguishes the
-components supported by current experiments from the complete loss-recovery
-protocol required for deployment.
+prevents indefinite open-loop prediction. Our evaluation separates the components current experiments support from the
+full loss-recovery protocol deployment would require.
 
 \subsection{Latent Decision Head}
 At a synchronized step, the robot encodes the real observation into $z_t$.
@@ -489,8 +483,7 @@ agent-view age is exactly $K_{\max}$. Thresholds are chosen on validation and
 frozen before the blind test. The causal budget controller then tracks
 realized sends without consulting future frames. Its measured
 errors---$0.13$ and $0.08$ percentage points at the two blind-test
-budgets---show that the comparison successfully isolates scheduling from
-transmission quantity.
+budgets---show that the comparison isolates scheduling from transmission quantity.
 
 Periodic sampling replaces the first clause with a fixed schedule while
 retaining the same observation model and runner; Bernoulli sampling replaces
@@ -598,11 +591,10 @@ prevents the current prototype from being presented as a complete transport.
 \section{Fidelity Does Not Rank Relevance}
 \label{sec:fidelity}
 
-The formal protocol contains four suites, ten tasks, seven horizons
+The formal protocol has four suites, ten tasks, seven horizons
 $\{1,2,3,4,5,8,12\}$, and five pairs per cell: 1{,}400 pairs in each
 episode-disjoint train, validation, and test split. Pixel RMS, SSIM error,
-LPIPS, and world-model latent RMS are evaluated against \cref{eq:div}; every
-threshold is fixed on validation.
+LPIPS, and world-model latent RMS are evaluated against \cref{eq:div}; thresholds come from validation.
 
 Before the formal study, a 500-pair pilot over 30 held-out episodes checks
 label quality and statistical power. Its divergence distribution spans
@@ -716,11 +708,10 @@ task success under a fixed realized budget.
 \section{Implementation and Evaluation Matrix}
 
 ActDelta is evaluated through four linked but separately frozen pipelines.
-This separation matters because the experiments were executed in multiple
-rounds and, in some records, on different devices. A numerical difference is
-interpreted only after identifying the pipeline, split, task panel, and
+This separation matters because the experiments ran in multiple rounds and, in some records, on different devices. A numerical difference is
+interpreted only after identifying the pipeline, split, panel, and
 runner that produced it. Results from distinct protocols are reported side by
-side rather than averaged into a synthetic number.
+side, never averaged into a synthetic number.
 
 \paragraph{Trajectory and predictor pipeline.}
 The trajectory collector runs the pinned policy on five fixed initial states
@@ -732,12 +723,11 @@ windows from the full training base; their error values are not
 interchangeable.
 
 \paragraph{Counterfactual label pipeline.}
-For each selected observation--horizon pair, the label job constructs a
+For each observation--horizon pair, the label job constructs a
 predicted observation and evaluates the policy twice with the same diffusion
 noise. The validator checks observation alignment, action chunk shape, noise
-shape, finiteness, metadata, and recomputed RMS before accepting a cell. The
-500-pair pilot is an independent diagnostic with a train/test threshold split
-of 200/300; pilot and formal results are never merged.
+shape, finiteness, metadata, and recomputed RMS before accepting a cell. The 500-pair pilot is a separate diagnostic with a 200/300 threshold
+split; pilot and formal results never merge.
 
 \paragraph{Head and threshold pipeline.}
 The decision head is trained with three seeds. Checkpoint selection uses
@@ -771,27 +761,27 @@ diagnostics.
 % ===================================================================
 \section{Closed-Loop Evaluation}
 
-The closed-loop experiments evaluate task success rather than frame-level
-correlation. Real proprioception and the real wrist view remain available;
-only the agent view is predicted between transmissions.
+The closed-loop experiments evaluate task success, not frame-level
+correlation. Proprioception and the wrist view remain real; only the agent
+view is predicted between transmissions.
 
 \subsection{Success--Horizon Frontier}
 \label{sec:frontier}
 We first force a fixed imagined horizon on LIBERO-Spatial to measure the
 resource being scheduled. Ten tasks, eight horizons, and ten fixed initial
-states produce 800 unique cells with zero episode exceptions. Success is 98,
+states produce 800 cells with zero exceptions. Success is 98,
 94, 84, 70, 69, 72, 65, and 62\% at $h=0,1,2,4,6,8,10,12$, with task-cluster
 intervals $[94,100]$, $[85,100]$, $[72,94]$, $[54,86]$, $[53,84]$, $[56,86]$,
 $[49,80]$, and $[45,79]$\%. Because a forced horizon $h$ corresponds to a send
 fraction of $1/(h+1)$, this sweep is exactly the periodic arm of the Spatial
-success--communication frontier, and it appears as such in
+success--communication frontier, and appears as such in
 \cref{fig:frontier}(a). It is a different suite from the Object panel in
-\cref{fig:frontier}(b) and the two are never merged.
+\cref{fig:frontier}(b), and the two are never merged.
 
-Two features shape the scheduling problem. The success increase from 69\% at
-$h=6$ to 72\% at $h=8$ does not mean older observations improve control; it
-shows that staleness is not a deterministic episode-level cost under this
-one-seed, task-heterogeneous protocol.
+Two features shape the problem. The rise from 69\% at
+$h=6$ to 72\% at $h=8$ does not mean older observations help; it shows that staleness is not a
+deterministic episode-level cost under this one-seed, task-heterogeneous
+protocol.
 
 Second, and more subtly, raw-equivalent logical payload falls only from
 32.7 to 26.8 MB per episode as the send fraction falls from 100\% to 7.7\%.
@@ -818,10 +808,9 @@ rate-matched periodic or Bernoulli sampling.}
 The first Spatial comparison used 480 cells across six arms. Periodic $h=1$
 achieved 92.50\% success at 50.2\% send fraction, while the nominal 50\%
 learned trigger achieved 80.00\% at 45.0\%. At the nominal 25\% setting, the
-trigger reached 83.75\% at 24.23\%, compared with 80.00\% at 20.28\% for
-periodic $h=4$. The apparent $+3.75$\pp{} gain has CI $[-5.0,+13.75]$\pp{}
-and spends 3.95 additional send-rate points, so it cannot isolate scheduling
-quality.
+trigger reached 83.75\% at 24.23\%, against 80.00\% at 20.28\% for periodic
+$h=4$. The apparent $+3.75$\pp{} gain has CI $[-5.0,+13.75]$\pp{}
+and spends 3.95 extra send-rate points, so it cannot isolate scheduling.
 
 We then froze thresholds, code, and statistics before a LIBERO-Object blind
 test with eight tasks, twenty fixed states, and five arms: 800 cells, 160
@@ -832,7 +821,7 @@ learned-minus-periodic difference of $+3.13$\pp{} with CI $[-1.25,+7.50]$. At
 50\%, success is 88.13\% versus 91.88\%, a difference of $-3.75$\pp{} with CI
 $[-8.13,0]$. Both intervals include zero. The experiment therefore does not
 establish superiority or equivalence; it establishes that accurate budget
-control alone does not produce a demonstrated scheduling gain.
+control alone does not produce a demonstrated gain.
 
 The reversal across budgets is a central result, not noise to hide. At 25\%
 the point estimate favors the learned trigger; at 50\% it favors periodic
@@ -1002,9 +991,8 @@ and an unbiased coin at the same rate. Periodic sampling never exceeds an age
 of three steps by construction. \claimTBD{The learned trigger places roughly
 9\% of its steps at an age above seven even with the maximum-silence
 safeguard active, and removing that safeguard leaves more than 6\% of steps
-beyond twelve.} The oracle behaves almost identically to the learned trigger, which
-is expected: both rank by instantaneous divergence, and divergence is
-temporally clustered.
+beyond twelve.} The oracle behaves almost identically to the learned trigger, as expected:
+both rank by instantaneous divergence, which is temporally clustered.
 
 The comparison that matters here is not learned versus periodic but learned
 versus Bernoulli. Periodic sampling is the tightest possible age distribution
@@ -1020,11 +1008,9 @@ temporally clustered (\cref{sec:fidelity}), the trigger bunches its sends and
 pays for them with longer silences elsewhere. The safeguard, not the
 criterion, is what bounds the worst case: with it active the mean age is
 \ageMeanLearned{} steps against the coin's \ageMeanBern, and with it removed
-the same trigger runs to \ageMeanNoCap. This is the
-mechanism the mean send rate hides: two schedulers can spend exactly the same
-budget and expose the policy to very different worst-case staleness. Matching
-the first moment of the traffic is necessary for a fair comparison but is not
-sufficient to make the arms behave equivalently.
+the same trigger runs to \ageMeanNoCap. This is what the mean send rate hides: two schedulers can spend the same
+budget and expose the policy to very different worst-case staleness. Matching the traffic's first moment is necessary for a fair comparison but
+not sufficient to make the arms equivalent.
 
 \begin{figure}[t]
 \centering
@@ -1071,8 +1057,8 @@ Current wrist view and proprioception let the policy recover from stale agent
 views. Freezing and then removing wrist input tests this channel at 25\%:
 \claimTBD{success falls for both arms, while learned-minus-periodic grows from
 $+3.1$\pp{} to $+6.9$\pp{} and $+11.2$\pp{} (\cref{fig:wrist}).} Wide paired
-intervals do not establish a learned-trigger win, but the widening suggests
-greater relevance value when no current-state recovery channel exists.
+intervals do not establish a learned-trigger win, but the widening suggests more relevance value with no current-state
+recovery channel.
 
 \begin{figure}[t]
 \centering
