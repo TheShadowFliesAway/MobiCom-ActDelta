@@ -74,9 +74,6 @@
 \title[ActDelta: Decision Relevance Is Learnable Offline but Does Not Yet Beat Periodic Sampling Online]%
       {ActDelta: Decision Relevance Is Learnable Offline\\
        but Does Not Yet Beat Periodic Sampling Online}
-\subtitle{A Measurement Study of Predictive Uplink Triggering\\
-          for Edge-Offloaded Robot Policies}
-
 \author{Anonymous Author(s)}
 
 \begin{abstract}
@@ -1124,8 +1121,13 @@ learned one-second P95 is \burstRatio$\times$ periodic.} One 256$\times$256 view
 is below 1\,Mb/s, but multiple robots can exceed shared capacity
 (\cref{fig:uplink}).
 
-A shared link is provisioned against aggregate peak, not average, so
-concentrating sends buys less headroom than the send fraction suggests.
+At that scale burstiness matters more than the mean. A fleet sharing an
+access link is provisioned against the aggregate peak, not the average, so a
+scheduler that lowers mean demand while concentrating its sends buys less
+headroom than its send fraction suggests---and \cref{fig:agetail} shows that
+concentration is intrinsic to threshold triggering rather than an artifact of
+this trigger. The clustering that exposes the policy to long silences is what
+the link must absorb.
 
 \begin{figure}[t]
 \centering
