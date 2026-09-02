@@ -285,8 +285,7 @@ def fig_frontier():
                fontsize=S.BASE - 1.4, borderaxespad=0.2)
     maybe_stamp(axR, f["_tag"])
 
-    fig.subplots_adjust(wspace=0.16)
-    S.save(fig, P("fig7_frontier.pdf"))
+    S.save(fig, P("fig7_frontier.pdf"), wspace=0.16)
 
 
 # ========================================================= Fig 8: effects ====
@@ -509,8 +508,7 @@ def fig_wrist():
     S.note(ax2, -0.5, 21.5, "(b) paired", size=S.BASE - 1.2)
 
     maybe_stamp(ax, d["_tag"])
-    fig.subplots_adjust(wspace=0.62)
-    S.save(fig, P("fig12_wrist.pdf"))
+    S.save(fig, P("fig12_wrist.pdf"), wspace=0.62)
 
 
 # ========================================================== Fig 13: uplink ===

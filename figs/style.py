@@ -18,6 +18,8 @@ Conventions taken from recent MobiCom best-paper figures:
     and captions should still get the paper's argument.
 """
 
+import os
+
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
@@ -25,8 +27,14 @@ from matplotlib import font_manager
 import numpy as np
 
 # ---------------------------------------------------------------- geometry
-COL = 3.33          # ACM sigconf \columnwidth, inches
-FULL = 7.00         # ACM sigconf \textwidth, inches
+# Measured from the class itself, not rounded: acmart sigconf at 10 pt reports
+#   \columnwidth = 241.14749pt   \textwidth = 506.295pt
+# in TeX points (1/72.27 in). A figure emitted at exactly these sizes and
+# included with width=\columnwidth is scaled by exactly 1.000, so a 7 pt label
+# in the figure is 7 pt on the page. Rounding these to 3.33/7.00 is enough to
+# make \includegraphics rescale, which is what this module exists to avoid.
+COL = 241.14749 / 72.27     # 3.336750 in
+FULL = 506.295 / 72.27      # 7.005604 in
 
 
 def figsize(width="col", h=1.85):
@@ -57,6 +65,33 @@ LS = {"periodic": "-", "learned": "-", "oracle": (0, (5, 1.6)),
 LABEL = {"periodic": "Periodic (control)", "learned": "ActDelta learned",
          "oracle": r"Oracle $\delta_t$", "lpips": "LPIPS threshold",
          "random": "Random (Bernoulli)"}
+
+
+def _register_texlive_serif():
+    """Make the body text's own face visible to matplotlib.
+
+    acmart sets Libertine, but TeX ships it as Type 1, which matplotlib
+    cannot embed. TeX Live also ships Libertinus as OpenType, which it can.
+    Registering it here is what lets _pick_serif() reach its first choice
+    instead of falling through to whatever Times clone the machine happens
+    to have -- which is why the previously committed panels were set in
+    Times New Roman while the paper itself was set in Libertine.
+    """
+    import glob
+    pats = ["/usr/share/fonts/**/Libertinus*.otf",
+            os.path.expanduser("~/texlive/*/texmf-dist/fonts/opentype/public/"
+                               "libertinus-fonts/Libertinus*.otf"),
+            "/usr/local/texlive/*/texmf-dist/fonts/opentype/public/"
+            "libertinus-fonts/Libertinus*.otf"]
+    for pat in pats:
+        for f in glob.glob(pat, recursive=True):
+            try:
+                font_manager.fontManager.addfont(f)
+            except Exception:
+                pass
+
+
+_register_texlive_serif()
 
 
 def _pick_serif():
@@ -125,8 +160,7 @@ plt.rcParams.update({
     # --- output
     "figure.dpi": 200,
     "savefig.dpi": 200,
-    "savefig.bbox": "tight",
-    "savefig.pad_inches": 0.012,
+    "savefig.bbox": None,
     "savefig.transparent": False,
 })
 
@@ -185,7 +219,17 @@ def wilson_err(pcts, n):
     return np.array([lo, hi])
 
 
-def save(fig, path):
+def save(fig, path, wspace=None):
+    """Write the figure at exactly its declared figsize.
+
+    tight_layout packs the axes inside that fixed canvas, so margins are
+    trimmed without changing the outer dimensions. Panel spacing, where a
+    figure sets it, is re-applied afterwards because tight_layout would
+    otherwise recompute it.
+    """
+    fig.tight_layout(pad=0.30)
+    if wspace is not None:
+        fig.subplots_adjust(wspace=wspace)
     fig.savefig(path)
     plt.close(fig)
     print("  wrote", path)
