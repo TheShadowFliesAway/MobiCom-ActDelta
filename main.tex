@@ -235,12 +235,12 @@ the second improves offline alignment without closing the remaining gap to
 the third.
 
 % ------------------------------------------------------- NEW FIGURE A
-\begin{figure*}[t]
+\begin{figure}[t]
 \centering
-\includegraphics[width=\textwidth]{Figure2 2.pdf}
-\caption{Three objectives separate reconstruction fidelity, decision relevance, and episode-level refresh value.}
+\includegraphics[width=\columnwidth]{Figure2 2.pdf}
+\caption{From reconstruction fidelity to decision relevance and refresh value.}
 \label{fig:ladder}
-\end{figure*}
+\end{figure}
 
 \subsection{Layered Claims}
 The argument is intentionally layered so that each claim is evaluated
@@ -274,12 +274,12 @@ relevance improves closed-loop success. \Cref{fig:pipeline} summarizes this
 separation.
 
 % ------------------------------------------------------------ FIGURE 2
-\begin{figure*}[t]
+\begin{figure}[t]
 \centering
-\includegraphics[width=.84\textwidth]{Figure3 1.pdf}
+\includegraphics[width=\columnwidth]{Figure3 1.pdf}
 \caption{Four frozen stages isolate metric choice, relevance learning, blind testing, and the oracle target.}
 \label{fig:pipeline}
-\end{figure*}
+\end{figure}
 
 \subsection{Environment, Policy, and Observation Model}
 All experiments use LIBERO~\cite{liu2023libero}: Spatial, Object, Goal, and
@@ -1155,6 +1155,7 @@ Bernoulli is not separated. Age-tail and outcome evidence shows that scheduling
 must model episode refresh value, age, and recovery. Every learned transmitter
 must first beat periodic sampling at matched rate.
 
+\clearpage
 \bibliographystyle{ACM-Reference-Format}
 \bibliography{refs}
 

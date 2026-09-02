@@ -1,0 +1,510 @@
+This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex.fmt)
+ restricted \write18 enabled.
+entering extended mode
+(main.tex
+LaTeX2e <2025-11-01>
+L3 programming layer <2025-12-24>
+(acmart.cls
+Document Class: acmart 2026/06/27 v2.19 Typesetting articles for the Associatio
+n for Computing Machinery
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/latex/xkeyval\xkeyval.sty
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/generic/xkeyval\xkeyval.tex
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/generic/xkeyval\xkvutils.tex
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/generic/xkeyval\keyval.tex)))
+) (C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/latex/xstring\xstring.sty
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/generic/xstring\xstring.tex))
+ (C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/generic/iftex\iftex.sty)
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/latex/amscls\amsart.cls
+Document Class: amsart 2020/05/29 v2.20.6
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsmath.sty
+For additional information on amsmath, use the `?' option.
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amstext.sty
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsgen.sty))
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsbsy.sty)
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsopn.sty))
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsa.fd)
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\amsfonts.sty))
+
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/latex/microtype\microtype.sty
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/latex/etoolbox\etoolbox.sty)
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/latex/microtype\microtype-pdf
+tex.def)
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/latex/microtype\microtype.cfg
+))
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/latex/booktabs\booktabs.sty)
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/latex/refcount\refcount.sty
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/generic/ltxcmds\ltxcmds.sty)
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/generic/infwarerr\infwarerr.s
+ty))
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/latex/totpages\totpages.sty
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/latex/everyshi\everyshi.sty))
+ (C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/latex/environ\environ.sty
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/latex/trimspaces\trimspaces.s
+ty)) (C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/latex/natbib\natbib.sty)
+ (C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\hyperref.sty
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/latex/kvsetkeys\kvsetkeys.sty
+)
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/generic/kvdefinekeys\kvdefine
+keys.sty)
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/generic/pdfescape\pdfescape.s
+ty
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/generic/pdftexcmds\pdftexcmds
+.sty))
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/latex/hycolor\hycolor.sty)
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\nameref.sty
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/generic/gettitlestring\gettit
+lestring.sty
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/latex/kvoptions\kvoptions.sty
+)))
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/generic/stringenc\stringenc.s
+ty) (C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\pd1enc.def
+) (C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/generic/intcalc\intcalc.sty
+) (C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\puenc.def)
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/latex/url\url.sty)
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/generic/bitset\bitset.sty
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/generic/bigintcalc\bigintcalc
+.sty)))
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\hpdftex.def
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/latex/rerunfilecheck\rerunfil
+echeck.sty
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/generic/uniquecounter\uniquec
+ounter.sty)))
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/latex/hyperxmp\hyperxmp.sty
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/latex/ifmtarg\ifmtarg.sty)
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/latex/base\ifthen.sty)
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/latex/oberdiek\ifdraft.sty)
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/generic/iftex\ifluatex.sty))
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/latex/graphics\graphicx.sty
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/latex/graphics\graphics.sty
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/latex/graphics\trig.sty)
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/latex/graphics-cfg\graphics.c
+fg)
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/latex/graphics-def\pdftex.def
+))) (C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/latex/xcolor\xcolor.sty
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/latex/graphics-cfg\color.cfg)
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/latex/graphics\mathcolor.ltx)
+) (C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/latex/geometry\geometry.sty
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/generic/iftex\ifvtex.sty)
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/latex/geometry\geometry.cfg))
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/latex/ncctools\manyfoot.sty
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/latex/ncctools\nccfoots.sty))
+
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/generic/pdftex\glyphtounicode
+.tex) (C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/latex/cmap\cmap.sty)
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/latex/base\fontenc.sty<<t1.cm
+ap>>)
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/latex/libertine\libertine.sty
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/generic/iftex\ifxetex.sty)
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/latex/base\textcomp.sty)
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/latex/base\fontenc.sty)
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/latex/fontaxes\fontaxes.sty
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/latex/figureversions\figureve
+rsions.sty))
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/latex/libertine\LinLibertine_
+I.tex))
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/latex/inconsolata\zi4.sty
+`inconsolata-zi4' v1.12, 2019/05/17 Text macros for Inconsolata (msharpe))
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/latex/newtx\newtxmath.sty
+`newtxmath' v1.754, 2024/09/22 Math macros based originally on txfonts (msharpe
+)
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/latex/oberdiek\centernot.sty)
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/generic/binhex\binhex.tex)
+amsthm NOT loaded
+) (C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\pifont.sty
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\upzd.fd)
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\upsy.fd))
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/latex/caption\caption.sty
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/latex/caption\caption3.sty
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/latex/caption\caption-ams-smf
+.sto))) (C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/latex/float\float.sty
+) (C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/latex/comment\comment.sty
+Excluding comment 'comment') Excluding comment 'CCSXML'
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/latex/fancyhdr\fancyhdr.sty)
+Special comment 'acks'
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/latex/libertine\t1linuxlibert
+inet-tlf.fd))
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/latex/pgf/frontendlayer\tikz.
+sty
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/latex/pgf/basiclayer\pgf.sty
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/latex/pgf/utilities\pgfrcs.st
+y
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/generic/pgf/utilities\pgfutil
+-common.tex)
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/generic/pgf/utilities\pgfutil
+-latex.def)
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/generic/pgf/utilities\pgfrcs.
+code.tex
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/generic/pgf\pgf.revision.tex)
+))
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/latex/pgf/basiclayer\pgfcore.
+sty
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/latex/pgf/systemlayer\pgfsys.
+sty
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/generic/pgf/systemlayer\pgfsy
+s.code.tex
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/generic/pgf/utilities\pgfkeys
+.code.tex
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/generic/pgf/utilities\pgfkeys
+libraryfiltered.code.tex))
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/generic/pgf/systemlayer\pgf.c
+fg)
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/generic/pgf/systemlayer\pgfsy
+s-pdftex.def
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/generic/pgf/systemlayer\pgfsy
+s-common-pdf.def)))
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/generic/pgf/systemlayer\pgfsy
+ssoftpath.code.tex)
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/generic/pgf/systemlayer\pgfsy
+sprotocol.code.tex))
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+e.code.tex
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmath.code
+.tex
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathutil.
+code.tex)
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathparse
+r.code.tex)
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfunct
+ions.code.tex)
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfunct
+ions.basic.code.tex)
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfunct
+ions.trigonometric.code.tex)
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfunct
+ions.random.code.tex)
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfunct
+ions.comparison.code.tex)
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfunct
+ions.base.code.tex)
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfunct
+ions.round.code.tex)
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfunct
+ions.misc.code.tex)
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfunct
+ions.integerarithmetics.code.tex)
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathcalc.
+code.tex)
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfloat
+.code.tex))
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfint.code.
+tex)
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+epoints.code.tex)
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+epathconstruct.code.tex)
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+epathusage.code.tex)
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+escopes.code.tex)
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+egraphicstate.code.tex)
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+etransformations.code.tex)
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+equick.code.tex)
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+eobjects.code.tex)
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+epathprocessing.code.tex)
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+earrows.code.tex)
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+eshade.code.tex)
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+eimage.code.tex)
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+eexternal.code.tex)
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+elayers.code.tex)
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+etransparency.code.tex)
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+epatterns.code.tex)
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+erdf.code.tex)))
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/generic/pgf/modules\pgfmodule
+shapes.code.tex)
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/generic/pgf/modules\pgfmodule
+plot.code.tex)
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/latex/pgf/compatibility\pgfco
+mp-version-0-65.sty)
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/latex/pgf/compatibility\pgfco
+mp-version-1-18.sty))
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/latex/pgf/utilities\pgffor.st
+y
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/latex/pgf/utilities\pgfkeys.s
+ty
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/generic/pgf/utilities\pgfkeys
+.code.tex))
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/latex/pgf/math\pgfmath.sty
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmath.code
+.tex))
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/generic/pgf/utilities\pgffor.
+code.tex))
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/generic/pgf/frontendlayer/tik
+z\tikz.code.tex
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/generic/pgf/libraries\pgflibr
+aryplothandlers.code.tex)
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/generic/pgf/modules\pgfmodule
+matrix.code.tex)
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/generic/pgf/frontendlayer/tik
+z/libraries\tikzlibrarytopaths.code.tex)))
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/generic/pgf/libraries\pgflibr
+aryarrows.meta.code.tex)
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/generic/pgf/frontendlayer/tik
+z/libraries\tikzlibrarypositioning.code.tex)
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/generic/pgf/frontendlayer/tik
+z/libraries\tikzlibrarycalc.code.tex)
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/generic/pgf/frontendlayer/tik
+z/libraries\tikzlibraryfit.code.tex)
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/generic/pgf/frontendlayer/tik
+z/libraries\tikzlibrarybackgrounds.code.tex)
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/generic/pgf/frontendlayer/tik
+z/libraries\tikzlibraryshapes.geometric.code.tex
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/generic/pgf/libraries/shapes\
+pgflibraryshapes.geometric.code.tex))
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/generic/pgf/frontendlayer/tik
+z/libraries\tikzlibrarydecorations.pathreplacing.code.tex
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/generic/pgf/frontendlayer/tik
+z/libraries\tikzlibrarydecorations.code.tex
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/generic/pgf/modules\pgfmodule
+decorations.code.tex))
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/generic/pgf/libraries/decorat
+ions\pgflibrarydecorations.pathreplacing.code.tex))
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/generic/pgf/frontendlayer/tik
+z/libraries\tikzlibrarymatrix.code.tex)
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/latex/cleveref\cleveref.sty)
+==> First Aid for cleveref.sty applied!
+(figs/numbers_auto.tex)
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/latex/preprint\balance.sty)
+Excluding comment 'screenonly' Include comment 'printonly'
+Excluding comment 'anonsuppress' Excluding comment 'acks'
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/latex/l3backend\l3backend-pdf
+tex.def) (main.aux)
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/latex/newtx\omlnxlmi.fd)
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/latex/newtx\untxexa.fd)
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/latex/newtx\lmsntxsy.fd)
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/latex/newtx\lmxntxexx.fd)
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/latex/libertine\ot1linuxliber
+tinet-tlf.fd)<<ot1.cmap>><<oml.cmap>>
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsa.fd)
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsb.fd)
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/latex/newtx\untxmia.fd)
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/latex/newtx\untxsym.fd)
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/latex/newtx\untxsyc.fd)
+
+Package hyperref Warning: Draft mode on.
+
+
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/context/base/mkii\supp-pdf.mk
+ii
+[Loading MPS to PDF converter (version 2006.09.02).]
+)
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/latex/epstopdf-pkg\epstopdf-b
+ase.sty
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/latex/00miktex\epstopdf-sys.c
+fg))
+*geometry* driver: auto-detecting
+*geometry* detected driver: pdftex
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/latex/upquote\upquote.sty)
+Excluding 'CCSXML' comment.
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/latex/libertine\t1linuxbiolin
+umt-tlf.fd)
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/latex/microtype\mt-msa.cfg)
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/latex/microtype\mt-msb.cfg)
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/latex/libertine\ts1linuxliber
+tinet-tlf.fd)
+
+pdfTeX warning: pdflatex.exe (file ./Figure1_v2 2.pdf): PDF inclusion: found PD
+F version <1.7>, but at most version <1.5> allowed
+
+Class acmart Warning: A possible image without description on input line 149.
+
+
+Underfull \vbox (badness 10000) has occurred while \output is active [1.1{C:/Us
+ers/13627/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}{C:/Users/13627/AppD
+ata/Local/Programs/MiKTeX/fonts/enc/dvips/libertine/lbtn_76gpa5.enc}{C:/Users/1
+3627/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/libertine/lbtn_25tcsq.enc}{C
+:/Users/13627/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/libertine/lbtn_nh77
+jq.enc}{C:/Users/13627/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/libertine/
+lbtn_7grukw.enc}{C:/Users/13627/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/l
+ibertine/lbtn_oexx6f.enc}{C:/Users/13627/AppData/Local/Programs/MiKTeX/fonts/en
+c/dvips/libertine/lbtn_naooyc.enc}]
+Overfull \hbox (3.17009pt too wide) in paragraph at lines 180--184
+ []\T1/LinuxLibertineT-TLF/m/it/10 (-20) Compute asym-me-try and the pro-posed 
+cor-rec-tion.[] \T1/LinuxLibertineT-TLF/m/n/10 (-20) The frozen
+
+
+pdfTeX warning: pdflatex.exe (file ./Figure2 2.pdf): PDF inclusion: found PDF v
+ersion <1.7>, but at most version <1.5> allowed
+
+Class acmart Warning: A possible image without description on input line 243.
+
+[2.2 <./Figure1_v2 2.pdf> <./Figure2 2.pdf>]
+
+pdfTeX warning: pdflatex.exe (file ./Figure3 1.pdf): PDF inclusion: found PDF v
+ersion <1.7>, but at most version <1.5> allowed
+
+Class acmart Warning: A possible image without description on input line 282.
+
+[3.3 <./Figure3 1.pdf>]
+Underfull \hbox (badness 5374) in paragraph at lines 424--424
+[]\T1/LinuxLibertineT-TLF/m/n/9 (+20) v1: joint fine-tune
+
+Underfull \hbox (badness 1635) in paragraph at lines 424--424
+\T1/LinuxLibertineT-TLF/m/n/9 (+20) (re-con. + im-age +
+
+Underfull \hbox (badness 1852) in paragraph at lines 427--427
+[]\T1/LinuxLibertineT-TLF/m/n/9 (+20) v2: frozen au-toen-
+
+Underfull \hbox (badness 2698) in paragraph at lines 427--427
+\T1/LinuxLibertineT-TLF/m/n/9 (+20) coder, joint ob-jec-
+
+Underfull \hbox (badness 1533) in paragraph at lines 428--429
+[]\T1/LinuxLibertineT-TLF/m/n/9 (+20) test $\OML/nxlmi/m/it/9 h\OT1/LinuxLibert
+ineT-TLF/m/n/9 (+20) 5$ $0\OML/nxlmi/m/it/9 :\OT1/LinuxLibertineT-TLF/m/n/9 (+2
+0) 0164 \LMS/ntxsy/m/n/9 ! \OT1/LinuxLibertineT-TLF/m/n/9 (+20) 0\OML/nxlmi/m/i
+t/9 :\OT1/LinuxLibertineT-TLF/m/n/9 (+20) 0327$
+
+Underfull \hbox (badness 10000) in paragraph at lines 428--429
+\T1/LinuxLibertineT-TLF/m/n/9 (+20) ($\LMS/ntxsy/m/n/9 �\OT1/LinuxLibertineT-TL
+F/m/n/9 (+20) 99\OML/nxlmi/m/it/9 :\OT1/LinuxLibertineT-TLF/m/n/9 (+20) 3$\T1/L
+inuxLibertineT-TLF/m/n/9 (+20) %); shuf-fled/true
+
+Class acmart Warning: A possible image without description on input line 443.
+
+
+Underfull \vbox (badness 2653) has occurred while \output is active [4.4]
+
+Class acmart Warning: A possible image without description on input line 544.
+
+
+Underfull \hbox (badness 1642) in paragraph at lines 564--564
+ [][]\T1/LinuxLibertineT-TLF/b/n/6 (+20) Bernoulli
+
+Underfull \hbox (badness 1642) in paragraph at lines 567--567
+ [][]\T1/LinuxLibertineT-TLF/b/n/6 (+20) Oracle $\OML/nxlmi/m/it/6.5 ^^N[]$
+
+Class acmart Warning: A possible image without description on input line 579.
+
+[5.5{C:/Users/13627/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/libertine/lbt
+n_fygcup.enc} <./figs/fig3_wm_selection.pdf>]
+
+Class acmart Warning: A possible image without description on input line 644.
+
+
+Underfull \vbox (badness 6396) has occurred while \output is active
+
+Class acmart Warning: A possible image without description on input line 676.
+
+
+Class acmart Warning: A possible image without description on input line 684.
+
+[6.6 <./figs/fig4_fidelity_forest.pdf>]
+Overfull \hbox (5.20006pt too wide) in paragraph at lines 731--737
+ []\T1/LinuxLibertineT-TLF/m/it/10 (-20) Counterfactual la-bel pipeline.[] \T1/
+LinuxLibertineT-TLF/m/n/10 (-20) For each se-lected observation--
+[7.7 <./figs/fig5_head_strata.pdf> <./figs/fig6_operating_point.pdf>]
+
+Class acmart Warning: A possible image without description on input line 811.
+
+
+Underfull \vbox (badness 10000) has occurred while \output is active [8.8]
+
+Class acmart Warning: A possible image without description on input line 903.
+
+
+Underfull \vbox (badness 2237) has occurred while \output is active [9.9 <./fig
+s/fig7_frontier.pdf> <./figs/fig8_effects.pdf>]
+Overfull \hbox (5.12253pt too wide) in paragraph at lines 928--936
+\T1/LinuxLibertineT-TLF/m/n/10 (-20) both di-rec-tions. The ex-per-i-ment can-n
+ot cer-tify that the learned
+
+Class acmart Warning: A possible image without description on input line 943.
+
+
+Class acmart Warning: A possible image without description on input line 989.
+
+
+Class acmart Warning: A possible image without description on input line 1031.
+
+
+Overfull \hbox (1.52637pt too wide) in paragraph at lines 1034--1044
+\T1/LinuxLibertineT-TLF/m/n/10 (-20) If ac-tion di-ver-gence were the right sch
+ed-ul-ing tar-get, episodes
+
+Underfull \vbox (badness 1184) has occurred while \output is active [10.10{C:/U
+sers/13627/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/libertine/lbtn_ki75ao.
+enc} <./figs/fig9_power.pdf> <./figs/fig10_age_tail.pdf>]
+
+Class acmart Warning: A possible image without description on input line 1062.
+
+
+Class acmart Warning: A possible image without description on input line 1079.
+
+
+Class acmart Warning: A possible image without description on input line 1111.
+
+
+Class acmart Warning: A possible image without description on input line 1124.
+
+[11.11 <./figs/fig11_target_vs_outcome.pdf> <./figs/fig12_wrist.pdf>] [12.12 <.
+/figs/fig13_uplink.pdf> <./figs/fig14_device.pdf>] (main.bbl
+Underfull \hbox (badness 2409) in paragraph at lines 41--48
+\T1/LinuxLibertineT-TLF/m/n/8 (+20) Meth-ods for Vision-Language-Action Mod-els
+.  \T1/LinuxLibertineT-TLF/m/it/8 (+20) arXiv preprint
+
+Underfull \hbox (badness 1377) in paragraph at lines 199--206
+[]\T1/LinuxLibertineT-TLF/m/n/8 (+20) Juntao Gao, Feiyang Ye, Jing Zhang, and W
+en-jing Qian. 2025.
+
+Underfull \vbox (badness 10000) has occurred while \output is active
+Underfull \vbox (badness 10000) has occurred while \output is active [13.13]
+Underfull \vbox (badness 10000) has occurred while \output is active)
+
+Class acmart Warning: Some images may lack descriptions.
+(acmart)              ACM is committed to complying with the upcoming US ADA ht
+tps://accessiblyapp.com/accessibility-compliance/ada/ and European Accessibilit
+y Act (EAA) https://accessiblyapp.com/accessibility-compliance/eaa/ regulations
+ by actively working to ensure our publications and application services are ac
+cessible to individuals with disabilities, adhering to the WCAG guidelines to p
+rovide a seamless experience for all users, and regularly reviewing our accessi
+bility practices to maintain compliance with evolving standards. 
+(acmart)              To this end, we strongly encourage our authors to provide
+ alternative text and captions for images and multimedia content. It is also im
+portant to optimize color contrast for the visually impaired. Taking these impo
+rtant steps when creating your papers will ensure that the widest possible audi
+ence can ingest your work..
+
+
+Package balance Warning: You have called \balance in second column
+(balance)                Columns might not be balanced.
+
+
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/generic/stringenc\se-pdfdoc.d
+ef)
+(C:\Users\13627\AppData\Local\Programs\MiKTeX\tex/generic/stringenc\se-utf8.def
+) [14.14] (main.aux) )
+(see the transcript file for additional information)<C:/Users/13627/AppData/Loc
+al/Programs/MiKTeX/fonts/type1/public/newtx/LibertineMathMI.pfb><C:/Users/13627
+/AppData/Local/Programs/MiKTeX/fonts/type1/public/newtx/LibertineMathMI5.pfb><C
+:/Users/13627/AppData/Local/Programs/MiKTeX/fonts/type1/public/newtx/LibertineM
+athMI7.pfb><C:/Users/13627/AppData/Local/Programs/MiKTeX/fonts/type1/public/new
+tx/LibertineMathRM.pfb><C:/Users/13627/AppData/Local/Programs/MiKTeX/fonts/type
+1/public/libertine/LinBiolinumT.pfb><C:/Users/13627/AppData/Local/Programs/MiKT
+eX/fonts/type1/public/libertine/LinBiolinumTB.pfb><C:/Users/13627/AppData/Local
+/Programs/MiKTeX/fonts/type1/public/libertine/LinLibertineT.pfb><C:/Users/13627
+/AppData/Local/Programs/MiKTeX/fonts/type1/public/libertine/LinLibertineTB.pfb>
+<C:/Users/13627/AppData/Local/Programs/MiKTeX/fonts/type1/public/libertine/LinL
+ibertineTBI.pfb><C:/Users/13627/AppData/Local/Programs/MiKTeX/fonts/type1/publi
+c/libertine/LinLibertineTI.pfb><C:/Users/13627/AppData/Local/Programs/MiKTeX/fo
+nts/type1/public/libertine/LinLibertineTZ.pfb><C:/Users/13627/AppData/Local/Pro
+grams/MiKTeX/fonts/type1/public/newtx/NewTXMI.pfb><C:/Users/13627/AppData/Local
+/Programs/MiKTeX/fonts/type1/public/newtx/txexs.pfb><C:/Users/13627/AppData/Loc
+al/Programs/MiKTeX/fonts/type1/public/newtx/txmiaX.pfb><C:/Users/13627/AppData/
+Local/Programs/MiKTeX/fonts/type1/public/newtx/txsym.pfb><C:/Users/13627/AppDat
+a/Local/Programs/MiKTeX/fonts/type1/public/newtx/txsys.pfb>
+Output written on C:\Users\13627\Desktop\actdelta\tmp\pdfs\build\main.pdf (14 p
+ages, 1510213 bytes).
+Transcript written on C:\Users\13627\Desktop\actdelta\tmp\pdfs\build\main.log.
+pdflatex: major issue: So far, you have not checked for MiKTeX updates.
