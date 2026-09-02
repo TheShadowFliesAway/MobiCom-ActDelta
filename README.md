@@ -32,9 +32,15 @@ figs/make_figs.py       12 figures + numbers_auto.tex
 figs/numbers_auto.tex   generated macros; \input by Table 2 and §5 so the
                         table and the prose cannot drift apart
 figs/data_orig.py       your uploaded file, unmodified, for diffing
-figs/Figure{1_v2,2,3}.pdf
-                        hand-drawn schematics (Figs. 1-3), included by name
-                        via \graphicspath{{figs/}}
+figs/figstyles.tex      palette + TikZ styles shared by Figs. 1-3. Same
+                        semantic colours as style.py, so the schematics and
+                        the measured panels read as one figure set
+figs/fig1_system.tex    Fig. 1, system overview
+figs/fig2_ladder.tex    Fig. 2, the three questions and their verdicts
+figs/fig3_protocol.tex  Fig. 3, the four frozen stages
+                        These three are \input by main.tex, not imported as
+                        PDFs: they are drawn at true \columnwidth (84 mm) so
+                        nothing is rescaled and no label falls below 7 pt.
 _offline/acmart.cls     fallback class. NOT for submission.
 ```
 

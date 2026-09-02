@@ -1,0 +1,66 @@
+% ===================================================================
+%  Figure 3 -- the four frozen stages of the protocol.
+%
+%  The previous version routed these four stages along a decorative
+%  S-curve, which carried no information and cost most of the panel's
+%  area. What actually matters is the ORDER and the fact that each
+%  boundary is a one-way freeze, so the figure is a plain vertical spine
+%  with a padlock at every commitment point.
+%
+%  Counts are the ones the text reports: 500-pair pilot over 30 held-out
+%  episodes (sec. 7); 4,200 offline pairs, 1,400 per split (sec. 6.3);
+%  blind test of 800 cells at 160 episodes per arm (sec. 10.2); oracle
+%  Gate B of 400 cells at 80 episodes per arm (sec. 10.4).
+%
+%  Requires figs/figstyles.tex.
+% ===================================================================
+\begin{tikzpicture}[x=1mm,y=1mm]
+
+% ------------------------------------------------------------- the spine
+\draw[draw=fgInk!25, line width=0.45pt] (5,9.5) -- (5,47);
+
+\tikzset{
+  stage/.style = {circle, draw=#1, fill=#1, text=white, inner sep=0pt,
+                  minimum size=5.6mm, font=\scriptsize\bfseries},
+}
+
+% ------------------------------------------------------------- stage 1
+\node[stage=fgGrey] at (5,47) {1};
+\node[lblink, anchor=west, text width=71mm, align=left] at (10.5,47)
+     {\textbf{Pilot} \textemdash\ 500 pairs, 30 held-out episodes\\[0.3mm]
+      \textcolor{fgMuted}{choose the trigger metric}};
+
+\lockglyph{(5,40.75)}{fgInk!55}
+\node[lbl, anchor=west] at (8.5,40.75) {metric fixed on the first 200 pairs};
+
+% ------------------------------------------------------------- stage 2
+\node[stage=fgBlue] at (5,34.5) {2};
+\node[lblink, anchor=west, text width=71mm, align=left] at (10.5,34.5)
+     {\textbf{Offline} \textemdash\ 4{,}200 pairs, 1{,}400 per split\\[0.3mm]
+      \textcolor{fgMuted}{train the relevance head on frozen latents}};
+
+\lockglyph{(5,28.25)}{fgInk!55}
+\node[lbl, anchor=west] at (8.5,28.25) {head, thresholds and statistics frozen};
+
+% ------------------------------------------------------------- stage 3
+\node[stage=fgBlue] at (5,22) {3};
+\node[lblink, anchor=west, text width=71mm, align=left] at (10.5,22)
+     {\textbf{Blind} \textemdash\ 800 cells, 160 episodes per arm\\[0.3mm]
+      \textcolor{fgMuted}{rate-matched closed-loop test driven by $\hat\delta_t$}};
+
+\lockglyph{(5,15.75)}{fgRed!70}
+\node[lblr, anchor=west] at (8.5,15.75) {$\hat\delta_t\rightarrow\delta_t$, and nothing else};
+
+% ------------------------------------------------------------- stage 4
+\node[stage=fgRed] at (5,9.5) {4};
+\node[lblink, anchor=west, text width=71mm, align=left] at (10.5,9.5)
+     {\textbf{Oracle} \textemdash\ 400 cells, 80 episodes per arm\\[0.3mm]
+      \textcolor{fgMuted}{isolates estimator error from the choice of target}};
+
+% -------------------------------------------------------------- footer
+\draw[rule] (0,3.6) -- (84,3.6);
+\node[lbl, text width=84mm, align=center] at (42,1.9)
+     {frozen throughout: policy, world model, tasks, initial states,
+      budgets, statistics};
+
+\end{tikzpicture}

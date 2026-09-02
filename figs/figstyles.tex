@@ -1,0 +1,94 @@
+% ===================================================================
+%  Shared TikZ styles for the schematic figures (Figs. 1-3).
+%
+%  The palette is the same semantic palette as figs/style.py, so the
+%  schematics and the measured panels read as one figure set:
+%
+%     fgBlue  #1F5FA9   the learned / adopted path      (style.py "learned")
+%     fgRed   #C1272D   the oracle and the failed claim (style.py "oracle")
+%     fgGrey  #4A4A4A   the control path, neutral       (style.py "periodic")
+%
+%  Everything is drawn at true size in millimetres (x=1mm,y=1mm) and each
+%  picture is <= 84 mm wide, which is \columnwidth for acmart sigconf at
+%  10 pt. Nothing is ever passed through \resizebox: scaling is what made
+%  the previous versions of these figures illegible.
+%
+%  Smallest type used anywhere below is \scriptsize = 7 pt.
+% ===================================================================
+
+\definecolor{fgInk}{HTML}{2B2B2B}
+\definecolor{fgMuted}{HTML}{6E6E6E}
+\definecolor{fgBlue}{HTML}{1F5FA9}
+\definecolor{fgRed}{HTML}{C1272D}
+\definecolor{fgGrey}{HTML}{4A4A4A}
+
+\tikzset{
+  % ---------------------------------------------------------- containers
+  band/.style      = {rounded corners=1.1pt, draw=none},
+  bandlbl/.style   = {font=\scriptsize\bfseries, inner sep=0pt},
+  % ---------------------------------------------------------- boxes
+  bx/.style        = {rounded corners=1.1pt, draw=fgInk!45, line width=0.4pt,
+                      fill=white, align=center, font=\scriptsize,
+                      inner sep=0.7mm, text=fgInk},
+  bxb/.style       = {bx, draw=fgBlue!70, fill=fgBlue!7},
+  bxr/.style       = {bx, draw=fgRed!70,  fill=fgRed!7},
+  bxg/.style       = {bx, draw=fgGrey!60, fill=black!5},
+  % ---------------------------------------------------------- flow arrows
+  ar/.style        = {-{Latex[length=1.35mm,width=1.05mm]},
+                      draw=fgInk!70, line width=0.45pt},
+  arb/.style       = {ar, draw=fgBlue},
+  arr/.style       = {ar, draw=fgRed},
+  arg/.style       = {ar, draw=fgGrey!75},
+  arfb/.style      = {ar, draw=fgGrey!70, dashed, dash pattern=on 0.9mm off 0.7mm},
+  % ---------------------------------------------------------- text
+  lbl/.style       = {font=\scriptsize, text=fgMuted, inner sep=0.35mm,
+                      align=center},
+  lblink/.style    = {lbl, text=fgInk},
+  lblb/.style      = {lbl, text=fgBlue},
+  lblr/.style      = {lbl, text=fgRed},
+  tag/.style       = {font=\scriptsize\bfseries, inner sep=0.35mm,
+                      align=center},
+  rule/.style      = {draw=fgInk!22, line width=0.35pt},
+}
+
+% ------------------------------------------------------------------ glyphs
+% A minimal camera, drawn rather than imported: the previous figures used
+% clip art whose line weight and grey did not match anything else on the page.
+% #1 = centre, #2 = draw colour.
+\newcommand{\camglyph}[2]{%
+  \colorlet{glyphc}{#2}%
+  \begin{scope}[shift={#1}]
+    \fill[glyphc!12] (-3.1,-1.8) rectangle (2.1,1.8);
+    \draw[draw=glyphc, line width=0.4pt] (-3.1,-1.8) rectangle (2.1,1.8);
+    \draw[draw=glyphc, line width=0.4pt, fill=white] (-1.0,0) circle (0.95);
+    \draw[draw=glyphc, line width=0.4pt, fill=glyphc!25]
+        (2.1,1.0) -- (3.5,1.8) -- (3.5,-1.8) -- (2.1,-1.0) -- cycle;
+  \end{scope}}
+
+% A padlock, used in Fig. 3 to mark each irreversible freeze.
+% #1 = centre, #2 = draw colour.
+\newcommand{\lockglyph}[2]{%
+  \colorlet{glyphc}{#2}%
+  \begin{scope}[shift={#1}]
+    \draw[draw=glyphc, line width=0.4pt] (-0.62,0.28) arc (180:0:0.62);
+    \draw[draw=glyphc, line width=0.35pt, fill=glyphc!16, rounded corners=0.15pt]
+        (-1.02,-1.02) rectangle (1.02,0.32);
+  \end{scope}}
+
+% Verdict badges for Fig. 2. Drawn rather than set from a symbol font so the
+% stroke weight matches the rules and arrows around them.
+% #1 = centre, #2 = colour.
+\newcommand{\okglyph}[2]{%
+  \colorlet{glyphc}{#2}%
+  \begin{scope}[shift={#1}]
+    \draw[draw=glyphc, line width=0.4pt, fill=glyphc!10] (0,0) circle (1.35);
+    \draw[draw=glyphc, line width=0.55pt, line cap=round, line join=round]
+        (-0.62,0.05) -- (-0.18,-0.5) -- (0.68,0.6);
+  \end{scope}}
+\newcommand{\noglyph}[2]{%
+  \colorlet{glyphc}{#2}%
+  \begin{scope}[shift={#1}]
+    \draw[draw=glyphc, line width=0.4pt, fill=glyphc!10] (0,0) circle (1.35);
+    \draw[draw=glyphc, line width=0.55pt, line cap=round]
+        (-0.52,-0.52) -- (0.52,0.52)  (-0.52,0.52) -- (0.52,-0.52);
+  \end{scope}}

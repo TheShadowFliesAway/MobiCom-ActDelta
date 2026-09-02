@@ -34,6 +34,7 @@
 
 \graphicspath{{figs/}}
 \input{figs/numbers_auto}          % auto-generated; never edit
+\input{figs/figstyles}             % palette + TikZ styles for Figs. 1-3
 
 % ------------------------------------------------------- provenance macros
 \definecolor{tbdc}{HTML}{C8102E}
@@ -143,7 +144,7 @@ transmission scheduling are different problems.
 % ------------------------------------------------------------ FIGURE 1
 \begin{figure}[t]
 \centering
-\includegraphics[width=\columnwidth]{Figure1_v2.pdf}
+\input{figs/fig1_system}
 \caption{ActDelta schedules the agent view while wrist view and proprioception remain current in closed loop.}
 \label{fig:system}
 \end{figure}
@@ -237,8 +238,10 @@ the third.
 % ------------------------------------------------------- NEW FIGURE A
 \begin{figure}[t]
 \centering
-\includegraphics[width=\columnwidth]{Figure2.pdf}
-\caption{From reconstruction fidelity to decision relevance and refresh value.}
+\input{figs/fig2_ladder}
+\caption{The three questions the paper separates. Fidelity does not rank
+decision relevance (\textsf{C1}); decision relevance is learnable offline
+(\textsf{C2}); neither buys refresh value in closed loop (\textsf{C3}).}
 \label{fig:ladder}
 \end{figure}
 
@@ -276,7 +279,7 @@ separation.
 % ------------------------------------------------------------ FIGURE 2
 \begin{figure}[t]
 \centering
-\includegraphics[width=\columnwidth]{Figure3.pdf}
+\input{figs/fig3_protocol}
 \caption{Four frozen stages isolate metric choice, relevance learning, blind testing, and the oracle target.}
 \label{fig:pipeline}
 \end{figure}

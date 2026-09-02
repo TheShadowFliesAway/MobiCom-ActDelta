@@ -1,0 +1,81 @@
+% ===================================================================
+%  Figure 2 -- the three questions, and how far each one was answered.
+%
+%  NOTE ON CONTENT. The previous version of this figure still showed C3 as
+%  "gap remains open / not yet estimated", with question marks. That was
+%  true of an earlier draft only. C3 has since been tested and it fails:
+%  the learned trigger moves success by +3.13 pp at a 25% budget and
+%  -3.75 pp at 50% (both intervals cover zero, sec. 10.1), and the
+%  true-divergence oracle fails at the same scale (Gate B, sec. 10.4).
+%  Reporting that outcome is the paper's principal finding, so the figure
+%  states it rather than deferring it.
+%
+%  Rungs read top to bottom, in the order the paper argues them. The first
+%  two are frame-level surrogates; only the third is the systems objective
+%  of Eq. (2). Colour follows figs/style.py: grey = rejected control,
+%  blue = the adopted offline result, red = the claim that does not hold.
+%
+%  Every line in the right-hand column is broken by hand. Left to wrap on
+%  its own, "AUROC" splits across lines.
+%
+%  Requires figs/figstyles.tex.
+% ===================================================================
+\begin{tikzpicture}[x=1mm,y=1mm]
+
+% ------------------------------------------------------------- rung 1
+\node[bxg] at (46,46.5) [minimum width=76mm, minimum height=13mm] {};
+\node[lblink, anchor=west, text width=43mm, align=left] at (10,46.5)
+     {\textbf{Fidelity.} Is $\hat o_t$ visually close to $o_t$?\\[0.3mm]
+      \textcolor{fgMuted}{pixel RMS $\cdot$ SSIM $\cdot$ LPIPS $\cdot$ latent RMS}};
+\draw[rule] (55,41) -- (55,52);
+\node[lbl, anchor=west, text width=21mm, align=left] at (56.5,46.5)
+     {\textcolor{fgGrey}{\textbf{C1} rejected}\\[0.3mm]
+      pooled $\rho_s$\\
+      $-0.117$ to $-0.028$};
+\noglyph{(81,46.5)}{fgGrey}
+
+% ------------------------------------------------------------- rung 2
+\node[bxb] at (46,28.0) [minimum width=76mm, minimum height=13mm] {};
+\node[lblink, anchor=west, text width=43mm, align=left] at (10,28.0)
+     {\textbf{Decision relevance.} Does $\hat o_t$ change the next
+      action chunk?\\[0.3mm]
+      \textcolor{fgMuted}{action divergence $\delta_t$, Eq.~(3)}};
+\draw[rule] (55,22.5) -- (55,33.5);
+\node[lbl, anchor=west, text width=21mm, align=left] at (56.5,28.0)
+     {\textcolor{fgBlue}{\textbf{C2} supported}\\[0.3mm]
+      $\rho_s = 0.684$\\
+      AUROC $0.833$};
+\okglyph{(81,28.0)}{fgBlue}
+
+% ------------------------------------------------------------- rung 3
+\node[bxr] at (46,9.5) [minimum width=76mm, minimum height=13mm] {};
+\node[lblink, anchor=west, text width=43mm, align=left] at (10,9.5)
+     {\textbf{Refresh value.} Does sending now change episode
+      success?\\[0.3mm]
+      \textcolor{fgMuted}{$\max_g\mathbb{E}[S]$ s.t.\ $\mathbb{E}[R]\le b$, Eq.~(2)}};
+\draw[rule] (55,4) -- (55,15);
+\node[lbl, anchor=west, text width=21mm, align=left] at (56.5,9.5)
+     {\textcolor{fgRed}{\textbf{C3} not achieved}\\[0.3mm]
+      $+3.13$/$-3.75$\pp\\
+      oracle also fails};
+\noglyph{(81,9.5)}{fgRed}
+
+% -------------------------------------------------------- transitions
+\draw[ar] (16,40) -- (16,34.5);
+\node[lbl, anchor=west] at (18,37.25)
+     {swapping the surrogate improves offline alignment};
+
+\draw[arr] (16,21.5) -- (16,16);
+\node[lblr, anchor=west] at (18,18.75)
+     {\textbf{but the offline gain does not transfer online}};
+
+% ------------------------------------------------- what is a surrogate
+\draw[decorate, decoration={brace, amplitude=1.0mm}, draw=fgInk!35,
+      line width=0.35pt] (5.2,53) -- (5.2,21.5);
+\node[lbl, rotate=90] at (2.2,37.25) {frame-level surrogate};
+
+\draw[decorate, decoration={brace, amplitude=1.0mm}, draw=fgRed!45,
+      line width=0.35pt] (5.2,16) -- (5.2,3);
+\node[lblr, rotate=90] at (2.2,9.5) {objective};
+
+\end{tikzpicture}
