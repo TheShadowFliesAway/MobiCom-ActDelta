@@ -2,282 +2,213 @@
 \providecommand\hyper@newdestlabel[2]{}
 \providecommand\HyField@AuxAddToFields[1]{}
 \providecommand\HyField@AuxAddToCoFields[2]{}
-\citation{kim2024openvla}
-\citation{black2024pi0,intelligence2025pi05}
-\citation{vlagents2026}
-\citation{raca20205g}
-\citation{miskowicz2006sod}
-\citation{suh2007predictor,nguyen2009stochasticsod}
-\citation{wmsemcom2025}
+\citation{black2024pi0,kim2024openvla,pi2025pi05}
+\citation{cao2026edgeserving,dai2025actionflow,julg2026vlagents,li2026oxygen,peng2026latency}
+\citation{jiang2025semworld,miskowicz2006sod,nguyen2008area,suh2007linear}
+\citation{black2024pi0,chi2023diffusion,zhao2023aloha}
+\citation{cao2026edgeserving,dai2025actionflow,julg2026vlagents,li2026oxygen,peng2026latency}
+\citation{narayanan2020lumos5g,narayanan2021variegated,raca2020beyond}
 \@writefile{toc}{\contentsline {section}{Abstract}{1}{section*.1}\protected@file@percent }
 \@writefile{toc}{\contentsline {section}{\numberline {1}Introduction}{1}{section.1}\protected@file@percent }
-\newlabel{sec:intro}{{1}{1}{Introduction}{section.1}{}}
-\@writefile{toc}{\contentsline {paragraph}{The obvious fix is old, and it triggers on the wrong quantity.}{1}{section*.5}\protected@file@percent }
-\citation{khazatsky2024droid}
-\citation{liu2023libero}
-\citation{cloudedgevla2026}
-\citation{vlagents2026}
-\citation{actionflow2025,edgeserving2026,oxygen2026}
-\citation{efmedge2026}
-\citation{suh2009dropouts}
-\citation{miskowicz2006sod,suh2007predictor}
-\citation{wmsemcom2025}
-\citation{pilworld2026,hafner2023dreamerv3}
-\citation{zhao2023act,chi2023diffusion,black2024pi0}
-\citation{khazatsky2024droid}
-\citation{vlagents2026}
-\@writefile{toc}{\contentsline {paragraph}{Why the policy is on the server in the first place.}{2}{section*.6}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{Silence needs a protocol.}{2}{section*.7}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{ActDelta\xspace  .}{2}{section*.8}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{What we do not claim.}{2}{section*.9}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{Contributions.}{2}{section*.10}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {2}Background and Motivation}{2}{section.2}\protected@file@percent }
-\newlabel{sec:motivation}{{2}{2}{Background and Motivation}{section.2}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {2.1}What Is on the Wire, and What the Link Gives}{2}{subsection.2.1}\protected@file@percent }
-\newlabel{sec:m0}{{2.1}{2}{What Is on the Wire, and What the Link Gives}{subsection.2.1}{}}
-\citation{raca20205g,narayanan2020lumos5g,narayanan2021variegated}
-\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces \textbf  {ActDelta\xspace  's closed-loop predictive transmission path.} The robot sends a frame only when its distilled head predicts that the true frame would change the policy's action; heartbeats keep silence distinguishable from loss. Red marks what ActDelta\xspace  adds, grey what it reuses unchanged; \S  \ref {sec:design} walks the numbered path.}}{3}{figure.caption.11}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {2}Background and Motivation}{1}{section.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Edge-offloaded robot policies.}{1}{section*.6}\protected@file@percent }
+\citation{arzen1999pid,astrom2002riemann,heemels2012intro,miskowicz2006sod,miskowicz2007asymptotic,tabuada2007event}
+\citation{jiang2025semworld,wang2026worldtwin,yang2024agentdriven,yin2025genvideo}
+\citation{black2024pi0,kim2024openvla,pi2025pi05}
+\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces ActDelta schedules the agent view while wrist view and proprioception remain current in closed loop.}}{2}{figure.caption.5}\protected@file@percent }
 \providecommand*\caption@xref[2]{\@setref\relax\@undefined{#1}}
-\newlabel{fig:arch}{{1}{3}{\textbf {\sys 's closed-loop predictive transmission path.} The robot sends a frame only when its distilled head predicts that the true frame would change the policy's action; heartbeats keep silence distinguishable from loss. Red marks what \sys adds, grey what it reuses unchanged; \S \ref {sec:design} walks the numbered path}{figure.caption.11}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces \textbf  {The deployed configuration does not fit the link.} Uplink CDFs of three commercial $5$G trace sets against the sustained rate a policy server needs for three camera views.}}{3}{figure.caption.12}\protected@file@percent }
-\newlabel{fig:m0}{{2}{3}{\textbf {The deployed configuration does not fit the link.} Uplink CDFs of three commercial $5$G trace sets against the sustained rate a policy server needs for three camera views}{figure.caption.12}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {1}{\ignorespaces \textbf  {Measured cost of one control step.} Jetson Orin NX ($16$\,GB), bf16, batch $1$, median of $10^3$ invocations. OpenVLA does not fit in the board's memory at all.}}{3}{table.caption.13}\protected@file@percent }
-\newlabel{tab:asym}{{1}{3}{\textbf {Measured cost of one control step.} Jetson Orin NX ($16$\,GB), bf16, batch $1$, median of $10^3$ invocations. OpenVLA does not fit in the board's memory at all}{table.caption.13}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {2.2}The Compute Asymmetry Is Real and Structural}{3}{subsection.2.2}\protected@file@percent }
-\newlabel{sec:rho}{{2.2}{3}{The Compute Asymmetry Is Real and Structural}{subsection.2.2}{}}
-\citation{cloudedgevla2026,vlagents2026,actionflow2025,edgeserving2026,efmedge2026}
-\citation{khazatsky2024droid}
+\newlabel{fig:system}{{1}{2}{ActDelta schedules the agent view while wrist view and proprioception remain current in closed loop}{figure.caption.5}{}}
+\newlabel{fig:system@cref}{{[figure][1][]1}{[1][1][]2}{}{}{}}
+\@writefile{toc}{\contentsline {paragraph}{Predictive transmission.}{2}{section*.7}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Compute asymmetry and the proposed correction.}{2}{section*.8}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Baselines and accounting.}{2}{section*.9}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {3}Problem Formulation and Claim Structure}{2}{section.3}\protected@file@percent }
+\newlabel{eq:obj}{{2}{2}{Problem Formulation and Claim Structure}{equation.2}{}}
+\newlabel{eq:obj@cref}{{[equation][2][]2}{[1][2][]2}{}{}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.1}Four Candidate Scheduling Signals}{2}{subsection.3.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.2}Layered Claims}{2}{subsection.3.2}\protected@file@percent }
 \citation{liu2023libero}
-\citation{li2024simplerenv}
-\citation{matthews2025kinetix}
-\citation{shukor2025smolvla}
-\citation{raca20205g}
-\citation{narayanan2020lumos5g}
-\citation{narayanan2021variegated}
-\citation{netravali2015mahimahi}
-\citation{black2025rtc}
-\citation{wmsemcom2025,genvidfusion2025}
-\newlabel{eq:rho}{{1}{4}{The Compute Asymmetry Is Real and Structural}{equation.1}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {2.3}Measurement Setup}{4}{subsection.2.3}\protected@file@percent }
-\newlabel{sec:m-setup}{{2.3}{4}{Measurement Setup}{subsection.2.3}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {2.4}How Far Ahead We Can See}{4}{subsection.2.4}\protected@file@percent }
-\newlabel{sec:m1}{{2.4}{4}{How Far Ahead We Can See}{subsection.2.4}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces \textbf  {Action conditioning roughly doubles the usable prediction window.} Error is measured in the decision space of \S  \ref {sec:trigger}, normalized so that $0.35$ is where the policy's action begins to change materially (Figure\nonbreakingspace \ref {fig:m3}b).}}{4}{figure.caption.14}\protected@file@percent }
-\newlabel{fig:m1}{{3}{4}{\textbf {Action conditioning roughly doubles the usable prediction window.} Error is measured in the decision space of \S \ref {sec:trigger}, normalized so that $0.35$ is where the policy's action begins to change materially (Figure~\ref {fig:m3}b)}{figure.caption.14}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {2.5}Fidelity and Decision Relevance Are Decoupled}{4}{subsection.2.5}\protected@file@percent }
-\newlabel{sec:m2}{{2.5}{4}{Fidelity and Decision Relevance Are Decoupled}{subsection.2.5}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces \textbf  {Fidelity and decision relevance are different quantities.} (a)\nonbreakingspace Predicted frames, by pixel reconstruction error against the divergence $\|\pi (o_t)-\pi (\hat  {o}_t)\|$ of the policy's action; a fidelity trigger cuts vertically, the decision it should make cuts horizontally. (b)\nonbreakingspace Rank correlation of six candidate distances with that same ground truth.}}{5}{figure.caption.15}\protected@file@percent }
-\newlabel{fig:m2}{{4}{5}{\textbf {Fidelity and decision relevance are different quantities.} (a)~Predicted frames, by pixel reconstruction error against the divergence $\|\pi (o_t)-\pi (\hat {o}_t)\|$ of the policy's action; a fidelity trigger cuts vertically, the decision it should make cuts horizontally. (b)~Rank correlation of six candidate distances with that same ground truth}{figure.caption.15}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {2.6}The Closed-Loop Cost of an Imagined Observation}{5}{subsection.2.6}\protected@file@percent }
-\newlabel{sec:m3}{{2.6}{5}{The Closed-Loop Cost of an Imagined Observation}{subsection.2.6}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces \textbf  {The closed-loop price of an imagined observation.} (a)\nonbreakingspace Success versus the number of consecutive steps the server spends on predictions. (b)\nonbreakingspace The same episodes against the quantity a trigger can actually observe; the knee at $\tau ^\star \!=\!0.35$ is the policy-flip threshold used throughout.}}{5}{figure.caption.16}\protected@file@percent }
-\newlabel{fig:m3}{{5}{5}{\textbf {The closed-loop price of an imagined observation.} (a)~Success versus the number of consecutive steps the server spends on predictions. (b)~The same episodes against the quantity a trigger can actually observe; the knee at $\tau ^\star \!=\!0.35$ is the policy-flip threshold used throughout}{figure.caption.16}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {2.7}Silence Is Ambiguous, and Dangerously So}{5}{subsection.2.7}\protected@file@percent }
-\newlabel{sec:m4}{{2.7}{5}{Silence Is Ambiguous, and Dangerously So}{subsection.2.7}{}}
-\citation{pilworld2026,hafner2023dreamerv3,wu2024ivideogpt}
-\@writefile{lof}{\contentsline {figure}{\numberline {6}{\ignorespaces \textbf  {What an undetected loss does to a closed loop.} One dropped resync frame at $t\!=\!6.6$\,s under $1.2\%$ uplink loss, under three protocols.}}{6}{figure.caption.17}\protected@file@percent }
-\newlabel{fig:m4}{{6}{6}{\textbf {What an undetected loss does to a closed loop.} One dropped resync frame at $t\!=\!6.6$\,s under $1.2\%$ uplink loss, under three protocols}{figure.caption.17}{}}
-\@writefile{toc}{\contentsline {paragraph}{Takeaways.}{6}{section*.18}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {3}Design}{6}{section.3}\protected@file@percent }
-\newlabel{sec:design}{{3}{6}{Design}{section.3}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.1}The Shared Predictor}{6}{subsection.3.1}\protected@file@percent }
-\newlabel{sec:wm}{{3.1}{6}{The Shared Predictor}{subsection.3.1}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.2}Triggering on Decision Relevance}{6}{subsection.3.2}\protected@file@percent }
-\newlabel{sec:trigger}{{3.2}{6}{Triggering on Decision Relevance}{subsection.3.2}{}}
-\@writefile{toc}{\contentsline {paragraph}{The quantity we want, and why we cannot have it.}{6}{section*.19}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{The distilled head.}{6}{section*.20}\protected@file@percent }
-\citation{policyvoi2027}
-\citation{black2025rtc}
-\citation{licvla2026}
-\newlabel{eq:head}{{2}{7}{The distilled head}{equation.2}{}}
-\@writefile{toc}{\contentsline {paragraph}{The rule.}{7}{section*.21}\protected@file@percent }
-\newlabel{eq:trigger}{{3}{7}{The rule}{equation.3}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.3}Making the Threshold a Network Citizen}{7}{subsection.3.3}\protected@file@percent }
-\newlabel{sec:adaptive}{{3.3}{7}{Making the Threshold a Network Citizen}{subsection.3.3}{}}
-\newlabel{eq:tau}{{4}{7}{Making the Threshold a Network Citizen}{equation.4}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.4}The Resynchronization Protocol}{7}{subsection.3.4}\protected@file@percent }
-\newlabel{sec:protocol}{{3.4}{7}{The Resynchronization Protocol}{subsection.3.4}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {7}{\ignorespaces \textbf  {The protocol makes silence unambiguous.} Heartbeats carry a sequence number and a rolling hash of the actions the robot actually executed, so the server can separate correct silence from loss and demand recovery.}}{7}{figure.caption.22}\protected@file@percent }
-\newlabel{fig:proto}{{7}{7}{\textbf {The protocol makes silence unambiguous.} Heartbeats carry a sequence number and a rolling hash of the actions the robot actually executed, so the server can separate correct silence from loss and demand recovery}{figure.caption.22}{}}
-\newlabel{eq:bound}{{5}{7}{The Resynchronization Protocol}{equation.5}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.5}Composition, and What Breaks}{7}{subsection.3.5}\protected@file@percent }
-\newlabel{sec:compose}{{3.5}{7}{Composition, and What Breaks}{subsection.3.5}{}}
-\citation{pilworld2026}
-\citation{cadene2024lerobot}
-\citation{vlagents2026}
-\citation{netravali2015mahimahi}
-\citation{vlagents2026}
-\citation{vlagents2026}
-\citation{sullivan2012hevc}
-\citation{miskowicz2006sod,suh2007predictor}
-\citation{wmsemcom2025}
-\citation{licvla2026}
-\@writefile{toc}{\contentsline {section}{\numberline {4}Implementation}{8}{section.4}\protected@file@percent }
-\newlabel{sec:impl}{{4}{8}{Implementation}{section.4}{}}
-\@writefile{toc}{\contentsline {paragraph}{World model and policies.}{8}{section*.23}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{Robot client.}{8}{section*.24}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{Transport.}{8}{section*.25}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{Compute-budget emulation.}{8}{section*.26}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {5}Evaluation}{8}{section.5}\protected@file@percent }
-\newlabel{sec:eval}{{5}{8}{Evaluation}{section.5}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {8}{\ignorespaces \textbf  {The one comparison that isolates the paper's mechanism.} Identical world model, policy, link and protocol; each arm's threshold is tuned so that the two match on task success within $0.7$\,pp\xspace  .}}{8}{figure.caption.28}\protected@file@percent }
-\newlabel{fig:c2}{{8}{8}{\textbf {The one comparison that isolates the paper's mechanism.} Identical world model, policy, link and protocol; each arm's threshold is tuned so that the two match on task success within $0.7$\pp }{figure.caption.28}{}}
-\@writefile{toc}{\contentsline {paragraph}{Setup and baselines.}{8}{section*.27}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.1}Fidelity vs.\ Decision: The Single-Variable Result}{8}{subsection.5.1}\protected@file@percent }
-\newlabel{sec:eval-c2}{{5.1}{8}{Fidelity vs.\ Decision: The Single-Variable Result}{subsection.5.1}{}}
-\citation{vlagents2026}
-\citation{suh2007predictor}
-\citation{wmsemcom2025}
-\citation{licvla2026}
-\@writefile{lof}{\contentsline {figure}{\numberline {9}{\ignorespaces \textbf  {The byte--success frontier.} ActDelta\xspace  dominates every baseline at every operating point; each curve is a sweep of that arm's own threshold.}}{9}{figure.caption.30}\protected@file@percent }
-\newlabel{fig:pareto}{{9}{9}{\textbf {The byte--success frontier.} \sys dominates every baseline at every operating point; each curve is a sweep of that arm's own threshold}{figure.caption.30}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.2}The Full Frontier}{9}{subsection.5.2}\protected@file@percent }
-\newlabel{sec:eval-main}{{5.2}{9}{The Full Frontier}{subsection.5.2}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {10}{\ignorespaces \textbf  {Benefit versus compute ratio, with both failure boundaries.} Shading marks the region in which the world model cannot finish inside the control period and ActDelta\xspace  degrades to fixed-rate transmission.}}{9}{figure.caption.31}\protected@file@percent }
-\newlabel{fig:rho}{{10}{9}{\textbf {Benefit versus compute ratio, with both failure boundaries.} Shading marks the region in which the world model cannot finish inside the control period and \sys degrades to fixed-rate transmission}{figure.caption.31}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.3}Where the Mechanism Applies}{9}{subsection.5.3}\protected@file@percent }
-\newlabel{sec:eval-rho}{{5.3}{9}{Where the Mechanism Applies}{subsection.5.3}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.4}Does the Protocol Earn Its Complexity?}{9}{subsection.5.4}\protected@file@percent }
-\newlabel{sec:eval-proto}{{5.4}{9}{Does the Protocol Earn Its Complexity?}{subsection.5.4}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {2}{\ignorespaces \textbf  {End-to-end results.} Send rate is the \% of control steps at which a frame is transmitted; divergence is measured in the decision space of \S  \ref {sec:trigger}, where $0.35$ flips the action.}}{10}{table.caption.29}\protected@file@percent }
-\newlabel{tab:main}{{2}{10}{\textbf {End-to-end results.} Send rate is the \% of control steps at which a frame is transmitted; divergence is measured in the decision space of \S \ref {sec:trigger}, where $0.35$ flips the action}{table.caption.29}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {11}{\ignorespaces \textbf  {Ablation} at $1.2\%$ uplink loss, so that the protocol components are exercised. Purple marks the two protocol rows, which lose success \emph  {without} saving bytes.}}{10}{figure.caption.32}\protected@file@percent }
-\newlabel{fig:ablation}{{11}{10}{\textbf {Ablation} at $1.2\%$ uplink loss, so that the protocol components are exercised. Purple marks the two protocol rows, which lose success \emph {without} saving bytes}{figure.caption.32}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.5}Ablations}{10}{subsection.5.5}\protected@file@percent }
-\newlabel{sec:eval-ablation}{{5.5}{10}{Ablations}{subsection.5.5}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {3}{\ignorespaces \textbf  {Robot-side cost per control step}, Orin NX, median of $10^5$ invocations; the $15$\,Hz control period is $66.7$\,ms.}}{10}{table.caption.33}\protected@file@percent }
-\newlabel{tab:overhead}{{3}{10}{\textbf {Robot-side cost per control step}, Orin NX, median of $10^5$ invocations; the $15$\,Hz control period is $66.7$\,ms}{table.caption.33}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.6}Cost on the Robot}{10}{subsection.5.6}\protected@file@percent }
-\newlabel{sec:eval-overhead}{{5.6}{10}{Cost on the Robot}{subsection.5.6}{}}
-\citation{astrom2002lebesgue,arzen1999pid}
-\citation{miskowicz2006sod}
-\citation{suh2007predictor}
-\citation{nguyen2009stochasticsod}
-\citation{miskowicz2007kldiv}
-\citation{molin2013optimal,mamduhi2017error,heemels2012introduction,tabuada2007eventtriggered}
-\citation{suh2009dropouts}
-\citation{wmsemcom2025}
-\citation{gosc2025video,genvidfusion2025,resividtok2026,agentsemcom2025,genvidcomp2025,gunduz2023beyond,kountouris2021semantics,bourtsoulatze2019deepjscc}
-\citation{wmsemcom2025}
-\citation{cdtsemcom2026}
-\citation{bejczy1990phantom}
-\citation{anderson1989bilateral,hannaford2002passivity}
-\citation{passenberg2010survey,brudnak2016predictive}
-\citation{genpreddisplay2026}
-\citation{licvla2026}
-\citation{onewmvla2026}
-\citation{compressorvla2025,vlacache2025}
-\citation{tofc2025,dinolink2026}
-\citation{li2020reducto,du2020dds,zhang2018awstream,chen2015glimpse}
-\@writefile{lof}{\contentsline {figure}{\numberline {12}{\ignorespaces \textbf  {Franka Panda, $160$ trials.} Two tasks against five shaped uplink capacities; bars are $95\%$ CIs.}}{11}{figure.caption.34}\protected@file@percent }
-\newlabel{fig:real}{{12}{11}{\textbf {Franka Panda, $160$ trials.} Two tasks against five shaped uplink capacities; bars are $95\%$ CIs}{figure.caption.34}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.7}Physical-Robot Evaluation}{11}{subsection.5.7}\protected@file@percent }
-\newlabel{sec:eval-real}{{5.7}{11}{Physical-Robot Evaluation}{subsection.5.7}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {6}Related Work}{11}{section.6}\protected@file@percent }
-\newlabel{sec:related}{{6}{11}{Related Work}{section.6}{}}
-\@writefile{toc}{\contentsline {paragraph}{Send-on-delta and event-triggered sampling.}{11}{section*.35}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{World models and generative semantic communication.}{11}{section*.36}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{Predictive display and model-mediated teleoperation.}{11}{section*.37}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{Observation compression for VLA.}{11}{section*.38}\protected@file@percent }
-\citation{pilworld2026}
-\citation{ha2018worldmodels,hafner2023dreamerv3,bruce2024genie,wu2024ivideogpt}
-\citation{kang2017neurosurgeon}
-\citation{cloudedgevla2026}
-\citation{vlagents2026}
-\citation{oxygen2026}
-\citation{actionflow2025}
-\citation{edgeserving2026}
-\citation{efmedge2026}
-\citation{black2025rtc,vlash2025,asyncbench2026}
-\citation{policyvoi2027}
+\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces Three objectives separate reconstruction fidelity, decision relevance, and episode-level refresh value.}}{3}{figure.caption.10}\protected@file@percent }
+\newlabel{fig:ladder}{{2}{3}{Three objectives separate reconstruction fidelity, decision relevance, and episode-level refresh value}{figure.caption.10}{}}
+\newlabel{fig:ladder@cref}{{[figure][2][]2}{[1][2][]3}{}{}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {4}Measurement Setup and Protocol}{3}{section.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.1}Environment, Policy, and Observation Model}{3}{subsection.4.1}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {1}{\ignorespaces The frozen trajectory base spans ten tasks per suite and five fixed initial states per task; failed episodes are retained and splits do not overlap.}}{3}{table.caption.12}\protected@file@percent }
+\newlabel{tab:data}{{1}{3}{The frozen trajectory base spans ten tasks per suite and five fixed initial states per task; failed episodes are retained and splits do not overlap}{table.caption.12}{}}
+\newlabel{tab:data@cref}{{[table][1][]1}{[1][3][]3}{}{}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.2}Trajectory Base and Splits}{3}{subsection.4.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.3}Action Divergence and Trigger Metrics}{3}{subsection.4.3}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Four frozen stages isolate metric choice, relevance learning, blind testing, and the oracle target.}}{4}{figure.caption.11}\protected@file@percent }
+\newlabel{fig:pipeline}{{3}{4}{Four frozen stages isolate metric choice, relevance learning, blind testing, and the oracle target}{figure.caption.11}{}}
+\newlabel{fig:pipeline@cref}{{[figure][3][]3}{[1][3][]4}{}{}{}}
+\newlabel{eq:div}{{3}{4}{Action Divergence and Trigger Metrics}{equation.3}{}}
+\newlabel{eq:div@cref}{{[equation][3][]3}{[1][3][]4}{}{}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.4}Freezing and Statistics}{4}{subsection.4.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Reproducibility of the figures.}{4}{section*.13}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {5}Selecting the Shared Predictor}{4}{section.5}\protected@file@percent }
+\citation{nguyen2009packet}
+\@writefile{lot}{\contentsline {table}{\numberline {2}{\ignorespaces Only removing the image objective improves action-conditioned rollout at the horizons used by the trigger.}}{5}{table.caption.14}\protected@file@percent }
+\newlabel{tab:wm}{{2}{5}{Only removing the image objective improves action-conditioned rollout at the horizons used by the trigger}{table.caption.14}{}}
+\newlabel{tab:wm@cref}{{[table][2][]2}{[1][5][]5}{}{}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces Dropping the image objective increasingly improves rollout error with horizon; one-step reconstruction selects the wrong predictor.}}{5}{figure.caption.15}\protected@file@percent }
+\newlabel{fig:wm}{{4}{5}{Dropping the image objective increasingly improves rollout error with horizon; one-step reconstruction selects the wrong predictor}{figure.caption.15}{}}
+\newlabel{fig:wm@cref}{{[figure][4][]4}{[1][5][]5}{}{}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {6}ActDelta Trigger Design}{5}{section.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.1}Latent Decision Head}{5}{subsection.6.1}\protected@file@percent }
+\newlabel{eq:head}{{4}{5}{Latent Decision Head}{equation.4}{}}
+\newlabel{eq:head@cref}{{[equation][4][]4}{[1][5][]5}{}{}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.2}Budgeted Transmission Rule}{5}{subsection.6.2}\protected@file@percent }
+\newlabel{eq:rule}{{5}{5}{Budgeted Transmission Rule}{equation.5}{}}
+\newlabel{eq:rule@cref}{{[equation][5][]5}{[1][5][]5}{}{}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.3}Synchronization Boundary}{5}{subsection.6.3}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces A send resets prediction and age; suppression advances both. Periodic and Bernoulli controls differ only in placement at equal mean rate.}}{6}{figure.caption.16}\protected@file@percent }
+\newlabel{fig:timeline}{{5}{6}{A send resets prediction and age; suppression advances both. Periodic and Bernoulli controls differ only in placement at equal mean rate}{figure.caption.16}{}}
+\newlabel{fig:timeline@cref}{{[figure][5][]5}{[1][5][]6}{}{}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {6}{\ignorespaces The control matrix isolates one substitution per stage.}}{6}{figure.caption.17}\protected@file@percent }
+\newlabel{fig:matrix}{{6}{6}{The control matrix isolates one substitution per stage}{figure.caption.17}{}}
+\newlabel{fig:matrix@cref}{{[figure][6][]6}{[1][5][]6}{}{}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {7}Fidelity Does Not Rank Decision Relevance}{6}{section.7}\protected@file@percent }
+\newlabel{sec:fidelity}{{7}{6}{Fidelity Does Not Rank Decision Relevance}{section.7}{}}
+\newlabel{sec:fidelity@cref}{{[section][7][]7}{[1][6][]6}{}{}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {8}Decision Relevance Is Learnable Offline}{6}{section.8}\protected@file@percent }
+\newlabel{sec:head}{{8}{6}{Decision Relevance Is Learnable Offline}{section.8}{}}
+\newlabel{sec:head@cref}{{[section][8][]8}{[1][6][]6}{}{}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {7}{\ignorespaces Fidelity metrics provide no stable ranking, whereas the latent head lies well outside their band.}}{7}{figure.caption.18}\protected@file@percent }
+\newlabel{fig:fidelity}{{7}{7}{Fidelity metrics provide no stable ranking, whereas the latent head lies well outside their band}{figure.caption.18}{}}
+\newlabel{fig:fidelity@cref}{{[figure][7][]7}{[1][6][]7}{}{}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {8}{\ignorespaces Decision relevance is predictable across suites and horizons; LIBERO-10 is weakest and has the highest operating-point cost.}}{7}{figure.caption.19}\protected@file@percent }
+\newlabel{fig:strata}{{8}{7}{Decision relevance is predictable across suites and horizons; LIBERO-10 is weakest and has the highest operating-point cost}{figure.caption.19}{}}
+\newlabel{fig:strata@cref}{{[figure][8][]8}{[1][7][]7}{}{}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {9}{\ignorespaces At 95\% action-high recall the trigger spends 82\% of the uplink, well above the closed-loop budgets.}}{7}{figure.caption.20}\protected@file@percent }
+\newlabel{fig:oppoint}{{9}{7}{At 95\% action-high recall the trigger spends 82\% of the uplink, well above the closed-loop budgets}{figure.caption.20}{}}
+\newlabel{fig:oppoint@cref}{{[figure][9][]9}{[1][7][]7}{}{}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {9}Implementation and Evaluation Matrix}{7}{section.9}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Trajectory and predictor pipeline.}{7}{section*.21}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Counterfactual label pipeline.}{8}{section*.22}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Head and threshold pipeline.}{8}{section*.23}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Closed-loop pipeline.}{8}{section*.24}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Conflict and provenance rules.}{8}{section*.25}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {10}Closed-Loop Evaluation}{8}{section.10}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {10.1}Success--Horizon Frontier}{8}{subsection.10.1}\protected@file@percent }
+\newlabel{sec:frontier}{{10.1}{8}{Success--Horizon Frontier}{subsection.10.1}{}}
+\newlabel{sec:frontier@cref}{{[subsection][1][10]10.1}{[1][8][]8}{}{}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {10.2}Exploration and Frozen Blind Test}{8}{subsection.10.2}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {10}{\ignorespaces Spatial and Object frontiers do not separate learned from rate-matched periodic or Bernoulli sampling.}}{9}{figure.caption.26}\protected@file@percent }
+\newlabel{fig:frontier}{{10}{9}{\synthcap Spatial and Object frontiers do not separate learned from rate-matched periodic or Bernoulli sampling}{figure.caption.26}{}}
+\newlabel{fig:frontier@cref}{{[figure][10][]10}{[1][8][]9}{}{}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {10.3}The Full Budget Sweep}{9}{subsection.10.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {10.4}Oracle Diagnostic}{9}{subsection.10.4}\protected@file@percent }
+\newlabel{sec:oracle}{{10.4}{9}{Oracle Diagnostic}{subsection.10.4}{}}
+\newlabel{sec:oracle@cref}{{[subsection][4][10]10.4}{[1][9][]9}{}{}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {11}{\ignorespaces No rate-matched arm beats periodic sampling; the only large effect spends 3.95 additional send-rate points.}}{10}{figure.caption.27}\protected@file@percent }
+\newlabel{fig:effects}{{11}{10}{No rate-matched arm beats periodic sampling; the only large effect spends 3.95 additional send-rate points}{figure.caption.27}{}}
+\newlabel{fig:effects@cref}{{[figure][11][]11}{[1][10][]10}{}{}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {10.5}What the Design Can Resolve}{10}{subsection.10.5}\protected@file@percent }
+\newlabel{sec:limits}{{10.5}{10}{What the Design Can Resolve}{subsection.10.5}{}}
+\newlabel{sec:limits@cref}{{[subsection][5][10]10.5}{[1][10][]10}{}{}{}}
+\newlabel{sec:power}{{10.5}{10}{What the Design Can Resolve}{subsection.10.5}{}}
+\newlabel{sec:power@cref}{{[subsection][5][10]10.5}{[1][10][]10}{}{}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {12}{\ignorespaces The blind test resolves roughly 6.2\,pp; resolving the observed 3\,pp{} gap would require about 625{} episodes per arm.}}{10}{figure.caption.28}\protected@file@percent }
+\newlabel{fig:power}{{12}{10}{The blind test resolves roughly \mde \pp ; resolving the observed 3\pp {} gap would require about \nForObserved {} episodes per arm}{figure.caption.28}{}}
+\newlabel{fig:power@cref}{{[figure][12][]12}{[1][10][]10}{}{}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {13}{\ignorespaces Independent controls eliminate estimator, sample-size, and compute explanations, leaving the scheduling target as the surviving diagnosis.}}{10}{figure.caption.29}\protected@file@percent }
+\newlabel{fig:elim}{{13}{10}{Independent controls eliminate estimator, sample-size, and compute explanations, leaving the scheduling target as the surviving diagnosis}{figure.caption.29}{}}
+\newlabel{fig:elim@cref}{{[figure][13][]13}{[1][10][]10}{}{}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {11}Interpreting the Offline-to-Online Gap}{10}{section.11}\protected@file@percent }
+\newlabel{sec:interp}{{11}{10}{Interpreting the Offline-to-Online Gap}{section.11}{}}
+\newlabel{sec:interp@cref}{{[section][11][]11}{[1][10][]10}{}{}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {11.1}Scheduling Changes the Age Distribution}{10}{subsection.11.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {14}{\ignorespaces At equal mean rate, threshold triggering has a heavier age tail; the silence cap only truncates it.}}{11}{figure.caption.30}\protected@file@percent }
+\newlabel{fig:agetail}{{14}{11}{\synthcap At equal mean rate, threshold triggering has a heavier age tail; the silence cap only truncates it}{figure.caption.30}{}}
+\newlabel{fig:agetail@cref}{{[figure][14][]14}{[1][11][]11}{}{}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {11.2}The Target Does Not Track the Outcome}{11}{subsection.11.2}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {15}{\ignorespaces Observation age separates outcomes more sharply than action divergence ($n=32$ episodes per bin).}}{11}{figure.caption.31}\protected@file@percent }
+\newlabel{fig:target}{{15}{11}{\synthcap Observation age separates outcomes more sharply than action divergence ($n=32$ episodes per bin)}{figure.caption.31}{}}
+\newlabel{fig:target@cref}{{[figure][15][]15}{[1][11][]11}{}{}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {11.3}The Recovery Channel Absorbs the Cost}{11}{subsection.11.3}\protected@file@percent }
+\newlabel{sec:recovery}{{11.3}{11}{The Recovery Channel Absorbs the Cost}{subsection.11.3}{}}
+\newlabel{sec:recovery@cref}{{[subsection][3][11]11.3}{[1][11][]11}{}{}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {11.4}Established Results and Implications}{11}{subsection.11.4}\protected@file@percent }
+\citation{arzen1999pid,astrom2002riemann,heemels2012intro,mamduhi2017error,miskowicz2006sod,miskowicz2007asymptotic,molin2013optimality,nguyen2008area,suh2007linear,tabuada2007event,nguyen2009packet}
+\citation{bourtsoulatze2019djscc,gunduz2023beyond,kountouris2021semantics,li2025goal,yuan2025taskoriented,chen2025genvid,jiang2025semworld,liu2025residtok,wang2026worldtwin,yang2024agentdriven,yin2025genvideo}
+\citation{chen2015glimpse,du2020serverdriven,li2020reducto,zhang2018awstream,cao2026edgeserving,dai2025actionflow,julg2026vlagents,li2026oxygen,peng2026latency,agouzoul2026async,black2025realtime,gao2025compressorvla,kim2026learnedcomp,tang2025vlash,xu2025vlacache,zhu2026dinolink}
+\citation{bruce2024genie,hafner2023dreamerv3,ma2026pilworld,tang2026onetoken,wu2024ivideogpt}
 \bibstyle{ACM-Reference-Format}
-\bibdata{references}
-\bibcite{asyncbench2026}{{1}{2026}{{Agouzoul}}{{}}}
-\@writefile{toc}{\contentsline {paragraph}{Action-conditioned world models.}{12}{section*.39}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{Edge serving and latency tolerance for VLA.}{12}{section*.40}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {7}Discussion and Limitations}{12}{section.7}\protected@file@percent }
-\newlabel{sec:discussion}{{7}{12}{Discussion and Limitations}{section.7}{}}
-\@writefile{toc}{\contentsline {paragraph}{The upper bound is the world model.}{12}{section*.41}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{At $\rho \ge 1$ the mechanism survives; the motivation changes.}{12}{section*.42}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{What the head is, and is not.}{12}{section*.43}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{What we did not evaluate.}{12}{section*.44}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {8}Conclusion}{12}{section.8}\protected@file@percent }
-\newlabel{sec:conclusion}{{8}{12}{Conclusion}{section.8}{}}
-\bibcite{anderson1989bilateral}{{2}{1989}{{Anderson and Spong}}{{}}}
-\bibcite{policyvoi2027}{{3}{2027}{{Anonymous}}{{}}}
-\bibcite{arzen1999pid}{{4}{1999}{{{\r A}rz{\'e}n}}{{}}}
-\bibcite{astrom2002lebesgue}{{5}{2002}{{{\r A}str{\"o}m and Bernhardsson}}{{}}}
-\bibcite{bejczy1990phantom}{{6}{1990}{{Bejczy et~al\mbox  {.}}}{{}}}
-\bibcite{black2024pi0}{{7}{2024}{{Black et~al\mbox  {.}}}{{}}}
-\bibcite{black2025rtc}{{8}{2025}{{Black et~al\mbox  {.}}}{{}}}
-\bibcite{bourtsoulatze2019deepjscc}{{9}{2019}{{Bourtsoulatze et~al\mbox  {.}}}{{}}}
-\bibcite{bruce2024genie}{{10}{2024}{{Bruce et~al\mbox  {.}}}{{}}}
-\bibcite{brudnak2016predictive}{{11}{2016}{{Brudnak}}{{}}}
-\bibcite{cadene2024lerobot}{{12}{2024}{{Cadene et~al\mbox  {.}}}{{}}}
-\bibcite{edgeserving2026}{{13}{2026}{{Cao et~al\mbox  {.}}}{{}}}
-\bibcite{chen2015glimpse}{{14}{2015}{{Chen et~al\mbox  {.}}}{{}}}
-\bibcite{genvidcomp2025}{{15}{2025}{{Chen et~al\mbox  {.}}}{{}}}
-\bibcite{chi2023diffusion}{{16}{2023}{{Chi et~al\mbox  {.}}}{{}}}
-\bibcite{actionflow2025}{{17}{2025}{{Dai et~al\mbox  {.}}}{{}}}
-\bibcite{du2020dds}{{18}{2020}{{Du et~al\mbox  {.}}}{{}}}
-\bibcite{compressorvla2025}{{19}{2025}{{Gao et~al\mbox  {.}}}{{}}}
-\bibcite{efmedge2026}{{20}{2026}{{Grover et~al\mbox  {.}}}{{}}}
-\bibcite{gunduz2023beyond}{{21}{2023}{{G{\"u}nd{\"u}z et~al\mbox  {.}}}{{}}}
-\bibcite{ha2018worldmodels}{{22}{2018}{{Ha and Schmidhuber}}{{}}}
-\bibcite{hafner2023dreamerv3}{{23}{2023}{{Hafner et~al\mbox  {.}}}{{}}}
-\bibcite{hannaford2002passivity}{{24}{2002}{{Hannaford and Ryu}}{{}}}
-\bibcite{heemels2012introduction}{{25}{2012}{{Heemels et~al\mbox  {.}}}{{}}}
-\bibcite{wmsemcom2025}{{26}{2025}{{Jiang et~al\mbox  {.}}}{{}}}
-\bibcite{vlagents2026}{{27}{2026}{{J{\"u}lg et~al\mbox  {.}}}{{}}}
-\bibcite{kang2017neurosurgeon}{{28}{2017}{{Kang et~al\mbox  {.}}}{{}}}
-\bibcite{genpreddisplay2026}{{29}{2026}{{Khalil and Kwon}}{{}}}
-\bibcite{khazatsky2024droid}{{30}{2024}{{Khazatsky et~al\mbox  {.}}}{{}}}
-\bibcite{licvla2026}{{31}{2026}{{Kim et~al\mbox  {.}}}{{}}}
-\bibcite{kim2024openvla}{{32}{2024}{{Kim et~al\mbox  {.}}}{{}}}
-\bibcite{kountouris2021semantics}{{33}{2021}{{Kountouris and Pappas}}{{}}}
-\bibcite{gosc2025video}{{34}{2025}{{Li et~al\mbox  {.}}}{{}}}
-\bibcite{li2024simplerenv}{{35}{2024}{{Li et~al\mbox  {.}}}{{}}}
-\@writefile{toc}{\contentsline {section}{References}{13}{section*.46}\protected@file@percent }
-\bibcite{oxygen2026}{{36}{2026}{{Li et~al\mbox  {.}}}{{}}}
-\bibcite{li2020reducto}{{37}{2020}{{Li et~al\mbox  {.}}}{{}}}
-\bibcite{liu2023libero}{{38}{2023}{{Liu et~al\mbox  {.}}}{{}}}
-\bibcite{resividtok2026}{{39}{2025}{{Liu et~al\mbox  {.}}}{{}}}
-\bibcite{pilworld2026}{{40}{2026}{{Ma et~al\mbox  {.}}}{{}}}
-\bibcite{mamduhi2017error}{{41}{2017}{{Mamduhi et~al\mbox  {.}}}{{}}}
-\bibcite{matthews2025kinetix}{{42}{2025}{{Matthews et~al\mbox  {.}}}{{}}}
-\bibcite{miskowicz2006sod}{{43}{2006}{{Miskowicz}}{{}}}
-\bibcite{miskowicz2007kldiv}{{44}{2007}{{Miskowicz}}{{}}}
-\bibcite{molin2013optimal}{{45}{2013}{{Molin and Hirche}}{{}}}
-\bibcite{narayanan2020lumos5g}{{46}{2020}{{Narayanan et~al\mbox  {.}}}{{}}}
-\bibcite{narayanan2021variegated}{{47}{2021}{{Narayanan et~al\mbox  {.}}}{{}}}
-\bibcite{netravali2015mahimahi}{{48}{2015}{{Netravali et~al\mbox  {.}}}{{}}}
-\bibcite{nguyen2009stochasticsod}{{49}{2008}{{Nguyen and Suh}}{{}}}
-\bibcite{suh2009dropouts}{{50}{2009}{{Nguyen and Suh}}{{}}}
-\bibcite{passenberg2010survey}{{51}{2010}{{Passenberg et~al\mbox  {.}}}{{}}}
-\bibcite{cloudedgevla2026}{{52}{2026}{{Peng et~al\mbox  {.}}}{{}}}
-\bibcite{intelligence2025pi05}{{53}{2025}{{{Physical Intelligence} et~al\mbox  {.}}}{{}}}
-\bibcite{raca20205g}{{54}{2020}{{Raca et~al\mbox  {.}}}{{}}}
-\bibcite{shukor2025smolvla}{{55}{2025}{{Shukor et~al\mbox  {.}}}{{}}}
-\bibcite{suh2007predictor}{{56}{2007}{{Suh}}{{}}}
-\bibcite{sullivan2012hevc}{{57}{2012}{{Sullivan et~al\mbox  {.}}}{{}}}
-\bibcite{tabuada2007eventtriggered}{{58}{2007}{{Tabuada}}{{}}}
-\bibcite{vlash2025}{{59}{2025}{{Tang et~al\mbox  {.}}}{{}}}
-\bibcite{onewmvla2026}{{60}{2026}{{Tang et~al\mbox  {.}}}{{}}}
-\bibcite{cdtsemcom2026}{{61}{2026}{{Wang et~al\mbox  {.}}}{{}}}
-\bibcite{wu2024ivideogpt}{{62}{2024}{{Wu et~al\mbox  {.}}}{{}}}
-\bibcite{vlacache2025}{{63}{2025}{{Xu et~al\mbox  {.}}}{{}}}
-\bibcite{agentsemcom2025}{{64}{2024}{{Yang et~al\mbox  {.}}}{{}}}
-\bibcite{genvidfusion2025}{{65}{2025}{{Yin et~al\mbox  {.}}}{{}}}
-\bibcite{tofc2025}{{66}{2025}{{Yuan et~al\mbox  {.}}}{{}}}
-\bibcite{zhang2018awstream}{{67}{2018}{{Zhang et~al\mbox  {.}}}{{}}}
-\bibcite{zhao2023act}{{68}{2023}{{Zhao et~al\mbox  {.}}}{{}}}
-\bibcite{dinolink2026}{{69}{2026}{{Zhu et~al\mbox  {.}}}{{}}}
+\bibdata{refs}
+\bibcite{agouzoul2026async}{{1}{2026}{{Agouzoul}}{{}}}
+\bibcite{arzen1999pid}{{2}{1999}{{{\r A}rz{\'e}n}}{{}}}
+\bibcite{astrom2002riemann}{{3}{2002}{{{\r A}str{\"o}m and Bernhardsson}}{{}}}
+\bibcite{black2024pi0}{{4}{2024}{{Black et~al\mbox  {.}}}{{}}}
+\@writefile{lof}{\contentsline {figure}{\numberline {16}{\ignorespaces Removing wrist-view recovery widens the paired learned--periodic gap.}}{12}{figure.caption.32}\protected@file@percent }
+\newlabel{fig:wrist}{{16}{12}{\synthcap Removing wrist-view recovery widens the paired learned--periodic gap}{figure.caption.32}{}}
+\newlabel{fig:wrist@cref}{{[figure][16][]16}{[1][11][]12}{}{}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {17}{\ignorespaces Event triggering is burstier, and encoded demand is sublinear in send fraction.}}{12}{figure.caption.33}\protected@file@percent }
+\newlabel{fig:uplink}{{17}{12}{\synthcap Event triggering is burstier, and encoded demand is sublinear in send fraction}{figure.caption.33}{}}
+\newlabel{fig:uplink@cref}{{[figure][17][]17}{[1][12][]12}{}{}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {12}Communication Accounting and On-Device Cost}{12}{section.12}\protected@file@percent }
+\newlabel{sec:comm}{{12}{12}{Communication Accounting and On-Device Cost}{section.12}{}}
+\newlabel{sec:comm@cref}{{[section][12][]12}{[1][12][]12}{}{}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {18}{\ignorespaces The robot-side trigger fits one control period and is far cheaper than remote policy inference.}}{12}{figure.caption.34}\protected@file@percent }
+\newlabel{fig:device}{{18}{12}{\synthcap The robot-side trigger fits one control period and is far cheaper than remote policy inference}{figure.caption.34}{}}
+\newlabel{fig:device@cref}{{[figure][18][]18}{[1][12][]12}{}{}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {13}Related Work}{12}{section.13}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {14}Scope and Limitations}{12}{section.14}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {15}Conclusion}{12}{section.15}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{References}{12}{section*.36}\protected@file@percent }
+\bibcite{black2025realtime}{{5}{2025}{{Black et~al\mbox  {.}}}{{}}}
+\bibcite{bourtsoulatze2019djscc}{{6}{2019}{{Bourtsoulatze et~al\mbox  {.}}}{{}}}
+\bibcite{bruce2024genie}{{7}{2024}{{Bruce et~al\mbox  {.}}}{{}}}
+\bibcite{cao2026edgeserving}{{8}{2026}{{Cao et~al\mbox  {.}}}{{}}}
+\bibcite{chen2015glimpse}{{9}{2015}{{Chen et~al\mbox  {.}}}{{}}}
+\bibcite{chen2025genvid}{{10}{2025}{{Chen et~al\mbox  {.}}}{{}}}
+\bibcite{chi2023diffusion}{{11}{2023}{{Chi et~al\mbox  {.}}}{{}}}
+\bibcite{dai2025actionflow}{{12}{2025}{{Dai et~al\mbox  {.}}}{{}}}
+\bibcite{du2020serverdriven}{{13}{2020}{{Du et~al\mbox  {.}}}{{}}}
+\bibcite{gao2025compressorvla}{{14}{2025}{{Gao et~al\mbox  {.}}}{{}}}
+\bibcite{gunduz2023beyond}{{15}{2023}{{G{\"u}nd{\"u}z et~al\mbox  {.}}}{{}}}
+\bibcite{hafner2023dreamerv3}{{16}{2023}{{Hafner et~al\mbox  {.}}}{{}}}
+\bibcite{heemels2012intro}{{17}{2012}{{Heemels et~al\mbox  {.}}}{{}}}
+\bibcite{jiang2025semworld}{{18}{2025}{{Jiang et~al\mbox  {.}}}{{}}}
+\bibcite{julg2026vlagents}{{19}{2026}{{J{\"u}lg et~al\mbox  {.}}}{{}}}
+\bibcite{kim2026learnedcomp}{{20}{2026}{{Kim et~al\mbox  {.}}}{{}}}
+\bibcite{kim2024openvla}{{21}{2024}{{Kim et~al\mbox  {.}}}{{}}}
+\bibcite{kountouris2021semantics}{{22}{2021}{{Kountouris and Pappas}}{{}}}
+\bibcite{li2025goal}{{23}{2025}{{Li et~al\mbox  {.}}}{{}}}
+\bibcite{li2026oxygen}{{24}{2026}{{Li et~al\mbox  {.}}}{{}}}
+\bibcite{li2020reducto}{{25}{2020}{{Li et~al\mbox  {.}}}{{}}}
+\bibcite{liu2023libero}{{26}{2023}{{Liu et~al\mbox  {.}}}{{}}}
+\bibcite{liu2025residtok}{{27}{2025}{{Liu et~al\mbox  {.}}}{{}}}
+\bibcite{ma2026pilworld}{{28}{2026}{{Ma et~al\mbox  {.}}}{{}}}
+\bibcite{mamduhi2017error}{{29}{2017}{{Mamduhi et~al\mbox  {.}}}{{}}}
+\bibcite{miskowicz2006sod}{{30}{2006}{{Miskowicz}}{{}}}
+\bibcite{miskowicz2007asymptotic}{{31}{2007}{{Miskowicz}}{{}}}
+\bibcite{molin2013optimality}{{32}{2013}{{Molin and Hirche}}{{}}}
+\bibcite{narayanan2020lumos5g}{{33}{2020}{{Narayanan et~al\mbox  {.}}}{{}}}
+\bibcite{narayanan2021variegated}{{34}{2021}{{Narayanan et~al\mbox  {.}}}{{}}}
+\bibcite{nguyen2008area}{{35}{2008}{{Nguyen and Suh}}{{}}}
+\bibcite{nguyen2009packet}{{36}{2009}{{Nguyen and Suh}}{{}}}
+\bibcite{peng2026latency}{{37}{2026}{{Peng et~al\mbox  {.}}}{{}}}
+\bibcite{pi2025pi05}{{38}{2025}{{{Physical Intelligence} et~al\mbox  {.}}}{{}}}
+\bibcite{raca2020beyond}{{39}{2020}{{Raca et~al\mbox  {.}}}{{}}}
+\bibcite{suh2007linear}{{40}{2007}{{Suh}}{{}}}
+\bibcite{tabuada2007event}{{41}{2007}{{Tabuada}}{{}}}
+\bibcite{tang2025vlash}{{42}{2025}{{Tang et~al\mbox  {.}}}{{}}}
+\bibcite{tang2026onetoken}{{43}{2026}{{Tang et~al\mbox  {.}}}{{}}}
+\bibcite{wang2026worldtwin}{{44}{2026}{{Wang et~al\mbox  {.}}}{{}}}
+\bibcite{wu2024ivideogpt}{{45}{2024}{{Wu et~al\mbox  {.}}}{{}}}
+\bibcite{xu2025vlacache}{{46}{2025}{{Xu et~al\mbox  {.}}}{{}}}
+\bibcite{yang2024agentdriven}{{47}{2024}{{Yang et~al\mbox  {.}}}{{}}}
+\bibcite{yin2025genvideo}{{48}{2025}{{Yin et~al\mbox  {.}}}{{}}}
+\bibcite{yuan2025taskoriented}{{49}{2025}{{Yuan et~al\mbox  {.}}}{{}}}
+\bibcite{zhang2018awstream}{{50}{2018}{{Zhang et~al\mbox  {.}}}{{}}}
+\bibcite{zhao2023aloha}{{51}{2023}{{Zhao et~al\mbox  {.}}}{{}}}
+\bibcite{zhu2026dinolink}{{52}{2026}{{Zhu et~al\mbox  {.}}}{{}}}
 \newlabel{tocindent-1}{0pt}
 \newlabel{tocindent0}{0pt}
-\newlabel{tocindent1}{4.65pt}
-\newlabel{tocindent2}{11.49998pt}
+\newlabel{tocindent1}{9.29999pt}
+\newlabel{tocindent2}{16.14998pt}
 \newlabel{tocindent3}{0pt}
 \newlabel{tocindent4}{0pt}
 \newlabel{tocindent5}{0pt}
-\newlabel{TotPages}{{15}{15}{}{page.15}{}}
-\gdef \@abspage@last{15}
+\newlabel{TotPages}{{14}{14}{}{page.14}{}}
+\gdef \@abspage@last{14}

@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 660" role="img" aria-labelledby="title desc">
+  <title id="title">Evidence escalation timeline</title>
+  <desc id="desc">A continuous four-stage experimental timeline from pilot metric selection to the oracle diagnostic, with frozen choices at each transition.</desc>
+  <defs>
+    <marker id="arrow-main" markerWidth="11" markerHeight="11" refX="10" refY="3.5" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L10,3.5 L0,7 Z" fill="#4F5961"/>
+    </marker>
+    <marker id="arrow-blue" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L9,3 L0,6 Z" fill="#587A9B"/>
+    </marker>
+    <marker id="arrow-peach" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L9,3 L0,6 Z" fill="#B96F55"/>
+    </marker>
+    <style>
+      .serif{font-family:'Times New Roman',Times,serif;fill:#17191B}
+      .stage{font-size:25px;font-weight:700}
+      .body{font-size:20px}
+      .small{font-size:17px}
+      .tiny{font-size:15px}
+      .math{font-style:italic}
+      .line{fill:none;stroke:#4F5961;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+      .thin{fill:none;stroke:#626970;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+    </style>
+  </defs>
+
+  <rect id="background" x="0" y="0" width="1600" height="660" fill="#FFFFFF"/>
+
+  <!-- Main continuous experimental rail -->
+  <path id="main-rail" d="M96 377 C310 377 375 377 520 377 S785 377 936 377 S1210 377 1500 377"
+        fill="none" stroke="#596168" stroke-width="4" marker-end="url(#arrow-main)"/>
+
+  <!-- Stage 1 -->
+  <g id="stage-pilot">
+    <circle cx="175" cy="377" r="27" fill="#E4E5E4" stroke="#52585D" stroke-width="2.5"/>
+    <text class="serif stage" x="175" y="386" text-anchor="middle">1</text>
+    <text class="serif stage" x="175" y="74" text-anchor="middle">Pilot</text>
+    <text class="serif body" x="175" y="102" text-anchor="middle">500 pairs</text>
+    <text class="serif body" x="175" y="139" text-anchor="middle">Choose trigger metric</text>
+
+    <g id="pilot-observations">
+      <text class="serif tiny" x="122" y="165" text-anchor="middle">real</text>
+      <text class="serif tiny" x="231" y="165" text-anchor="middle">predicted</text>
+      <rect x="76" y="174" width="92" height="70" rx="4" fill="#F5F5F3" stroke="#52585D" stroke-width="1.8"/>
+      <path d="M84 191 V181 H95 M149 181 H160 V191 M84 227 V237 H95 M149 237 H160 V227" class="thin"/>
+      <circle cx="110" cy="201" r="8" fill="#8797A3" stroke="#52585D" stroke-width="1.5"/>
+      <path d="M110 209 L125 219 L142 205" stroke="#7B8B97" stroke-width="7" fill="none" stroke-linecap="round"/>
+      <rect x="112" y="218" width="17" height="13" fill="#A7C4A1" stroke="#52585D" stroke-width="1"/>
+      <rect x="132" y="216" width="17" height="15" fill="#D49A82" stroke="#52585D" stroke-width="1"/>
+
+      <rect x="185" y="174" width="92" height="70" rx="4" fill="#F5F5F3" stroke="#52585D" stroke-width="1.8"/>
+      <path d="M193 191 V181 H204 M258 181 H269 V191 M193 227 V237 H204 M258 237 H269 V227" class="thin"/>
+      <rect x="215" y="214" width="16" height="17" fill="#A7C4A1" stroke="#52585D" stroke-width="1"/>
+      <rect x="235" y="205" width="17" height="26" fill="#D7B176" stroke="#52585D" stroke-width="1"/>
+      <rect x="254" y="216" width="15" height="15" fill="#8FAAC1" stroke="#52585D" stroke-width="1"/>
+    </g>
+    <g id="magnifier" transform="translate(139,255)">
+      <circle cx="36" cy="30" r="24" fill="#FFFFFF" stroke="#52585D" stroke-width="3"/>
+      <line x1="54" y1="48" x2="72" y2="66" stroke="#52585D" stroke-width="7" stroke-linecap="round"/>
+    </g>
+    <text class="serif tiny" x="175" y="318" text-anchor="middle">pixel RMS · SSIM</text>
+    <text class="serif tiny" x="175" y="340" text-anchor="middle">LPIPS · latent RMS</text>
+  </g>
+
+  <!-- Transition 1 -->
+  <g id="transition-metric-selected">
+    <text class="serif small" x="370" y="338" text-anchor="middle">metric selected</text>
+    <g id="lock-1" transform="translate(356,390)">
+      <path d="M7 15 V9 A7 7 0 0 1 21 9 V15" fill="none" stroke="#363A3E" stroke-width="2.2"/>
+      <rect x="3" y="15" width="22" height="20" rx="3" fill="#363A3E"/>
+      <circle cx="14" cy="24" r="2.5" fill="#FFFFFF"/><line x1="14" y1="26" x2="14" y2="31" stroke="#FFFFFF" stroke-width="2"/>
+    </g>
+  </g>
+
+  <!-- Stage 2 -->
+  <g id="stage-offline">
+    <circle cx="570" cy="377" r="27" fill="#DCE6EE" stroke="#587A9B" stroke-width="2.5"/>
+    <text class="serif stage" x="570" y="386" text-anchor="middle">2</text>
+    <text class="serif stage" x="570" y="74" text-anchor="middle">Offline</text>
+    <text class="serif body" x="570" y="102" text-anchor="middle">4,200 pairs</text>
+    <text class="serif body" x="570" y="139" text-anchor="middle">Train relevance head</text>
+
+    <g id="offline-training">
+      <g id="dataset" transform="translate(452,178)">
+        <ellipse cx="44" cy="10" rx="35" ry="10" fill="#EAF0F5" stroke="#587A9B" stroke-width="2"/>
+        <rect x="9" y="10" width="70" height="54" fill="#EAF0F5" stroke="#587A9B" stroke-width="2"/>
+        <ellipse cx="44" cy="64" rx="35" ry="10" fill="#D8E3EC" stroke="#587A9B" stroke-width="2"/>
+        <path d="M9 28 Q44 45 79 28 M9 46 Q44 63 79 46" fill="none" stroke="#587A9B" stroke-width="1.4"/>
+      </g>
+      <line x1="496" y1="253" x2="496" y2="285" stroke="#587A9B" stroke-width="2.2" marker-end="url(#arrow-blue)"/>
+      <rect x="449" y="288" width="94" height="48" rx="8" fill="#F7F9FB" stroke="#587A9B" stroke-width="2"/>
+      <text class="serif body math" x="496" y="318" text-anchor="middle">zₜ</text>
+      <text class="serif tiny" x="496" y="360" text-anchor="middle">frozen latent</text>
+
+      <line x1="543" y1="312" x2="610" y2="312" stroke="#587A9B" stroke-width="2.5" marker-end="url(#arrow-blue)"/>
+      <path d="M618 278 H690 L716 312 L690 346 H618 Z" fill="#DCE6EE" stroke="#587A9B" stroke-width="2"/>
+      <text class="serif small" x="662" y="306" text-anchor="middle">Relevance</text>
+      <text class="serif small" x="662" y="328" text-anchor="middle">head</text>
+    </g>
+  </g>
+
+  <!-- Transition 2 -->
+  <g id="transition-head-frozen">
+    <text class="serif small" x="783" y="347" text-anchor="middle">head frozen</text>
+    <g id="lock-2" transform="translate(769,390)">
+      <path d="M7 15 V9 A7 7 0 0 1 21 9 V15" fill="none" stroke="#363A3E" stroke-width="2.2"/>
+      <rect x="3" y="15" width="22" height="20" rx="3" fill="#363A3E"/>
+      <circle cx="14" cy="24" r="2.5" fill="#FFFFFF"/><line x1="14" y1="26" x2="14" y2="31" stroke="#FFFFFF" stroke-width="2"/>
+    </g>
+  </g>
+
+  <!-- Stage 3 -->
+  <g id="stage-blind">
+    <circle cx="980" cy="377" r="27" fill="#CAD9E6" stroke="#587A9B" stroke-width="2.5"/>
+    <text class="serif stage" x="980" y="386" text-anchor="middle">3</text>
+    <text class="serif stage" x="980" y="74" text-anchor="middle">Blind</text>
+    <text class="serif body" x="980" y="102" text-anchor="middle">800 cells</text>
+    <text class="serif body" x="980" y="139" text-anchor="middle">Rate-matched closed-loop test</text>
+
+    <g id="blind-loop">
+      <circle cx="980" cy="257" r="82" fill="none" stroke="#587A9B" stroke-width="2.4" stroke-dasharray="7 6"/>
+      <path d="M923 211 C944 181 989 169 1022 189" fill="none" stroke="#587A9B" stroke-width="2.4" marker-end="url(#arrow-blue)"/>
+      <path d="M1038 301 C1015 331 970 342 937 321" fill="none" stroke="#587A9B" stroke-width="2.4" marker-end="url(#arrow-blue)"/>
+      <g id="blind-robot" transform="translate(913,220)">
+        <rect x="0" y="47" width="79" height="8" fill="#8FAAC1" stroke="#4F5961" stroke-width="1.4"/>
+        <line x1="14" y1="55" x2="14" y2="68" class="thin"/><line x1="65" y1="55" x2="65" y2="68" class="thin"/>
+        <circle cx="19" cy="20" r="9" fill="#DCE6EE" stroke="#4F5961" stroke-width="2"/>
+        <path d="M19 29 L38 38 L53 19" stroke="#6F8DAA" stroke-width="8" fill="none" stroke-linecap="round"/>
+        <circle cx="38" cy="38" r="5" fill="#FFFFFF" stroke="#4F5961" stroke-width="1.6"/>
+        <circle cx="53" cy="19" r="5" fill="#FFFFFF" stroke="#4F5961" stroke-width="1.6"/>
+      </g>
+      <rect x="1005" y="223" width="78" height="48" rx="7" fill="#F7F9FB" stroke="#587A9B" stroke-width="2"/>
+      <text class="serif tiny" x="1044" y="243" text-anchor="middle">scheduler</text>
+      <text class="serif small math" x="1044" y="264" text-anchor="middle">δ̂ₜ</text>
+      <text class="serif small" x="980" y="344" text-anchor="middle">Predicted relevance δ̂ₜ</text>
+    </g>
+  </g>
+
+  <!-- Transition 3 -->
+  <g id="transition-oracle-signal">
+    <text class="serif small math" x="1190" y="338" text-anchor="middle">δ̂ₜ → δₜ only</text>
+    <g id="lock-3" transform="translate(1176,390)">
+      <path d="M7 15 V9 A7 7 0 0 1 21 9 V15" fill="none" stroke="#363A3E" stroke-width="2.2"/>
+      <rect x="3" y="15" width="22" height="20" rx="3" fill="#363A3E"/>
+      <circle cx="14" cy="24" r="2.5" fill="#FFFFFF"/><line x1="14" y1="26" x2="14" y2="31" stroke="#FFFFFF" stroke-width="2"/>
+    </g>
+  </g>
+
+  <!-- Stage 4 -->
+  <g id="stage-oracle">
+    <circle cx="1390" cy="377" r="27" fill="#F1D8CA" stroke="#B96F55" stroke-width="2.5"/>
+    <text class="serif stage" x="1390" y="386" text-anchor="middle">4</text>
+    <text class="serif stage" x="1390" y="74" text-anchor="middle">Oracle</text>
+    <text class="serif body" x="1390" y="102" text-anchor="middle">400 cells</text>
+    <text class="serif body" x="1390" y="139" text-anchor="middle">Replace only the relevance signal</text>
+
+    <g id="oracle-loop">
+      <circle cx="1390" cy="257" r="82" fill="none" stroke="#B96F55" stroke-width="2.4" stroke-dasharray="7 6"/>
+      <path d="M1333 211 C1354 181 1399 169 1432 189" fill="none" stroke="#B96F55" stroke-width="2.4" marker-end="url(#arrow-peach)"/>
+      <path d="M1448 301 C1425 331 1380 342 1347 321" fill="none" stroke="#B96F55" stroke-width="2.4" marker-end="url(#arrow-peach)"/>
+      <g id="oracle-robot" transform="translate(1323,220)">
+        <rect x="0" y="47" width="79" height="8" fill="#D5A58F" stroke="#4F5961" stroke-width="1.4"/>
+        <line x1="14" y1="55" x2="14" y2="68" class="thin"/><line x1="65" y1="55" x2="65" y2="68" class="thin"/>
+        <circle cx="19" cy="20" r="9" fill="#F1D8CA" stroke="#4F5961" stroke-width="2"/>
+        <path d="M19 29 L38 38 L53 19" stroke="#C78469" stroke-width="8" fill="none" stroke-linecap="round"/>
+        <circle cx="38" cy="38" r="5" fill="#FFFFFF" stroke="#4F5961" stroke-width="1.6"/>
+        <circle cx="53" cy="19" r="5" fill="#FFFFFF" stroke="#4F5961" stroke-width="1.6"/>
+      </g>
+      <rect x="1415" y="223" width="78" height="48" rx="7" fill="#FFF9F6" stroke="#B96F55" stroke-width="2"/>
+      <text class="serif tiny" x="1454" y="243" text-anchor="middle">scheduler</text>
+      <text class="serif small math" x="1454" y="264" text-anchor="middle">δₜ</text>
+      <text class="serif small" x="1390" y="344" text-anchor="middle">True action divergence δₜ</text>
+    </g>
+  </g>
+
+  <!-- Freeze discipline, one continuous visual only -->
+  <g id="freeze-discipline">
+    <path d="M111 478 C111 498 131 502 151 502 H1449 C1469 502 1489 498 1489 478"
+          fill="none" stroke="#6B7075" stroke-width="2.1"/>
+    <text class="serif body" x="800" y="536" text-anchor="middle">Freeze before advancing the claim</text>
+    <path d="M112 565 H1488" stroke="#D2D5D7" stroke-width="2"/>
+    <text class="serif small" x="800" y="604" text-anchor="middle">Frozen throughout: policy · world model · tasks · initial states · budgets · statistics</text>
+  </g>
+</svg>

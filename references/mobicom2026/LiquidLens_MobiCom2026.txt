@@ -1,0 +1,907 @@
+       Detecting Liquid Food Adulteration with Mobile
+        Hyperspectral Analysis based on RGB Camera
+                 Zimo Liao                                   Qianyi Huang                                  Lei Yang
+   Hong Kong Polytechnic University                      Sun Yat-sen University              Hong Kong Polytechnic University
+       zimo_liao@outlook.com                          huangqy89@mail.sysu.edu.cn                 ray.yang@polyu.edu.hk
+Abstract
+                                                                                                                    Flash light
+Liquid adulteration poses critical societal challenges by en-
+                                                                                                                     RGB camera
+dangering public health and causing economic losses. Ex-
+isting methods on mobile devices rely solely on vibration-
+based solutions, which face practical limitations due to re-
+                                                                                                            RGB
+quirements of specific container materials/structures and
+vibrational contact. In this paper, we present LiquidLens,                                                        VIS-NIR
+                                                                                                                  spectral
+a practical, non-contact mobile system for detecting liquid                                                       analysis
+
+adulteration based on RGB images of liquid surfaces. Inspired                                                     Adulteration
+                                                                                                                  detection
+by hyperspectral reconstruction, we aim to analyze liquid
+food’s hyperspectral properties from RGB data for effective
+adulteration detection. To achieve this, we address three ma-                       Figure 1: The concept of LiquidLens.
+jor challenges: First, the specular reflections of liquid, which
+act as a mirror image of surrounding obstacles, distort spec-
+tral measurements. Second, the camera’s spectral range is
+                                                                          Keywords
+restricted to the visible domain, which lacks access to vital             Mobile Computing, Hyperspectral Reconstruction, VIS-NIR
+information in the invisible bands. Third, the target liquid              Spectroscopy, Liquid Food Adulteration Detection
+spectrum is entangled with uncertain ambient illumination,
+rendering it uninterpretable. To overcome these challenges,               1   Introduction
+we first exploit the camera flash as visible light source and val-        Liquid food adulteration is a critical societal issue, endan-
+idate its spectral consistency across mobile devices. Next, we            gering public health and economic stability. Recent studies
+design a specular noise suppression technique to cancel the               indicate that 46% of commercial honey products are adul-
+specular noise. Then, we design an RGB-based VIS-NIR spec-                terated [53], and 20% of wines are counterfeit [41]. These
+tral recovery (RVN-SR) framework to overcome the spectral                 practices pose serious health risks: for example, adulterated
+range limitation. Besides, a cross-spectral training scheme               honey has been linked to hypercholesterolemia and allergic
+is designed to train the RVN-SR model in the flash domain,                reactions [19]. In more severe cases, as reported by the BBC,
+compensating for the lack of NIR radiation. We deploy and                 there have been numerous cases involving alcohol adulter-
+validate LiquidLens across multiple smartphones. Experi-                  ated with toxic polyols—leading to poisoning and even fatal-
+mental results show robust detection accuracy of 96.2% for 8              ities [1, 10, 68]. Liquid adulteration also causes substantial
+honey adulteration types and 94.0% for 5 wine adulteration                economic losses, amounting to billions of dollars globally
+types.                                                                    each year, solely due to wine and honey fraud [7, 46]. In-
+                                                                          vestigations have revealed that regulatory oversights have
+CCS Concepts                                                              allowed adulterated liquid food products to flood the market
+• Human-centered computing → Ubiquitous and mo-                           [3, 24]. Therefore, it is crucial to develop detection meth-
+bile computing.                                                           ods for liquid food adulteration that are readily accessible to
+                                                                          consumers for daily use.
+                                                                             Mobile devices present a promising platform to achieve
+                                                                          this goal, given their ubiquity and various sensors. Recently,
+This work is licensed under a Creative Commons Attribution 4.0 Interna-   a growing number of liquid detection studies have utilized
+tional License.
+MobiCom ’26, Austin, TX, USA
+                                                                          various sensors on unmodified mobile devices, such as cam-
+© 2026 Copyright held by the owner/author(s).                             eras [60, 74], IMUs [30, 70], and microphones [38]. These
+ACM ISBN 979-8-4007-2505-0/26/10                                          methods analyze how a liquid modulates vibrations to infer
+https://doi.org/10.1145/3795866.3796676                                   its viscosity, using either direct measurement (e.g., IMU or
+microphone signals) or indirect observation (e.g., visually        such implementations remain rare [55]. 3) Uncertain Illu-
+tracking surface ripples or bubble movements via camera).          mination Spectrum for Liquid: The reflected spectrum
+However, these vibration-based sensing methods require             of liquid exhibits significant dependence on illumination
+particular container materials or structures to function ef-       conditions. When measured under diverse ambient illumi-
+fectively, and requires direct vibrational contact or manual       nation, the spectral reflectance profile of identical liquid
+shaking, causing practical limitations.                            food samples exhibits variability. To address this challenge,
+   In this paper, we therefore ask: can we realize a practical,    conventional hyperspectral solutions rely on controlled illu-
+non-contact liquid food adulteration detector using only a         mination conditions, which are impractical for mobile device
+commercial mobile device? We shift the sensing paradigm            users.
+from bulk viscosity to molecular specificity. Unlike prior            We propose LiquidLens, a mobile system for liquid food
+methods, our approach leverages the phone’s camera for             adulteration detection that exclusively utilizes the RGB sens-
+direct spectral analysis to target the unique molecular fin-       ing capability of mobile devices to perform VIS-NIR spectral
+gerprints of a liquid. The core principle is that variations in    analysis, as shown in Fig. 1. We observe that the camera
+liquid food composition (such as those caused by adulter-          flash can serve as a spectrally consistent light source across
+ation) can be revealed through spectral analysis [31]. While       mobile devices. Integrated as ordinary components in mobile
+prior studies have successfully utilized hyperspectral devices     devices, camera flashes provide visible-spectrum illumina-
+[29, 44, 47] to achieve precise liquid food adulteration de-       tion and serve as essential supplemental light sources for
+tection, such equipment is typically bulky, expensive, and         low-light photography. We analyze the spectral diversity of
+unsuitable for daily applications. In contrast, mobile devices     common light sources and then investigate mobile camera
+are generally equipped with RGB cameras, which lack the            flashes across multiple devices, demonstrating their remark-
+spectral wavelength resolution required for detailed hyper-        able spectral consistency (Section 4). To remove the specular
+spectral analysis. Fortunately, we are inspired by the hy-         reflection interference, we design a specular noise suppres-
+perspectral reconstruction technology [28, 56, 75], which          sion technique. We first analyze the optical path at liquid
+enables hyperspectral reconstruction in the visible range          surfaces carefully and find that the fixed camera-flash ge-
+with higher wavelength resolution from conventional RGB            ometry allows a common viewing tilt to steer the flash’s
+inputs. This technology enables hyperspectral analysis based       own specular reflection out of view. This leaves only the
+on mobile RGB data for liquid adulteration detection.              ambient light’s specular component, which we suppress by
+   However, applying hyperspectral analysis to mobile RGB          computing a “flash-only” image (obtained by subtracting an
+cameras for liquid adulteration detection is not a trivial task.   ambient-only capture from a flash-illuminated one). This
+It faces the following challenges: 1) Complex Liquid Sur-          process effectively isolates the underlying bulk reflection
+face Reflection: Liquid surface reflection includes two com-       (Section 5). To break the limited spectral sensing range, we
+ponents: bulk reflection from light interacting with the liq-      propose a RGB-based VIS-NIR Spectral Recovery (RVN-SR)
+uid’s interior, providing spectral detection data; and specular    module to recover the NIR spectral information (Section 6.1).
+reflection, a mirror-like effect from surrounding objects that     Here, we first explore the correlation between visible and
+distorts the spectrum. While conventional hyperspectral sys-       NIR spectral bands. Our analysis reveals that this correlation
+tems demand isolated environments to avoid the specular            does exist, but it is observed only sparsely. Thus, we develop
+interference [9, 29, 37, 44], our solution functions in open       a Sparsity-Gated NIR Transformer (SNT) structure that sup-
+settings where nearby object reflections can cause interfer-       presses irrelevant spectral noise to recover the NIR spectral
+ence. Thus, extracting the bulk reflection signal from this        information. In addition, since camera flashes lack NIR spec-
+mixed spectrum remains a key challenge. 2) Visible-Limited         tral components, we design the expert-guided cross-spectral
+Spectral Sensing Constraint: Existing hyperspectral re-            domain adaptation (ECDA) framework to train the RVN-SR
+construction methods are limited to acquiring fine-grained         module. ECDA solves the data limitation by transferring spec-
+spectral resolution only within the visible range (400–700         tral correlations learned from full-spectrum sources (with
+nm) from RGB images captured by mobile devices. However,           complete VIS-NIR ground truth) to the flash domain, bridg-
+the near-infrared (NIR) region (>700 nm) provides essen-           ing the domain shift between broad-band and flash-specific
+tial complementary information for liquid food adulteration        illumination (Section 6.2).
+analysis [48, 65], as it captures molecular signatures that are       We implement LiquidLens on commercial mobile devices
+undetectable within the visible band. Consequently, conven-        and demonstrate its effectiveness in detecting adulteration
+tional mobile RGB sensors offer no measurable response in          in honey and wine. For honey, eight distinct types of adulter-
+the NIR region, presenting a significant gap for comprehen-        ants are considered, including water, cheap honey, syrups,
+sive spectral analysis. Note that several flagship smartphones     and illegal additives. For wine, five categories of adulter-
+have begun to incorporate dedicated NIR imaging modules,           ants are evaluated, such as water, cheap alcohol, fruit juice,
+                                                                                   VIS                        NIR
+
+
+
+
+                                         Sensitivity
+      Incident Specular                                                  B          G          R                       RGB sensor
+                                                                                                                                         Liquid Surface Reflection. Light reflection from a liquid
+        light  reflection                                                                                     …… 1000                 surface consists of two distinct components: specular reflec-
+                                                                   400       500         600       700
+
+
+
+
+                                         Sensitivity Sensitivity
+                            Bulk                                                    ……                                     VIS
+                                                                                                                       Spectrometer
+                                                                                                                                      tion and bulk reflection (Fig. 2). Specular reflection, which is
+  Air                       reflection
+                                                                   400       500         600       700        …… 1000                 directional [66], occurs at the air-liquid interface and follows
+ Liquid                                                                                                                  VIS-NIR
+                                                                                    ……                   ……           Spectrometer    the law of reflection. It is independent of the liquid’s internal
+     Absorption                                                                                               ……
+                            Scattering                             400       500         600       700              1000
+                                                                                                                                      composition, as it involves no penetration into the medium.
+                                                                               Wavelength/nm
+                                                                                                                                      In contrast, bulk reflection, which is non-directional, arises
+ Figure 2: Specular reflec- Figure 3: Sensitivity of RGB                                                                              from light that enters the liquid and interacts with its molec-
+ tion and bulk reflection. and hyperspectral device.                                                                                  ular constituents and suspended particles. This component
+                                                                                                                                      carries spectral information related to chemical bonds (e.g.,
+                                                                                                                                      O–H, C–H, N–H) and scattering elements, making it highly
+and illegal additives. Various concentration levels are tested                                                                        dependent on the liquid’s composition.
+for each adulterant. Experimental results show that Liqui-                                                                               Optical Imaging Principle. In an optical imaging system,
+dLens achieves an accuracy of 96.2% in identifying 8 honey                                                                            each pixel converts incident light into an electrical signal via
+adulteration types and 94.0% for 5 wine adulteration types.                                                                           its spectral response. The pixel value 𝐼 is the integral of the
+Furthermore, we validate the robustness of LiquidLens under                                                                           light intensity over the sensor’s wavelength range, weighted
+diverse environmental conditions, including 5 different illu-                                                                         by three spectral components: the illumination spectrum
+mination environments, 8 different capture distances, and                                                                             𝑆 (𝜆), the object reflectance 𝑅(𝜆), and the sensor response
+across 3 different device models.                                                                                                     𝐶 (𝜆) [55]:
+  In summary, we make the following contributions:
+    • We developed LiquidLens, the first mobile-based sys-                                                                                                 ∫𝜆max
+      tem capable of detecting liquid food adulteration based                                                                                           𝐼∝      𝑆 (𝜆)𝑅(𝜆)𝐶 (𝜆) 𝑑𝜆.                 (1)
+      on hyperspectral analysis. Leveraging only the ubiqui-                                                                                                𝜆min
+      tous RGB camera and flash standard on mobile devices,                                                                              Thus, the output is a spectrally weighted sum determined
+      our system achieves accurate liquid authentication                                                                              by the interplay of these three factors.
+      with the capability to identify specific adulterants.                                                                              Hyperspectral Reconstruction. Hyperspectral recon-
+    • We present a novel framework for VIS-NIR spectral                                                                               struction [8, 56, 75] recovers spectral data with high wave-
+      recovery by leveraging a mobile device’s RGB camera,                                                                            length resolution from standard RGB inputs. As illustrated
+      which substantially improves the detection accuracy                                                                             in Fig. 3, RGB captures color via three broad bands, while hy-
+      and reliability of liquid food adulteration.                                                                                    perspectral devices (e.g. spectrometer) sample many narrow
+    • We implement and evaluate LiquidLens. Experimen-                                                                                contiguous bands for fine spectral detail. The core principle
+      tal results demonstrate LiquidLens’s high accuracy in                                                                           is that each RGB value results from a spectrally-weighted
+      detecting various adulteration types and robustness                                                                             integration of the incident light across the entire visible spec-
+      under different experimental settings.                                                                                          trum. Models trained on paired RGB and hyperspectral data
+                                                                                                                                      learn the mapping from broad-band responses to underlying
+2 Background and Challenges                                                                                                           spectral features, thereby reconstructing continuous high-
+2.1 Background                                                                                                                        resolution spectra through learned correlation.
+VIS-NIR Spectroscopy for Liquid Food Adulteration.
+VIS-NIR spectroscopy is a well-established technique for de-                                                                          2.2    Challenges
+tecting liquid food adulteration, operating primarily within                                                                          Our goal is to realize liquid food adulteration detection based
+the 400–1000 nm spectral range [6, 20, 37, 52, 54, 73]. The                                                                           on liquid VIS-NIR spectral analysis using the built-in RGB
+core idea is to measure how the liquid food interacts with                                                                            image sensor on mobile devices. This task, however, faces
+light, specifically its absorption quantified via reflectance. In                                                                     several significant research challenges, summarized as fol-
+the visible spectrum (400-700 nm), the electronic transitions                                                                         lows:
+of chromophores (e.g., flavonoids, carotenoids) directly re-                                                                             Complex Liquid Surface Reflection. As discussed in
+veal color and pigment concentration [4, 51]. Moving into                                                                             Section 2.1, light reflected from a liquid surface contains both
+the near-infrared (NIR) region (700-1000 nm), the technique                                                                           specular and bulk components. The bulk reflection carries
+captures overtone and combination vibrational bands, pre-                                                                             the spectral fingerprint crucial for chemical characterization,
+dominantly from O–H and C–H bonds, yielding valuable                                                                                  yet remains mixed with specular reflection. As shown in
+information on moisture content, sugar structure and lipid                                                                            Fig. 4, the specular interference, which visually appears as a
+composition[15].                                                                                                                      mirror image of the surrounding scene, acts as a disruptive
+Figure 4: Specular reflection of a clock and curtain at
+the liquid surface.
+
+
+
+                                                                        Figure 7: The system structure of LiquidLens.
+
+
+                                                                    extracting the target’s spectral signature 𝑅(𝜆) becomes an
+                                                                    ill-posed problem.
+
+(a) Artificial light-   (b) Nature light-                           3   Overview
+ing                     ing                    6: The
+                                          Figure
+                                                                    In this section, we provide the system overview of Liqui-
+                                      reflect spectrum
+                                                                    dLens. As shown in Fig. 7, LiquidLens is mainly composed
+Figure 5: Spectra of different light- under different               of three modules: First, we utilize the mobile camera flash
+ing.                                  illuminations.
+                                                                    as a spectrally consistent light source across mobile devices,
+                                                                    as established in this work. We measure the spectral data
+                                                                    of camera flashes across various mobile devices to demon-
+noise source that can distort the spectral features embedded
+                                                                    strate that mobile flashes exhibit inherent spectral consis-
+within the target bulk reflection. To achieve accurate results,
+                                                                    tency. Then, based on the analysis of the optical path at liquid
+traditional hyperspectral analysis of liquids is performed in
+                                                                    surfaces, we utilize the the co-location of flash light and cam-
+isolated environments to control specular reflection [9, 29,
+                                                                    era and design a specular noise suppression technique. This
+37, 44]. However, our method operates in open environments
+                                                                    scheme computes a flash-only image (derived by subtract-
+where nearby objects induce specular reflections. Therefore,
+                                                                    ing ambient-only images from flash-illuminated captures)
+the effective separation of this interfering specular reflection
+                                                                    to effectively remove specular noise and isolate the bulk re-
+is essential to reliable spectral analysis of the target liquid.
+                                                                    flection signature. Finally, we design an RGB-based VIS-NIR
+   Visible-Limited Spectral Sensing Constraint. As shown
+                                                                    Spectral Recovery (RVN-SR) module to recover the missing
+in Fig. 3, RGB cameras are limited to capturing data within
+                                                                    NIR information. It is a transformer-based architecture which
+the visible band and lack access to the NIR region. Specifi-
+                                                                    leverages our insights into the sparse relationship between
+cally, RGB sensors acquire information only within the vis-
+                                                                    visible and NIR spectral bands. Furthermore, since camera
+ible spectrum (approximately 400–700 nm), whereas VIS-
+                                                                    flashes lack NIR components, training requires full-band illu-
+NIR hyperspectral instruments (e.g., spectrometers) cover
+                                                                    mination. However, the spectral discrepancy between light
+an extended range from 400 nm to 1000 nm with higher
+                                                                    sources introduces domain shift. To address this, we intro-
+wavelength resolution, thereby incorporating chemically
+                                                                    duce the Expert-guided Cross-spectral Domain Adaptation
+meaningful NIR spectral features. Although hyperspectral
+                                                                    (ECDA) framework, which uses NIR data from full-band illu-
+reconstruction techniques can enhance spectral wavelength
+                                                                    mination to train RVN-SR and bridge the domain gap across
+resolution within the visible range using RGB data, they re-
+                                                                    lighting conditions.
+main unable to recover the NIR portion (700–1000 nm) due
+to its complete absence in the original signal.
+   Uncertain Illumination Spectrum for Liquid. Accord-              4   Camera Flash: A Spectrally Consistent
+ing to Eq. (1), the ambient light spectrum 𝑆 (𝜆) weights wave-          Light Source across Mobile Devices
+lengths differently, so the same reflectance 𝑅(𝜆) yields dif-       According to the analysis in Section 2.2, the spectral vari-
+ferent reflected intensities under distinct illuminants (Fig. 6).   ability in ambient light compromises the reliability of liq-
+Traditional hyperspectral methods require known and con-            uid spectral analysis under uncontrolled lighting conditions.
+trolled illumination, whereas mobile devices operate un-            While lab spectrometers provide controlled, standardized
+der varying conditions (e.g., artificial and natural lighting).     illumination, mobile environments present uncontrolled and
+Figs. 5a and 5b demonstrate substantial spectral differences        spectrally variable conditions. Here, we first analyze com-
+across these conditions. Without a constant 𝑆 (𝜆), accurately       mon illumination spectra, sourcing artificial light data from
+                                                                                        Ambient light
+
+
+
+                                                                                                           Flash light   Light reflected by
+                                                                                                         𝑆
+                                                                                                        𝐵!               surroundings
+                                                                                                        𝐵"!            𝑆"
+
+
+
+
+Figure 8: Camera flash spectra Figure 9: SAM and SID
+on different mobile devices. for camera flashes and
+                               diverse illumination.               Figure 10: Optical path analysis at the liquid interface.
+
+CIE [14] and generating natural light spectra via SMARTS           between flash-illuminated and ambient-only images) as the
+[25]. Fig. 5a and 5b show their spectral distributions. For        basis for bulk scattering extraction. Our key insight lever-
+artificial illumination, halogen bulbs emit a broad and uni-       ages a fundamental advantage of the smartphone platform:
+form spectrum, while LEDs and fluorescent lamps are limited        the co-location of flash light and camera on the same device.
+to the visible band, with fluorescent spectra showing sharp        Because they are fixed together, any angular motion of the
+peaks and LEDs having distinct spectral shapes. For natural        phone is shared by both units. As shown in Fig. 10, by apply-
+illumination, sunlight varies throughout the day, shifting         ing a suitable tilt, this shared movement actively steers the
+toward longer wavelengths at twilight. Thus, it is difficult to    directional specular highlight from camera flash (𝑆 𝑓 ) away
+find a consistent and continuous illumination environment          from the camera’s field of view, while the non-directional
+in real-world conditions.                                          bulk scattering from the liquid volume (𝐵 𝑓 ) continues to be
+   Fortunately, integrated smartphone camera flashes pro-          captured. Under this configuration, the contribution of 𝑆 𝑓
+vide a spectrally consistent visible illumination source across    becomes negligible.
+mobile devices. Most mobile flashes utilize LEDs, offering            Formally, a flash-illuminated image (𝐼 ) and an ambient-
+advantages in compactness, power efficiency, and longevity         only image (𝐼𝑎 ) can be expressed as: 𝐼 = 𝑆𝑎 + 𝐵𝑎 + 𝑆 𝑓 + 𝐵 𝑓 ,
+[35]. Crucially, unlike variable ambient light, flash spectra      𝐼𝑎 = 𝑆𝑎 + 𝐵𝑎 . where 𝑆𝑎 and 𝐵𝑎 are the specular and bulk
+remain consistent across smartphone models due to stan-            reflected components from ambient light, while 𝑆 𝑓 and 𝐵 𝑓 are
+dardized LED materials and fabrication [50, 57, 64]. In order      those from camera flash. Note that the specular components
+to confirm the spectral consistency of camera flashes on           𝑆𝑎 and 𝑆 𝑓 do not encode chemical information about the
+mobile devices, we measure flash spectra across 6 device           liquid, despite governing its surface appearance.
+models (i.e., iPhone 11, iPhone 14, iPhone 15, HuaweiMate             We first use feature-based alignment to align this with the
+20, Google Pixel 7, Xiaomi 15) using a spectral illuminance        flash-illuminated image and then perform subtraction, which
+meter (AH-310). Results are shown in Fig. 8. We can see            yields: 𝐼 𝑓 𝑜 = 𝐼 −𝐼𝑎 = (𝑆𝑎 +𝐵𝑎 +𝑆 𝑓 +𝐵 𝑓 ) − (𝑆𝑎 +𝐵𝑎 ) = 𝑆 𝑓 +𝐵 𝑓 .
+that the spectral profiles of mobile flashes across various de-    Although the derivation retains the specular component 𝑆 𝑓 ,
+vices consistently display a sharp emission peak centered at       we now demonstrate its negligible contribution. As shown
+435–470 nm, accompanied by a broader secondary peak cov-           in Fig. 10, due to the coordinated tilt maneuver described
+ering the 500–700 nm range. To quantify spectral differences       above, the flash-induced specular reflection is effectively ex-
+and LED consistency, we employed Spectral Angle Map-               cluded from capture. Furthermore, any secondary specular
+per (SAM) [69] and Spectral Information Divergence (SID)           reflection of the flash from environmental objects is severely
+[55]. SAM measures angular similarity, while SID assesses          attenuated and considered negligible. Thus, 𝑆 𝑓 ≈ 0. There-
+brightness distribution divergence. We then compared mean          fore, 𝐼 𝑓 𝑜 effectively isolates the bulk scattering component
+SAM and SID values across diverse light sources and smart-         from the flash illumination: 𝐼 𝑓 𝑜 ≈ 𝐵 𝑓 .
+phone flashlights. As shown in Fig. 9, the results demonstrate        Thus, 𝐼 𝑓 𝑜 isolates the chemically informative bulk reflec-
+significantly lower SAM and SID values for camera flashes          tion from the original surface reflection, providing a reliable
+compared to conventional light sources across all categories,      input for subsequent chemical analysis.
+which confirms the spectral consistency of camera flashes.
+                                                                   6    From RGB to Detection: An Integrated
+5   Bulk Reflection Extraction                                          Spectral Recovery Framework
+In this section, our goal is to extract the bulk scattering com-   Currently, we have acquired bulk reflection RGB images
+ponent from flash-illuminated images captured by mobile            under consistent illumination conditions. For each image,
+devices. To this end, we suppress non-informative specu-           a Region of Interest (ROI) is manually defined to isolate
+lar reflections by using the flash-only image (the difference      the liquid sample, within which each pixel is treated as an
+                RGB                          VIS Spectrum            VIS-NIR
+                                   SOTA SR
+                                                                    Spectrum
+                   B   G R                               …
+
+                400 500 600 700                  400 500 600 700
+
+                                                                   400
+
+                            …       SNT                            500
+
+              Sparse Gate Layer                                    600
+                            …
+
+
+
+
+                                                                          …
+              Linear Projection              NIR Spectrum          700
+
+                                                                   800
+             Transformer Encoder
+
+
+
+
+                                                                          …
+                                                                   900
+                                                    …
+                  Decoder                                          1000
+
+
+                                               700 800 900 1000
+
+
+
+                                                                                     Figure 12: NMI across VIS-NIR wavelengths.
+Figure 11: The RGB-based VIS-NIR Spectral Recovery
+(RVN-SR) model.
+
+
+independent observation. Next, we perform VIS-NIR spectral                     only the spectral attention block and remove the spatial
+analysis based on the RGB value of a single pixel from the                     branch. Additionally, we streamline loss computation by re-
+image.                                                                         placing pixel-wise metrics with a wavelength-aggregated
+   However, two significant challenges arise: First, due to                    measure. The loss is defined as the mean relative absolute
+inherent limitations of RGB image sensors, the spectral reso-                  error (MRAE) [69] across all reconstructed visible spectral
+lution and range of RGB data are substantially lower than                                       1 Í𝑛 𝑣𝑖𝑠 |𝑆𝑝𝑒𝑐 (𝑖 ) −𝑆𝑝𝑒𝑐ˆ (𝑖 ) |
+those of VIS-NIR spectral data. Second, the camera flash illu-                 bands: L𝑆𝑅 = 𝑛 𝑣𝑖𝑠    𝑖=1     |𝑆𝑝𝑒𝑐 (𝑖 ) |         , where 𝑛 𝑣𝑖𝑠 is the
+mination spectrum does not cover the NIR band, resulting in                    total number of visible sampled wavelengths, 𝑆𝑝𝑒𝑐 (𝑖) repre-
+the absence of reflected NIR spectrum data from the target                     sents the ground-truth of visible spectral value at the i-th
+liquid under camera flash.                                                     wavelength, and 𝑆𝑝𝑒𝑐ˆ (𝑖) denotes the reconstructed spectral
+   In this section, we first introduce the RGB-based VIS-NIR                   value. By minimizing the loss L𝑆𝑅 , the model can narrow
+Spectral Recovery (RVN-SR) model designed to simultane-                        the distance between the reconstructed and original visible
+ously enhance spectral resolution and extend the spectral                      spectra.
+range of RGB sensor. Note that the model assumes full-band
+VIS-NIR illumination conditions, with corresponding ground                     6.1.2 From VIS to NIR Spectrum. Following the visible spec-
+truth spectra available for model training. Subsequently, we                   tral reconstruction, we obtain a high-resolution visible spec-
+propose an Expert-guided Cross-spectral Domain Adapta-                         trum from RGB data. However, directly predicting the NIR
+tion (ECDA) training scheme to address hardware limitations                    spectrum from RGB inputs remains infeasible, as RGB sig-
+of mobile flashlights, which lack NIR spectrum coverage. Fi-                   nals inherently lack NIR spectral information. Although RGB
+nally, we introduce the adulteration detection model based                     values only represent integrals of the visible spectrum, we
+on the spectral analysis result.                                               identified intrinsic correlations between the reconstructed
+                                                                               visible spectrum and the NIR bands. Thus, as shown in Fig.
+6.1    VIS-NIR Spectral Recovery Under                                         11, instead of directly predicting NIR spectra from RGB in-
+       Full-band Illumination                                                  puts, we utilize the reconstructed visible data to infer the
+In this section, we introduce the RVN-SR design. Our goal is                   NIR spectrum. In this section, we first analyze correlations
+to recover the VIS-NIR spectrum based on RGB data.                             between the visible and NIR bands, then introduce the NIR
+                                                                               predictor model.
+6.1.1 From RGB to VIS Spectrum. Deriving visible spec-                            VIS-NIR Cross-Spectral Correlations. The VIS–NIR
+trum from RGB data is inherently a task of spectral super-                     cross-spectral correlations in liquid foods arises because mul-
+resolution, also referred to as hyperspectral reconstruction,                  tiple constituents vary together and their spectral effects add
+which is a well-established topic [8, 56, 75]. Here, we leverage               up. In the visible range, signals are largely shaped by chro-
+a state-of-the-art (SOTA) spectral reconstruction algorithm                    mophores (for example, pigments, or phenolic compounds),
+[69] to achieve high-wavelength-resolution spectral estima-                    while the NIR is influenced by overtone/combination bands
+       ˆ from RGB inputs.
+tion 𝑆𝑝𝑒𝑐                                                                      of abundant O–H/C–H groups in major constituents (for ex-
+   To adapt this architecture for our task, we implement a                     ample, water, sugars, alcohols, or acids). These components
+focused modification. The original design in [69] employs a                    tend to co-vary with source, formulation, and processing,
+dual-branch structure with both spectral and spatial model-                    so shifts in composition move both VIS and NIR in tandem,
+ing modules. Since our emphasis lies on chemical composi-                      yielding measurable mutual information. Here we calculate
+tion analysis rather than spatial detail recovery, we retain                   the Normalized Mutual Information (NMI) across VIS-NIR
+wavelengths to quantitatively validate cross-spectral depen-                                                                                Collected NIR
+
+dencies. NMI quantifies the normalized statistical depen-                                                                 RGB
+                                                                                                                                  Expert    Collected VIS
+                                                                                                 Full-band illumination
+dence between two variables by measuring shared infor-
+                                                                                               Under full-band lighting
+mation relative to their individual entropies (H), capturing
+                                                                                               Under camera flash               ℒ!"
+both linear and nonlinear correlations. In contrast to Mutual                                       Camera flash
+                                                                                                                          RGB
+                                                                                                                                           ℒ#$%
+Information (MI), NMI scales this value to [0,1], allowing
+consistent comparison across variables with different mar-
+ginal distributions. The NMI between visible band 𝑉𝑖 and
+NIR band 𝑊 𝑗 is [34]:                                                              Figure 13: Expert-guided Cross-spectral Domain Adap-
+                                                                                   tation (ECDA) training framework.
+
+                  2 · 𝑀𝐼 (𝑉𝑖 ;𝑊 𝑗 )
+NMI(𝑉𝑖 ;𝑊 𝑗 ) =
+                  𝐻 (𝑉𝑖 ) + 𝐻 (𝑊 𝑗 )                                               heads/layer) with self-attention and GeLU-activated feedfor-
+                            Í Í                      𝑝 (𝑣,𝑤 )                      ward networks. Features are decoded through a 128-neuron
+                        2·           𝑝 (𝑣, 𝑤) log2 𝑝 (𝑣)𝑝 (𝑤 )
+                                𝑣 ∈𝑉𝑖 𝑤 ∈𝑊 𝑗                                       ReLU linear layer and projected to NIR wavelengths. The
+              =        Í                            Í                          ,   model’s loss is the MRAE computed across all NIR spec-
+                  −           𝑝 (𝑣) log2 𝑝 (𝑣) −            𝑝 (𝑤) log2 𝑝 (𝑤)
+                      𝑣 ∈𝑉𝑖                        𝑤 ∈𝑊 𝑗                                                1 Í𝑛𝑛𝑖𝑟 |𝑆𝑝𝑒𝑐 (𝑖 ) −𝑆𝑝𝑒𝑐ˆ (𝑖 ) |
+                                                                                   tral bands: L𝑆𝑁𝑇 = 𝑛𝑛𝑖𝑟    𝑖=1     |𝑆𝑝𝑒𝑐 (𝑖 ) |        , where 𝑛𝑛𝑖𝑟 is
+                                                               (2)
+                                                                                   the total number of NIR sampled wavelengths, 𝑆𝑝𝑒𝑐 (𝑖) rep-
+where 𝑉𝑖 and 𝑊 𝑗 denote the value ranges of visible band 𝑖 and
+                                                                                   resents the ground-truth of NIR spectral value at the i-th
+NIR band 𝑗, respectively. Here, 𝑣 and 𝑤 represent reflectance
+                                                                                   wavelength, and 𝑆𝑝𝑒𝑐ˆ (𝑖) denotes the recovered NIR spectral
+values within each band; 𝑝 (𝑣), 𝑝 (𝑤) are their marginal prob-
+                                                                                   value. Minimizing L𝑆𝑁𝑇 reduces the discrepancy between
+ability distributions, and 𝑝 (𝑣, 𝑤) is the joint distribution.
+                                                                                   recovered and original NIR spectra.
+   Here we analyze the honey hyperspectral dataset [49] as
+an example. As shown in Fig. 12, adjacent spectral bands ex-
+hibit stronger correlations, peaking near 700 nm and decreas-                      6.2    Spectral Recovery Training Scheme
+ing toward both 400 nm and 1000 nm. This occurs because                                   Under Camera Flash
+materials interact with light over continuous spectral ranges                      As shown in Fig. 8, camera flashes inherently lack NIR spec-
+rather than at isolated wavelengths, causing neighboring                           tral components, making it infeasible to obtain ground-truth
+bands within the same spectral feature to capture similar                          NIR data under camera flash illumination. One simple solu-
+interactions. Moreover, each NIR band shows significant cor-                       tion is to collect paired VIS-NIR ground truth data using a
+relation (NMI > 0.5) with certain visible bands, confirming                        full-band illumination source, which emits a substantially
+their inherent link and supporting visible-based NIR predic-                       full VIS-NIR spectrum. However, directly applying a model
+tion [16]. However, we notice that the correlation between                         trained on such data to flash conditions results in a signifi-
+visible and NIR bands is sparse. Each NIR band exhibiting                          cant domain shift due to the substantial difference in spectral
+correlations with only a small subset of visible bands.                            distribution between full-band and flash illumination, even
+   NIR Predictor Model. As we’ve analyzed above, Fig.                              within their shared visible spectral band, as shown in Fig. 5a.
+12 demonstrates that sparse correlations exist between vis-                           To overcome these limitations and effectively leverage the
+ible and NIR bands. Consequently, leveraging full visible                          available expert knowledge, we propose the Expert-guided
+spectral information for NIR prediction introduces redun-                          Cross-spectral Domain Adaptation (ECDA) framework. As
+dant data that increases computational burden and propa-                           shown in Fig. 13, ECDA uses a two-stage teacher-student
+gates noise interference. We propose the Sparse-Gated NIR                          strategy. First, a teacher model is trained under full-band
+Transformer (SNT), an architecture that leverages sparsity-                        illumination to reconstruct visible spectra, learning robust
+optimized transformer operations on reconstructed visible                          spectral representations. Its parameters are then frozen, and
+spectra for NIR prediction. The model initiates processing                         intermediate features 𝑓𝑡 are extracted for subsequent knowl-
+with a sparse, trainable gating layer, which applies sigmoid-                      edge transfer. Next, a student model is trained on flash RGB
+activated weights to dynamically identify and enhance a                            images. During this student training phase, we extract the
+sparse subset of task-relevant wavelengths while suppress-                         corresponding features from the student, denoted as 𝑓𝑠 , and
+ing irrelevant or noisy bands. This sparsity-inducing gat-                         perform feature-level alignment by minimizing the repre-
+ing mechanism ensures that only a limited number of spec-                          sentation gap between 𝑓𝑡 and 𝑓𝑠 through feature distillation.
+tral features contribute significantly to downstream process-                      Note that the visible spectral reconstruction network in Sec-
+ing. The processed input is projected to 64 dimensions via                         tion 6.1.1 uses a multistage architecture with spectral atten-
+a linear layer, then encoded by a 3-layer Transformer (4                           tion blocks. Here, the feature alignment is applied to the
+first-stage outputs to transfer spectral knowledge from the                                                Table 1: Experimental Settings.
+teacher to the student. This alignment loss is combined with
+the spectral reconstruction loss to form the overall training                                     Item         Number                    Value
+objective. Specifically, the loss function is:                                                                                  Honey: Manuka,Acacia
+                                                                                               Liquid food           2
+                                                                                                                                Wine: Merlot, Cabernet
+                  L𝐸𝐶𝐷𝐴 = 𝜆 · L𝐷𝑇 𝑅 + (1 − 𝜆) · L𝐸𝐴 ,                                (3)       Adulterant            8              Shown in Table 2
+                                                                                                                            Dark room, conference room,
+where L𝐷𝑇 𝑅 is the domain-transfer regression loss, which                                     Environment            5
+                                                                                                                            office, home, beside a window
+utilizes full-band ground truth to directly supervise the flash
+                                                                                                                               5 cm, 7 cm, 10 cm, 20 cm,
+model’s spectral reconstruction. L𝐸𝐴 represents expert align-                                   Distance             8
+                                                                                                                             30 cm, 40 cm, 50 cm, 55 cm
+ment loss, which aligns intermediate features between the
+flash and expert models to reduce cross-domain discrep-                                                                          iPhone 11, iPhone 15,
+                                                                                                 Device              3
+ancy. The coefficient 𝜆 is a trade-off hyperparameter that                                                                       Redmi note 11
+balances the contributions of the two loss terms, which                                           Bottle             2                 Seal, open
+is 0.7 in our method. L𝐷𝑇 𝑅 and L𝐸𝐴 are represented as:
+                                                        ˆ
+              1 Í𝑛 𝑣𝑖𝑠 | 𝑓 𝑓 𝑢𝑙𝑙 −𝑏𝑎𝑛𝑑 (𝑖 ) − 𝑓 𝑓 𝑙𝑎𝑠ℎ (𝑖 ) |                                   Table 2: Adulterants Types and Concentrations.
+L𝐷𝑇 𝑅 = 𝑛 𝑣𝑖𝑠      𝑖=1           | 𝑓 𝑓 𝑢𝑙𝑙 −𝑏𝑎𝑛𝑑 (𝑖 ) |       , L𝐸𝐴 = 𝑛1𝑓 ||𝑓𝑡 − 𝑓𝑠 || 2 .
+Here 𝑛 𝑣𝑖𝑠 is the total number of sampled visible wavelengths,                                               Type          Substance          Conc.
+𝑓 𝑓 𝑢𝑙𝑙 −𝑏𝑎𝑛𝑑 (𝑖) represent the original visible spectral values                                             Water            Water          20%, 40%
+under full-band illumination at the i-th wavelength, respec-                                                              Multi-flower,
+               ˆ (𝑖) denotes the reconstructed visible spectral
+tively; 𝑓 𝑓 𝑙𝑎𝑠ℎ                                                                                Honey      Substitute                        20%, 50%
+                                                                                                                         rapeseed honey
+value under camera flash. 𝑛 𝑓 is the dimension of feature                                                                Maltose, invert,
+alignment, which is set to 64 in our implementation. This                                                    Syrup                           20%, 40%
+                                                                                                                           corn syrup
+mechanism enables accurate visible spectral reconstruction                                                   Illegal        Tartrazine      0.1, 0.2g/kg
+under camera flash illumination despite the absence of target-                                              additive          Glycol           2%, 5%
+domain supervision. Following the cross-domain adaptation                                                    Water            Water          20%, 40%
+from flash to full-band visible spectra, the resulting outputs                                   Wine
+                                                                                                           Substitute        Brandy          20%, 50%
+are used with full-band NIR data to train the NIR predictor.                                                  Juice        Grape juice       20%, 40%
+                                                                                                             Illegal         Carmine        0.1, 0.2g/kg
+6.3       Adulteration Detection Model                                                                      additive         Glycerol         5%, 10%
+After recovering the hyperspectral data from RGB inputs via
+the model above, we obtain hyperspectral information with
+dimensions 𝑛 𝑣𝑖𝑠 + 𝑛𝑛𝑖𝑟 , spanning both visible and NIR bands.                               types + 2 authentic types) × 2 = 36 honey samples and 12 (2
+This high-dimensional spectral information serves as the                                     wine types × 5 adulterant types + 2 authentic types) × 2 =
+foundational input for classifying liquid food adulteration                                  24 wine samples in total. Thus, the complete dataset consists
+types. To achieve this, we employ a Multilayer Perceptron                                    of 6,000 spectral data points.
+(MLP) classifier comprising three fully connected hidden                                        Our spectral recovery model, as described in Section 6,
+layers (250, 150, and 100 neurons respectively) to detect adul-                              requires three key components for training: (1) RGB data cap-
+teration patterns effectively.                                                               tured under full-band illumination, (2) RGB data under cam-
+                                                                                             era flash illumination, and (3) hyperspectral data acquired
+7 Evaluation                                                                                 under full-band illumination. While our current dataset only
+                                                                                             contains hyperspectral measurements obtained under full-
+7.1 Dataset for Spectral Recovery                                                            band illumination, we can derive the necessary RGB values
+We employ a Cubert UHD 185 hyperspectral camera to ac-                                       through color conversion methodologies. Full-band RGB val-
+quire VIS-NIR hyperspectral ground truth data of liquid food                                 ues are computed directly from the hyperspectral data using
+samples. The hyperspectral images are collected under halo-                                  the CIE 1931 color-matching functions [13], as RGB is fun-
+gen illumination for various types of liquid foods, as well as                               damentally derived from spectral integration across visible
+for samples adulterated with different contaminants listed                                   wavelengths. We employ an illumination conversion method
+in Table 1 and Table 2. Note that for adulterated samples,                                   [61] to transform the RGB values of samples from halogen
+hyperspectral data acquisition is limited to the maximum                                     to flash illumination. This leverages the principle that the
+concentration of each adulterant in Table 2. Two samples                                     reflected light from an object represents the coupled inter-
+are prepared for both the authentic liquid food and the adul-                                action between the illumination spectrum and the object’s
+terated one. Thus we have 18 (2 honey types × 8 adulterant                                   reflectance spectrum [18]. We first measure the spectral data
+of the halogen light source. Combined with the known spec-           Table 3: Accuracy of the Spectral Recovery Model.
+tral data of the smartphone flash, this allows us to compute
+the corresponding RGB values under flash illumination based               Model                          MRAE      RMSE
+on the measured halogen-illuminated RGB values. Here, we                  SOTA                           0.1385    0.1049
+use the spectrum of iPhone 11 camera flash measured in                    RVN-SR w/o ECDA                0.0893    0.0603
+Section 4.                                                                RVN-SR with ECDA (ours)        0.0751    0.0424
+7.2    Dataset for Liquid Food Adulteration
+       Detection                                                   component is isolated by subtracting the ambient-only image
+To evaluate the detection accuracy of LiquidLens for liquid        from the flash-illuminated image, with consistent camera set-
+food adulteration types, we assemble a dataset with RGB            tings (shutter speed, ISO, focus, white balance) maintained
+cameras from different mobile device models.                       throughout using a professional photography app. In de-
+   Experimental setup. We collect images of 2 types of             fault, data are collected in an artificially lit conference room
+liquid food: honey and wine. Each type of liquid food, we          with the iPhone 11 handheld approximately 10 cm above the
+collect images of 2 types. For honey, we collect Manuka            liquid surface. The system is as simple to use as a standard
+honey ($18.1 per 500g) and acacia honey ($7.7 per 500g). For       smartphone camera: focus, then shoot, without needing addi-
+wine, we select Merlot from the Languedoc region of France         tional stabilization. For each sample, we gain four flash-only
+($10.1 per 500mL), and Cabernet Sauvignon from California          images: two with an open container and two sealed. We have
+($15.4 per 500mL) . For honey, we examine four categories of       (34 honey sample categories +22 wine sample categories)× 2
+adulterants: water, substitutes (low-cost honey), syrup, and       samples × 4 captures = 448 images under default experimen-
+illegal additives. Note that the cheap honey we use here is        tal setting.
+priced below $3.5 per 500g. From each category, several rep-          ROI extraction. We manually select liquid surface re-
+resentative adulterants are selected, yielding a total of five     gions of interest (ROI, 20×20 pixels) in honey samples for
+distinct adulterants per honey type. For wine, we also con-        spectral recovery. This sampling strategy produce 400 RGB
+sider four types of adulterants: water, substitutes (low-priced    values per flash-only image. Here, each pixel is treated as an
+grape brandy), grape juice, and illegal additives. Here, the       individual sample for classification. Thus, our dataset com-
+grape brandy cost less than $5 per 500mL. Multiple typical         prised 179,200 pixel-level samples extracted from 400-pixel
+adulterants are chosen from each category, resulting in five       ROIs across all 448 captures.
+different adulterants per wine type. We evaluate 2 typical            Illumination intensity normalization. Due to vari-
+adulteration concentrations [5, 26, 32, 59] for each adulterant.   ations in camera distance during manual data collection,
+Note that the concentration values represent mass fractions.       brightness inconsistencies arise. To address this, we perform
+Thus, we have 34 types (2 honey types × 8 adulterant types         per-pixel brightness normalization: for each pixel, the max-
+× 2 concentration types + 2 authentic types) of honey sam-         imum RGB value is scaled to the full intensity range, and
+ples and 22 types (2 wine types × 5 adulterant types × 2           the other two channels are adjusted proportionally. This pre-
+concentration types + 2 authentic types) in total. We eval-        serves color ratios while ensuring uniform brightness. The
+uate LiquidLens in 5 different environments, at 8 different        normalized pixels are then used for further analysis.
+distances, using 3 different mobile device models, and under          We then feed the preprocessed RGB data into the trained
+two distinct conditions: with the bottle cap open (capturing       spectral recovery model to infer the VIS-NIR spectra. These
+the liquid surface directly) and with the bottle cap closed        inferred spectra are subsequently used to train the liquid
+(capturing the liquid through the bottle). Table 1 and Table 2     adulteration detection model.
+illustrates our experimental settings.
+   Liquid sample preparation. We prepare liquid samples            7.3    Accuracy of the Recovered Bands
+for two types of honey, two types of wine, and their adul-         In this section, we evaluate the performance of our spectral
+terants, with each adulterant prepared at two representative       recovery model (Section 6), validating its effectiveness as
+concentration levels [5, 26, 32, 59]. We prepare two sam-          the core component of LiquidLens. We first assess the core
+ples for each concentration. For each sample, we thoroughly        spectral recovery performance on known liquids, and then
+mixed it using a stirring rod and then allowed it to stand         extend the evaluation to unseen liquids and adulterants to
+to eliminate foam. Each prepared sample was stored in a            test generalization.
+standard 20mL plastic sample bottle, filled to capacity.
+   Flash-only image collection. To capture flash-only im-          7.3.1 Known Liquid and Adulterant. This evaluation is con-
+ages of liquid samples, we acquire paired images under both        ducted on the two datasets described in Section 7.1, which
+flash-illuminated and ambient-only lighting. The flash-only        contains paired RGB data and corresponding ground-truth
+Figure 14: Comparison be- Figure 15: Accuracy of Figure 16: Accuracy of wine Figure 17: Ablation Study.
+tween LiquidLens and base- honey adulteration detec- adulteration detection.
+lines.                     tion.
+
+hyperspectral data. Note that we use both datasets to train        Table 4: Accuracy of the Spectral Recovery Model for
+the model together, aiming to recover full-band VIS–NIR            Unknown Liquid and Adulterant.
+hyperspectral data from flash-based RGB data. We divide
+the data of the two datasets into two disjoint partitions: 70%      Model                                      MRAE      RMSE
+for training and 30% for testing. We test the accuracy of           New liquid w/o transfer learning           0.3660    0.3516
+the recovered bands by comparing them against the ground            New liquid with transfer learning          0.0458    0.0397
+truth ones. With an inter-band distance of only 5 nm, the           New adulterant w/o transfer learning       0.0621    0.0534
+recovered spectra exhibit high spectral resolution, sufficient
+for detecting liquid adulteration. Accuracy is measured using
+standard metrics: Mean Relative Absolute Error (MRAE) and               Table 5: Specular Reflection Removal Result.
+Root Mean Square Error (RMSE).
+   We employ SOTA-reconstructed VIS-NIR data (Section                       Flash&Ambient        Ambient-only         Flash-only
+6.1.1) as our baseline, with output dimensions extended for
+NIR recovery. Two variants of our spectral recovery model
+                                                                    Exp.
+are evaluated: without ECDA and with ECDA (our full de-
+sign). Results in Table 3 show metrics close to zero, indicating
+high spectral similarity between recovered and ground-truth         Var.           2.61                 3.78              1.24
+bands. Moreover, our model outperforms both the SOTA
+baseline and the non-ECDA variant, confirming its effective-
+ness.
+                                                                      We adopt a transfer learning strategy: freezing all layers
+                                                                   of the pre-trained spectral reconstruction and NIR prediction
+                                                                   models, and fine-tuning only the final output layers. This
+7.3.2 Unknown Liquid and Adulterant. To validate the gen-          preserves learned feature representations while efficiently
+eralization of our spectral recovery model to unseen liquids       adapting to new data. With only 20 randomly selected spec-
+and adulterants, we conduct an additional experiment using         tral curves (out of 1,000) for fine-tuning, this approach yields
+orange juice. This validation uses only hyperspectral data         substantial performance gains (Table 4), demonstrating that
+(under full-band illumination) to assess spectral reconstruc-      our framework can achieve high accuracy on new liquid
+tion accuracy, and is independent of the mobile RGB dataset        types with minimal data.
+(Section 7.2 and Table 2) used for primary detection. We              We further tested the model on unknown adulterants by
+evaluate hyperspectral reconstruction accuracy for orange          training only on authentic orange juice spectra and evalu-
+juice adulterated with water, syrup, and tartrazine. Ten sam-      ating on adulterated samples. Results (Table 4) show mini-
+ples are prepared: two authentic (NFC and reconstituted)           mal accuracy degradation, demonstrating robustness. This
+and three adulterated NFC (with 40% water, 40% syrup, or           is because common adulterants (e.g., water, syrup) share key
+0.2 g/kg tartrazine), each in duplicate. A single hyperspectral    chemical bonds (O-H, C-H) with the authentic juice, differ-
+image is captured for each sample. From each image, 100            ing mainly in concentration. Their low dosage places the
+pixels are selected from the ROI, yielding a final dataset of      adulterated samples close to the authentic ones in the feature
+1,000 spectral curves (10 samples × 100 pixels each).              space, allowing the model to approximate them effectively.
+7.4    Results of Flash-only Specular                             existing SOTA method improves system performance by re-
+       Reflection Removal                                         constructing the visible spectrum from flash-only RGB data.
+We evaluate the specular reflection removal effect of flash-      However, due to its failure in NIR spectrum recovery and
+                                                                  substantial domain shift, the detection accuracy remains be-
+only method in Section 5. Traditional approaches in com-
+puter vision always employ PSNR and SSIM [36] to evalu-           low 85%. 4) The existing SOTA method demonstrates lower
+ate reflection removal effects. However, calculating the two      detection accuracy when reconstructing VIS-NIR spectra
+metrics requires the groundtruth images without specular          compared to visible spectrum reconstruction, primarily due
+reflection, which can not be acquired in our scenario.            to inaccuracies in NIR reconstruction that introduce noise
+   We employ spatial-frequency analysis to evaluate reflec-       interference in liquid adulteration detection. Our designed
+                                                                  system achieves 95.2% accuracy for the liquid adulteration
+tion removal. Specular reflections appear as high-frequency
+components, while authentic liquid textures occupy lower          type detection task, outperforming all baseline methods and
+bands. Using patch-based variance (computing local RGB            validating the effectiveness of our system design.
+intensity variance across sliding windows), we analyze three
+image types: flash-illuminated, ambient-only, and their dif-      7.5.2 LiquidLens’s Performance. Fig. 15 and Fig. 16 presents
+                                                                  the confusion matrix of LiquidLens for detecting honey and
+ference (flash-only). We test 50 sets of the three image types.
+                                                                  wine adulteration types. The results demonstrate consis-
+Table 5 shows example images and average variance. Results
+confirm flash-only images exhibit substantially reduced high-     tently good performance across different liquid food cat-
+frequency energy, validating our method’s effectiveness in        egories and adulteration types. LiquidLens effectively dis-
+specular removal.                                                 tinguishes between various types of adulterated samples,
+                                                                  achieving an overall accuracy of 96.2% for honey and 94.0%
+                                                                  for wine.
+7.5    Accuracy of Liquid Food Adulteration
+       Detection                                                  7.5.3 Ablation Study. Ablation studies quantify each mod-
+                                                                  ule’s contribution (Fig. 17). Replacing our RVN-SR module
+In this section we evaluate the performance of LiquidLens         with a SOTA baseline causes an 8.0% accuracy drop, un-
+in detecting types of liquid food adulteration across various     derscoring its importance. RVN-SR employs a sparse-gated
+experimental settings. By default, we report the average          transformer to enable precise NIR analysis from visible spec-
+performance from an 8-fold cross-validation, ensuring that        tra. Removing the ECDA framework (i.e., training RVN-SR
+the class ratio in each fold remains consistent with that of      end-to-end without domain adaptation) results in a 3.9%
+the entire dataset. Note that pixels from the same image are      accuracy drop, confirming ECDA’s role in bridging the il-
+never split across the training and test sets simultaneously.     lumination domain gap and compensating for missing NIR
+                                                                  data.
+7.5.1 Baselines Comparison. We compare our system’s per-
+formance with several baselines. (1) Ambient-only RGB. We         7.5.4 Different environments. We evaluated authentic and
+use the RGB data without flash light illuminated to conduct       adulterated manuka samples in five environments, which
+the classification. (2) Flash-only RGB. We use flash-only RGB     varied in spectral composition, intensity, and surrounding
+data to conduct the classification. (3) Hyperspectral data        reflection characteristics. The test environment’s data are
+in the visible range reconstructed from flash-only RGB im-        excluded from the training set. These environments are care-
+ages using SOTA methods. We employ the SOTA spectral              fully selected to represent common real-world scenarios: 1)
+reconstruction method (detailed in Section 6.1.1) to gener-       In a near-dark environment (10 lux) with minimal ambient
+ate hyperspectral data in the visible range from flash-only       illumination, creating a simple reflection scenario. 2) In a
+RGB inputs. (4) VIS-NIR hyperspectral data reconstructed by       conference room with the lighting infrastructure on at night
+adapting our SOTA model with extended output dimensions           (200 lux), creating a simple reflection scenario. 3) In a daytime
+for NIR spectral recovery.                                        home setting (500 lux), creating a complex reflection environ-
+   Fig. 14 compares the accuracy of the LiquidLens with base-     ment with various surfaces including walls and equipment. 4)
+lines, revealing three important findings. 1) Using RGB for       In a daytime office with lighting infrastructures on (800 lux),
+liquid adulteration detection results in poor performance,        creating complex light interactions with walls and equip-
+which is lower than 80% accuracy, due to the limited spec-        ment surfaces. 5) In a daytime office besides a window (1500
+tral range and low spectral resolution. 2) Detection perfor-      lux), featuring a simple reflective environment.
+mance using ambient-only RGB is significantly inferior to            Fig. 18 presents the adulteration detection accuracy un-
+flash-only RGB, primarily due to interference from variable       der the different conditions. We can observe that 1) under
+ambient illuminance and liquid specular reflections. 3) The       common indoor lighting scenarios (≤ 800 lux), the system
+Figure 18: Accuracy under Figure 19: Accuracy under Figure 20: Accuracy under Figure 21: Accuracy on dif-
+different environments.   different distances.      different angles.         ferent devices.
+
+achieves the accuracy ranging from 91% to 99%, which con-              30◦ to 75◦ . Although the reflected intensity changes with
+firms that LiquidLens can work in diverse real-world envi-             angle (according to the lambert radiation model [39, 40]), our
+ronments. 2) Under extremely high ambient illumination,                brightness normalization successfully removes this interfer-
+detection accuracy decreases significantly. This occurs be-            ence, allowing the essential color features to be retained for
+cause under the fixed camera parameters of our experimen-              analysis. The system fails at the angle below 15◦ because the
+tal setup, intense ambient light can drive the sensor signal           specular reflection from the flash falls within the camera’s
+toward saturation. This saturation corrupts the differential           field of view (FOV). At larger angles, this reflection is steered
+imaging process, compromising the extraction of the isolated           outside the camera’s FOV, allowing only the diffuse signal to
+flash component. 3) With more complex reflection scenario,             be captured. Note that a 90◦ angle is not feasible as the liquid
+the detection accuracy becomes lower. The reason is that               surface falls entirely outside the camera’s field of view in
+although flash-only imaging eliminates dominant specular               that configuration and is therefore excluded from evaluation.
+and ambient noise, residual artifacts from multi-path prop-
+agation and complex surface interactions under complex
+                                                                       7.5.7 Different devices. We capture authentic and adulter-
+reflection scenario may remain.
+                                                                       ated manuka samples with 3 different devices, iPhone 11,
+7.5.5 Different distances. We analyze the impact of the cap-           iPhone 15, Redmi note 11. The model was trained on a dataset
+turing distance on the accuracy of the liquid adulteration             collected using the iPhone 11’s camera and flashlight.
+detection by LiquidLens. We capture the authentic and adul-               Camera flashes on different devices. First, we evaluate
+terated manuka samples at 8 distances: 5 cm, 7 cm, 10 cm, 20           LiquidLens under illumination from camera flashes on vari-
+cm, 30 cm, 40 cm, 50 cm, 55 cm. The test distance’s data are           ous mobile devices. Specifically, we use the camera flashes
+excluded from the training set. As shown in Fig. 19, we have           of iPhone 11, iPhone 15 and Redmi note 11 as light sources
+three observations: 1) A significant performance degradation           separately, while employing an iPhone 11 to capture the cor-
+occurs at the 5 cm distance. The reason is that lens defocusing        responding RGB images. Results in Fig. 21 demonstrate that
+at extremely close distances can generate chromatic aber-              LiquidLens performs robustly under different camera flashes,
+rations in the measured spectra [2]. 2) Distance variations            due to the consistent spectral characteristics exhibited across
+between 7-50 cm demonstrate consistent detection accuracy,             these light sources.
+indicating robust distance generalization of the LiquidLens               Cameras on different devices. We then evaluate Liqui-
+algorithm. The reason is that we apply brightness normal-              dLens using the same iPhone 11 flash as the light source but
+ization to eliminate interference caused by variations in the          with different cameras (i.e. iPhone 11, iPhone 15, and Redmi
+distance between the camera flash and the target liquid. 3)            Note 11) to capture RGB images. The experimental results in
+Performance declines significantly at 55 cm. The reason is             Fig. 21 reveal significant performance degradation due to the
+that the camera flash becomes too weak to provide adequate             variations in spectral response characteristics across different
+illumination at long distance, causing low signal-to-noise             camera sensors. To mitigate this cross-device discrepancy, we
+ratio that distorts color accuracy.                                    adopt the image normalization technique proposed in [55],
+                                                                       which requires only a small calibration dataset per device.
+                                                                       We trained a deep learning encoder-decoder architecture to
+7.5.6 Different angles. We quantify the impact of the cam-             project all input images into a unified color space aligned
+era’s tilt angle on system performance. We capture images              with the iPhone 11’s spectral characteristics.
+of authentic and adulterated Manuka honey samples with
+the camera positioned at a fixed distance of 10 cm and tilted          7.6    Time Consumption and Memory Usage
+at angles of 15◦ , 30◦ , 45◦ , 60◦ , and 75◦ relative to the surface   We test the time consumption and the memory usage on
+normal. Results in Fig. 20 show robust performance from                two mobile devices: Redmi note 11 and OnePlus Ace5. The
+average processing time of LiquidLens for each pixel is 0.21      a NIR camera module, which is not commonly available in
+msec on Redmi note 11 and 0.14 msec on OnePlus Ace5. For          most commercial smartphones.
+each device, we test 400 pixels and calculate the average time.
+LiquidLens used less than 90 MB of memory on both devices.        9    Discussion
+                                                                  Outdoor Deployment. While our experimental setup uses
+8   Related Work                                                  fixed camera parameters (such as ISO and shutter speed)
+Spectral-based Liquid Food Adulteration Detection. Spec-          optimized for indoor environments, these settings may not
+tral analysis has become a powerful tool for detecting liquid     be suitable for outdoor use. Strong ambient light outdoors
+food adulteration. Based on wavelength ranges, it can be cat-     can cause image saturation, reducing the effectiveness of
+egorized into three types: visible, VIS-NIR, and NIR. Visible     our method. Future work should address this limitation by
+spectral analysis (400–700 nm) is primarily used to identify      calibrating camera parameters for outdoor conditions and
+colour-based adulterants such as artificial dyes in liquids       dynamically adjusting exposure to ensure robust bulk scat-
+[62], though it lacks the sensitivity to distinguish chemically   tering extraction under varying lighting environments.
+similar substances. VIS-NIR analysis (400–1000 nm) offers             Target Liquid Requirements. Our method’s effective-
+higher sensitivity, enabling the detection of more subtle adul-   ness depends on two key conditions. First, it requires distinct
+terations such as sugar syrup added to honey [6, 54]. NIR         visible absorption features to reconstruct the NIR component;
+analysis (900–1700 nm) provides even greater sensitivity and      therefore, high accuracy is achieved mainly for colored liq-
+is widely applied in detecting chemical adulterants such as       uids, as transparent ones lack sufficient spectral variation in
+melamine in milk [12, 17, 43] and assessing quality indicators    RGB signals. Second, it assumes liquid homogeneity, which
+in olive oil [21, 45]. However, these methodologies require       we ensure by stirring, so the spectral signature from the
+bulky and expensive hyperspectral devices.                        surface represents the entire volume; without homogeneity,
+   Liquid Analysis on Mobile Devices. Previous mobile             the analysis remains local to the imaged layer.
+liquid analysis methods [30, 38, 70, 74] primarily rely on mea-       From Single Pixel to Full ROI. Our study validates
+suring physical properties, including viscosity and surface       single-pixel spectral recovery for liquid adulteration detec-
+tension. However, their measurements need direct contact          tion, relying on the sample homogeneity assumption whereby
+with container, thus are easily compromised by interference       any pixel’s spectrum represents the whole sample. We seg-
+from the container material due to resonant effects. [11]         ment a liquid ROI and apply the model to one pixel within
+sense the viscosity from a drop of liquid, which can not be       it. In practice, this framework supports flexible extension:
+interfered by container material. Nevertheless, the require-      detection can be performed either on the averaged color of
+ment for controlled deposition of liquid droplets onto glass      the entire ROI, or on each pixel individually with results
+slides adds significant procedural overhead. LiquidHash[60]       consolidated by voting.
+leverages smartphone cameras to record videos of bubble
+dynamics (including morphology and motion patterns) to de-
+                                                                  10    Conclusion
+tect liquid food adulteration. However, the system requires a     LiquidLens enables mobile VIS-NIR spectral analysis for liq-
+specialized bottle cap accessory to regulate bubble formation     uid food adulteration detection using only the RGB sensing
+for reliable measurements.                                        capability. By utilizing the camera flash as a spectrally con-
+   Hyperspectral Sensing on Mobile Devices. While most            sistent light source and innovating with flash-only reflec-
+existing mobile sensing systems rely on wireless sensing          tion suppression and sparsity-optimized spectral recovery,
+techniques [23, 42, 71, 72, 76] to capture physical proper-       we overcome fundamental limitations in uncontrolled en-
+ties of objects, mobile hyperspectral sensing emerges as          vironments and spectral sensing range of mobile devices.
+a new paradigm for chemical analysis. Recent works, e.g.,         Experimental validation demonstrates robust performance
+[22, 33, 58, 63, 67], have explored the implementation of hy-     across honey (96.2% accuracy) and wine (94.0% accuracy)
+perspectral sensing on mobile devices. However, most of           adulteration detection under diverse real-world conditions.
+these approaches require hardware modifications. For in-
+stance, Lumos [67] integrates a spectral sensor and an LED        Acknowledgments
+array into a wristband to enable hyperspectral capture. Chro-     This work is supported by UGC/GRF (No.15211024), Innova-
+maFlash [63] employs a specialized multispectral flash unit       tion and Technology Fund (ITS/034/23FP, GHP/079/22SZ),
+attached to a smartphone to reconstruct hyperspectral data        and Shenzhen Fundamental Research Scheme (No. JCYJ202308
+in the visible range using the device’s camera. Several works     07140410022). This work is also supported by the Research
+[27, 55] achieve hyperspectral reconstruction across VIS-NIR      Institute for Artificial Intelligence of Things (RIAIoT). Lei
+bands using only smartphone cameras. However, it relies on        Yang is the corresponding author of this paper.
+References                                                                        [21] DM Martínez Gila, P Cano Marchal, J Gámez García, and J Gómez
+ [1] 2020. Dozens dead in Mexico after drinking adulterated alcohol. Re-               Ortega. 2015. On-line system based on hyperspectral information to
+     trieved June 30, 2025 from https://www.bbc.com/news/world-latin-                  estimate acidity, moisture and peroxides in olive oil samples. Computers
+     america-52648026                                                                  and Electronics in Agriculture 116 (2015), 1–7.
+ [2] 2025. Chromatic aberration. Retrieved July 2, 2025 from https://en.          [22] Mayank Goel, Eric Whitmire, Alex Mariakakis, T Scott Saponas, Neel
+     wikipedia.org/wiki/Visible_spectrum                                               Joshi, Dan Morris, Brian Guenter, Marcel Gavriliu, Gaetano Borriello,
+ [3] 2025.      Fake wine – honestly, it’s a thing.                  Retrieved         and Shwetak N Patel. 2015. HyperCam: hyperspectral imaging for
+     June 30, 2025 from https://www.bbc.co.uk/programmes/articles/                     ubiquitous computing applications. In Proceedings of the 2015 ACM
+     4CVrkdJB3FmkL3LgJwRFsXD/fake-wine-honestly-it-s-a-thing                           International Joint Conference on Pervasive and Ubiquitous Computing.
+ [4] 2025. Visible spectrum. Retrieved Dec 21, 2025 from https://en.                   145–156.
+     wikipedia.org/wiki/Chromatic_aberration?utm_source                           [23] Zheng Gong, Lubing Han, Zhenlin An, Lei Yang, Siqi Ding, and Yu
+ [5] 2025. Visible spectrum. Retrieved July 29, 2025 from https://en.                  Xiang. 2022. Empowering smart buildings with self-sensing concrete
+     wikipedia.org/wiki/Propylene_glycol                                               for structural health monitoring. In Proceedings of the ACM SIGCOMM
+ [6] Mokhtar A Al-Awadhi and Ratnadeep R Deshmukh. 2022. Honey adul-                   2022 Conference (SIGCOMM ’22). Association for Computing Machin-
+     teration detection using hyperspectral imaging and machine learning.              ery, New York, NY, USA, 560–575.
+     In 2022 2nd international conference on artificial intelligence and signal   [24] Guardian. 2023. All UK honey tested in EU fraud investigation fails au-
+     processing (AISP). IEEE, 1–5.                                                     thenticity test. Retrieved June 30, 2025 from https://www.theguardian.
+ [7] Apimondia. 2020. EVALUATION OF THE DIRECT ECONOMIC                                com/food/2023/mar/26/uk-honey-fails-authenticity-test
+     IMPACT OF DECREASING PRICES OF HONEY ON THE MAIN                             [25] Christian Gueymard. 2025. SMARTS: Simple Model of the Atmospheric
+     HONEY EXPORT COUNTRIES OF THE AMERICAS. Retrieved                                 Radiative Transfer of Sunshine. Retrieved June 28, 2025 from https:
+     June 30, 2025 from https://www.apimondia.org/latest/evaluation-of-                //www.nrel.gov/grid/solar-resource/smarts
+     the-direct-economic-impact-of-decreasing-prices-of-honey-on-the-             [26] Mohammad Ashraful Haque, Rummanur Rahad, AKM Rakib, Shad-
+     main-honey-export-countries-of-the-americas                                       man Shahriar Sharar, and Rakibul Hasan Sagor. 2023. Plasmonic sensor
+ [8] Boaz Arad and Ohad Ben-Shahar. 2016. Sparse recovery of hyper-                    for rapid detection of water adulteration in honey and quantitative
+     spectral signal from natural RGB images. In European conference on                measurement of lactose concentration in solution. Results in Physics
+     computer vision. Springer, 19–34.                                                 51 (2023), 106733.
+ [9] Antonietta Baiano. 2017. Applications of hyperspectral imaging for           [27] Haiyan Hu, Yinan Zhu, Shanwen Chen, Qianyi Huang, and Qian Zhang.
+     quality assessment of liquid based and semi-liquid food products: A               2025. FruitPhone: Detecting Sugar Content in Fruits Using Unmodified
+     review. Journal of Food Engineering 214 (2017), 10–15.                            Smartphones with Spectral Imaging. Proc. ACM Interact. Mob. Wearable
+[10] Anthony Baxter. 2011. Fears over ’harmful’ fake alcohol on sale across            Ubiquitous Technol. 9, 3, Article 86 (Sept. 2025), 29 pages.
+     the UK. Retrieved June 30, 2025 from https://www.bbc.com/news/               [28] Haiyan Hu, Yinan Zhu, Baichen Yang, Hua Kang, Shanwen Chen,
+     newsbeat-16182770                                                                 and Qian Zhang. 2024. MeatSpec: Enabling Ubiquitous Meat Fraud
+[11] Justin Chan, Ananditha Raghunath, Kelly E Michaelsen, and Shyam-                  Inspection through Consumer-Level Spectral Imaging (ACM MobiCom
+     nath Gollakota. 2022. Testing a drop of liquid using smartphone LiDAR.            ’24). Association for Computing Machinery, New York, NY, USA.
+     Proceedings of the ACM on Interactive, Mobile, Wearable and Ubiquitous       [29] Leqian Hu, Chunling Yin, Shuai Ma, and Zhimin Liu. 2018. Rapid
+     Technologies 6, 1 (2022), 1–27.                                                   detection of three quality parameters and classification of wine based
+[12] Hui Chen, Chao Tan, Zan Lin, and Tong Wu. 2017. Detection of                      on Vis-NIR spectroscopy with wavelength selection by ACO and CARS
+     melamine adulteration in milk by near-infrared spectroscopy and one-              algorithms. Spectrochimica Acta Part A: Molecular and Biomolecular
+     class partial least squares. Spectrochimica Acta Part A: Molecular and            Spectroscopy 205 (2018), 574–581.
+     Biomolecular Spectroscopy 173 (2017), 832–836.                               [30] Yongzhi Huang, Kaixin Chen, Yandao Huang, Lu Wang, and Kaishun
+[13] CIE color-matching functions 2025. CIE 1931 colour-matching func-                 Wu. 2021. Vi-liquid: unknown liquid identification with your smart-
+     tions. https://cie.co.at/datatable/cie-1931-colour-matching-functions-            phone vibration. In Proceedings of the 27th Annual International Con-
+     2-degree-observer.                                                                ference on Mobile Computing and Networking. 174–187.
+[14] CIE datasets 2025. CIE illumination datasets. https://cie.co.at/data-        [31] Shyam Narayan Jha, Pranita Jaiswal, Manpreet Kaur Grewal, Mansha
+     tables.                                                                           Gupta, and Rishi Bhardwaj. 2016. Detection of adulterants and con-
+[15] Emil W Ciurczak, Benoît Igne, Jerome Workman Jr, and Donald A                     taminants in liquid foods—a review. Critical reviews in food science and
+     Burns. 2021. Handbook of near-infrared analysis. CRC press.                       nutrition 56, 10 (2016), 1662–1684.
+[16] Jacob Cohen. 2013. Statistical power analysis for the behavioral sciences.   [32] Rahul Joshi, Ritu Joshi, Hanim Zuhrotul Amanah, Mohammad Ak-
+     routledge.                                                                        bar Faqeerzada, Praveen Kumar Jayapal, Geonwoo Kim, Insuck Baek,
+[17] Yi-Wei Dong, Zhen-Hua Tu, Da-Zhou Zhu, Ya-Wei Liu, Ya-Nan Wang,                   Eun-Sung Park, Rudiati Evi Masithoh, and Byoung-Kwan Cho. 2021.
+     Jin-Li Huang, Bao-Li Sun, Zhong-Nan Fan, et al. 2009. Feasibility of              Quantitative analysis of glycerol concentration in red wine using
+     using NIR spectroscopy to detect melamine in milk. Spectroscopy and               Fourier transform infrared spectroscopy and chemometrics analysis.
+     Spectral Analysis 29, 11 (2009), 2934–2938.                                       Korean Journal of Agricultural Science 48, 2 (2021), 299–310.
+[18] Mark D Fairchild. 2013. Color appearance models. John Wiley & Sons.          [33] Sewoong Kim, Dongrae Cho, Jihun Kim, Manjae Kim, Sangyeon Youn,
+[19] Rafieh Fakhlaei, Jinap Selamat, Alfi Khatib, Ahmad Faizal Abdull Razis,           Jae Eun Jang, Minkyu Je, Dong Hun Lee, Boreom Lee, Daniel L Farkas,
+     Rashidah Sukor, Syahida Ahmad, and Arman Amani Babadi. 2020. The                  et al. 2016. Smartphone-based multispectral imaging: system develop-
+     toxic impact of honey adulteration: A review. Foods 9, 11 (2020), 1538.           ment and potential for mobile skin diagnosis. Biomedical optics express
+[20] Mario Gabrielli, Daoud Ounaissi, Vanessa Lançon-Verdier, Séverine                 7, 12 (2016), 5294–5307.
+     Julien, Dominique Le Meurlay, and Chantal Maury. 2023. Hyperspec-            [34] Tarald O Kvålseth. 2017. On normalized mutual information: measure
+     tral imaging to assess wine grape quality. JSFA reports 3, 10 (2023),             derivations and properties. Entropy 19, 11 (2017), 631.
+     452–462.                                                                     [35] Crystal Lam. 2008. Driving LED lighting in mobile phones and PDAs.
+                                                                                       Retrieved June 7, 2025 from https://www.eetimes.com/driving-led-
+     lighting-in-mobile-phones-and-pdas/                                        [54] Sahameh Shafiee, Gerrit Polder, Saeid Minaei, Nasrolah Moghadam-
+[36] Yu Li and Michael S Brown. 2013. Exploiting reflection change for               Charkari, Saskia Van Ruth, and Piotr M Kuś. 2016. Detection of honey
+     automatic reflection removal. In Proceedings of the IEEE international          adulteration using hyperspectral imaging. IFAC-PapersOnLine 49, 16
+     conference on computer vision. 2432–2439.                                       (2016), 311–314.
+[37] Yun Li and Haiqing Yang. 2012. Honey Discrimination Using Visi-            [55] Neha Sharma, Muhammad Shahzaib Waseem, Shahrzad Mirzaei, and
+     ble and Near-Infrared Spectroscopy. International Scholarly Research            Mohamed Hefeeda. 2023. MobiSpectral: Hyperspectral imaging on mo-
+     Notices 2012, 1 (2012), 487040.                                                 bile devices. In Proceedings of the 29th Annual International Conference
+[38] Zhaohui Li, Wei Luo, Yongmin Zhang, Jianxi Chen, Yuanchao Shu,                  on Mobile Computing and Networking. 1–15.
+     and Yaoxue Zhang. 2024. ASLiquid: Non-Intrusive Liquid Counterfeit         [56] Zhan Shi, Chang Chen, Zhiwei Xiong, Dong Liu, and Feng Wu. 2018.
+     Identification with Your Earphones. In Proceedings of the 22nd ACM              Hscnn+: Advanced cnn-based hyperspectral recovery from rgb images.
+     Conference on Embedded Networked Sensor Systems. 41–53.                         In Proceedings of the IEEE Conference on Computer Vision and Pattern
+[39] Zimo Liao, Zhicheng Luo, Qianyi Huang, Linfeng Zhang, Fan Wu, Qian              Recognition Workshops. 939–947.
+     Zhang, and Guihai Chen. 2024. Gesture Recognition Using Visible            [57] Omar Mahmoud Solyman, Omnia Hamdy, Salwa Ahmed Abdelkawi,
+     Light on Mobile Devices. IEEE/ACM Trans. Netw. 32, 4 (March 2024),              and Aziza Ahmed Hassan. 2022. Investigating the light emitting diode
+     2920–2935.                                                                      (LED) flashlight characteristics of a sample of smartphones for its
+[40] Zimo Liao, Zhicheng Luo, Qianyi Huang, Linfeng Zhang, Fan Wu, Qian              safety in indirect retinal photography. Pan African Medical Journal 43,
+     Zhang, and Yi Wang. 2021. SMART: Screen-based gesture recognition               1 (2022).
+     on commodity mobile devices. In Proceedings of the 27th Annual Inter-      [58] Mary B Stuart, Andrew JS McGonigle, Matthew Davies, Matthew J
+     national Conference on Mobile Computing and Networking. 283–295.                Hobbs, Nicholas A Boone, Leigh R Stanger, Chengxi Zhu, Tom D
+[41] Allan Liska. 2022. How accurate are the figures on wine fraud?                  Pering, and Jon R Willmott. 2021. Low-cost hyperspectral imaging
+     Retrieved June 30, 2025 from https://janeanson.com/how-accurate-                with a smartphone. Journal of imaging 7, 8 (2021), 136.
+     are-the-figures-on-wine-fraud?srsltid=AfmBOorv_eGJZDT_                     [59] Norazian Subari, Junita Mohamad Saleh, Ali Yeon Md Shakaff, and Am-
+     0gxwWeBD8qwBv0BF4wQScbradHcL1xDLeIWHGB6g                                        mar Zakaria. 2012. A hybrid sensing approach for pure and adulterated
+[42] Tianci Liu, Lei Yang, Qiongzheng Lin, Yi Guo, and Yunhao Liu. 2014.             honey classification. Sensors 12, 10 (2012), 14022–14040.
+     Anchor-free backscatter positioning for RFID tags with high accuracy.      [60] Bangjie Sun, Sean Rui Xiang Tan, Zhiwei Ren, Mun Choon Chan, and
+     IEEE (2014).                                                                    Jun Han. 2022. Detecting counterfeit liquid food products in a sealed
+[43] Chenghui Lu, Bingren Xiang, Gang Hao, Jianping Xu, Zhengwu Wang,                bottle using a smartphone camera. In Proceedings of the 20th Annual
+     and Changyun Chen. 2009. Rapid detection of melamine in milk pow-               International Conference on Mobile Systems, Applications and Services.
+     der by near infrared spectroscopy. Journal of Near Infrared Spectroscopy        42–55.
+     17, 2 (2009), 59–67.                                                       [61] Shigeri Y Tamura S, Okamoto Y. 2017. Image Color Conversion by
+[44] MJ Martelo-Vidal and M Vázquez. 2014. Determination of polyphenolic             Illumination. Journal of Information Technology & Software Engineering
+     compounds of red wines by UV–VIS–NIR spectroscopy and chemo-                    7, 5 (July 2017), 359–379.
+     metrics tools. Food chemistry 158 (2014), 28–34.                           [62] Havva Tümay Temiz and Berdan Ulaş. 2021. A review of recent stud-
+[45] Candela Melendreras, Ana Soldado, José M Costa-Fernández, Alberto               ies employing hyperspectral imaging for the determination of food
+     López, Marta Valledor, Juan Carlos Campo, and Francisco Ferrero. 2023.          adulteration. Photochem 1, 2 (2021), 125–146.
+     An affordable NIR spectroscopic system for fraud detection in olive        [63] Dhruv Verma, Ian Ruffolo, David B Lindell, Kiriakos N Kutulakos, and
+     oil. Sensors 23, 3 (2023), 1728.                                                Alex Mariakakis. 2024. ChromaFlash: Snapshot Hyperspectral Imaging
+[46] Microgen. 2021. Wine fraud – How genuine is your wine? Retrieved                Using Rolling Shutter Cameras. Proceedings of the ACM on Interactive,
+     June 30, 2025 from https://joint-research-centre.ec.europa.eu/jrc-              Mobile, Wearable and Ubiquitous Technologies 8, 3 (2024), 1–31.
+     news-and-updates/wine-fraud-how-genuine-your-wine-2021-07-                 [64] Binh V Vu, Rongwei Lei, Chandra Mohan, Katerina Kourentzi, and
+     27_en                                                                           Richard C Willson. 2022. Flash characterization of smartphones used
+[47] AM Mustafah, D Jamaludin, MFI Azmi, S Abd Aziz, and YA Yusof.                   in point-of-Care diagnostics. Biosensors 12, 12 (2022), 1060.
+     2021. Adulterated stingless bee honey identification using VIS-NIR-        [65] Lu Wang, Da-Wen Sun, Hongbin Pu, and Jun-Hu Cheng. 2017. Quality
+     spectroscopy technique. Food Research (Malaysia) (2021).                        analysis, classification, and authentication of liquid foods by near-
+[48] Heidi Anita Nilsen and Karsten Heia. 2009. VIS/NIR Spectroscopy.                infrared spectroscopy: A review of recent research developments. Crit-
+     Fishery Products: Quality, safety and authenticity (2009), 89–104.              ical reviews in food science and nutrition 57, 7 (2017), 1524–1538.
+[49] Tessa Phillips, Ary Noviyanto, and Waleed Abdulla. 2020. Hyperspec-        [66] Shen Wang, Xiaopeng Zhao, Donghui Dai, and Lei Yang. 2024. Mirror
+     tral imaging honey dataset. (2020).                                             Never Lies: Unveiling Reflective Privacy Risks in Glass-laden Short
+[50] Siddha Pimputkar, James S Speck, Steven P DenBaars, and Shuji Naka-             Videos. In Proceeding of the 10th International Conference on Mobile
+     mura. 2009. Prospects for LED lighting. Nature photonics 3, 4 (2009),           Computing and Networking (MobiCom’24). Association for Computing
+     180–182.                                                                        Machinery, New York, NY, USA.
+[51] Jukka A Räty, Kai-Erik Peiponen, and Toshimitsu Asakura. 2004. UV-         [67] Amanda Watson, Claire Kendell, Anush Lingamoorthy, Insup Lee, and
+     visible reflection spectroscopy of liquids. Vol. 92. Springer Science &         James Weimer. 2023. Lumos: An open-source device for wearable
+     Business Media.                                                                 spectroscopy research. Proceedings of the ACM on Interactive, Mobile,
+[52] Muna E Raypah, Ahmad Fairuz Omar, Jelena Muncan, Musfirah Zulkur-               Wearable and Ubiquitous Technologies 6, 4 (2023), 1–24.
+     nain, and Abdul Rahman Abdul Najib. 2022. Identification of stingless      [68] George Wright. 2024. Alert over potentially deadly counterfeit vodka?
+     bee honey adulteration using visible-near infrared spectroscopy com-            Retrieved June 30, 2025 from https://www.bbc.com/news/articles/
+     bined with aquaphotomics. Molecules 27, 7 (2022), 2324.                         c8er23xwwjno
+[53] Emma Rossiter. 2024. World Beekeeping Awards axe honey prize due           [69] Yaohang Wu, Renwei Dian, and Shutao Li. 2024. Multistage spatial–
+     to fraud. Retrieved June 28, 2025 from https://www.bbc.com/news/                spectral fusion network for spectral super-resolution. IEEE Transac-
+     articles/cjw0w921nzgo                                                           tions on Neural Networks and Learning Systems (2024).
+[70] Yuezhong Wu, Wei Song, Yanxiang Wang, Dong Ma, Weitao Xu, Mah-             Vis–NIR spectroscopy and least-squares support vector machines. Food
+     bub Hassan, and Wen Hu. 2024. VibMilk: Nonintrusive Milk Spoilage          Chemistry 113, 1 (2009), 291–296.
+     Detection via Smartphone Vibration. IEEE Internet of Things Journal   [74] Shichao Yue and Dina Katabi. 2019. Liquid testing with your smart-
+     11, 10 (2024), 17184–17197.                                                phone. In Proceedings of the 17th annual international conference on
+[71] Lei Yang, Yekui Chen, Xiang-Yang Li, Chaowei Xiao, Mo Li, and Yun-         mobile systems, applications, and services. 275–286.
+     hao Liu. 2014. Tagoram: real-time tracking of mobile RFID tags to     [75] Jingang Zhang, Runmu Su, Qiang Fu, Wenqi Ren, Felix Heide, and
+     high precision using COTS devices (MobiCom ’14). Association for           Yunfeng Nie. 2022. A survey on computational spectral reconstruction
+     Computing Machinery, New York, NY, USA, 237–248.                           methods from RGB to hyperspectral imaging. Scientific reports 12, 1
+[72] Lei Yang, Qiongzheng Lin, Xiangyang Li, Tianci Liu, and Yunhao Liu.        (2022), 11905.
+     2015. See Through Walls with COTS RFID System!. In Proceedings        [76] Xiaopeng Zhao, Zhenlin An, Qingrui Pan, and Lei Yang. 2023. NeRF2:
+     of the 21st Annual International Conference on Mobile Computing and        Neural Radio-Frequency Radiance Fields. In Proceedings of the 29th
+     Networking (MobiCom ’15). Association for Computing Machinery,             Annual International Conference on Mobile Computing and Networking
+     New York, NY, USA, 487–499.                                                (ACM MobiCom ’23). Association for Computing Machinery, New York,
+[73] HY Yu, XY Niu, HJ Lin, YB Ying, BB Li, and XX Pan. 2009. A fea-            NY, USA, Article 27, 15 pages.
+     sibility study on on-line determination of rice wine composition by
+

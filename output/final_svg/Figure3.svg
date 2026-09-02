@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 740" role="img" aria-labelledby="title desc">
+  <title id="title">Staggered evidence escalation route</title>
+  <desc id="desc">Four alternating experimental checkpoints from pilot metric selection to an oracle diagnostic, with frozen decisions at each transition.</desc>
+  <defs>
+    <marker id="arrow-gray" markerWidth="11" markerHeight="11" refX="10" refY="3.5" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L10,3.5 L0,7 Z" fill="#555E65"/>
+    </marker>
+    <marker id="arrow-blue" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L9,3 L0,6 Z" fill="#587A9B"/>
+    </marker>
+    <marker id="arrow-peach" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L9,3 L0,6 Z" fill="#B96F55"/>
+    </marker>
+    <style>
+      .serif{font-family:'Times New Roman',Times,serif;fill:#17191B}
+      .title{font-size:25px;font-weight:700}
+      .body{font-size:20px}
+      .small{font-size:17px}
+      .tiny{font-size:15px}
+      .math{font-style:italic}
+      .line{fill:none;stroke:#555E65;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+      .thin{fill:none;stroke:#687078;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+    </style>
+  </defs>
+
+  <rect id="background" x="0" y="0" width="1600" height="740" fill="#FFFFFF"/>
+
+  <!-- One staggered route, visually distinct from Figure 2 -->
+  <g id="evidence-route">
+    <path d="M92 352 C230 352 350 265 500 222" fill="none" stroke="#7B8288" stroke-width="4" marker-end="url(#arrow-gray)"/>
+    <path d="M555 223 C690 232 800 322 900 348" fill="none" stroke="#587A9B" stroke-width="4" marker-end="url(#arrow-blue)"/>
+    <path d="M955 348 C1085 316 1160 242 1290 223" fill="none" stroke="#587A9B" stroke-width="4" marker-end="url(#arrow-blue)"/>
+    <path d="M1345 223 C1438 241 1490 286 1530 332" fill="none" stroke="#B96F55" stroke-width="4" marker-end="url(#arrow-peach)"/>
+  </g>
+
+  <!-- Checkpoint 1: Pilot, above the route -->
+  <g id="pilot-checkpoint">
+    <circle cx="145" cy="352" r="29" fill="#ECEDEC" stroke="#555E65" stroke-width="2.5"/>
+    <text class="serif title" x="145" y="361" text-anchor="middle">1</text>
+    <path d="M145 323 V292" stroke="#555E65" stroke-width="2"/>
+    <text class="serif title" x="145" y="62" text-anchor="middle">Pilot</text>
+    <text class="serif body" x="145" y="90" text-anchor="middle">500 pairs</text>
+    <text class="serif body" x="145" y="127" text-anchor="middle">Choose trigger metric</text>
+
+    <g id="pilot-images">
+      <rect x="48" y="168" width="94" height="70" rx="5" fill="#F6F6F4" stroke="#555E65" stroke-width="1.8"/>
+      <rect x="156" y="168" width="94" height="70" rx="5" fill="#F6F6F4" stroke="#555E65" stroke-width="1.8"/>
+      <path d="M57 187 V177 H68 M122 177 H133 V187 M57 219 V229 H68 M122 229 H133 V219" class="thin"/>
+      <path d="M165 187 V177 H176 M230 177 H241 V187 M165 219 V229 H176 M230 229 H241 V219" class="thin"/>
+      <circle cx="82" cy="194" r="8" fill="#8797A3" stroke="#555E65" stroke-width="1.4"/>
+      <path d="M82 202 L97 213 L114 196" stroke="#738593" stroke-width="7" fill="none" stroke-linecap="round"/>
+      <rect x="78" y="214" width="16" height="13" fill="#A7C4A1" stroke="#555E65"/>
+      <rect x="99" y="212" width="16" height="15" fill="#D49A82" stroke="#555E65"/>
+      <rect x="185" y="211" width="17" height="16" fill="#A7C4A1" stroke="#555E65"/>
+      <rect x="206" y="199" width="18" height="28" fill="#D7B176" stroke="#555E65"/>
+      <rect x="227" y="213" width="16" height="14" fill="#8FAAC1" stroke="#555E65"/>
+      <circle cx="144" cy="248" r="23" fill="#FFFFFF" stroke="#555E65" stroke-width="3"/>
+      <line x1="161" y1="265" x2="178" y2="282" stroke="#555E65" stroke-width="7" stroke-linecap="round"/>
+    </g>
+  </g>
+
+  <!-- Transition 1 -->
+  <g id="metric-selected">
+    <g transform="translate(334,274)">
+      <path d="M6 14 V8 A7 7 0 0 1 20 8 V14" fill="none" stroke="#363A3E" stroke-width="2.1"/>
+      <rect x="2" y="14" width="22" height="20" rx="3" fill="#363A3E"/>
+      <circle cx="13" cy="23" r="2.4" fill="#FFFFFF"/><line x1="13" y1="25" x2="13" y2="30" stroke="#FFFFFF" stroke-width="2"/>
+    </g>
+  </g>
+
+  <!-- Checkpoint 2: Offline, below the route -->
+  <g id="offline-checkpoint">
+    <circle cx="530" cy="222" r="29" fill="#DCE6EE" stroke="#587A9B" stroke-width="2.5"/>
+    <text class="serif title" x="530" y="231" text-anchor="middle">2</text>
+    <path d="M530 251 V290" stroke="#587A9B" stroke-width="2"/>
+    <text class="serif title" x="530" y="327" text-anchor="middle">Offline</text>
+    <text class="serif body" x="530" y="355" text-anchor="middle">4,200 pairs</text>
+    <text class="serif body" x="530" y="392" text-anchor="middle">Train relevance head</text>
+
+    <g id="offline-training">
+      <ellipse cx="445" cy="427" rx="34" ry="10" fill="#EAF0F5" stroke="#587A9B" stroke-width="2"/>
+      <rect x="411" y="427" width="68" height="49" fill="#EAF0F5" stroke="#587A9B" stroke-width="2"/>
+      <ellipse cx="445" cy="476" rx="34" ry="10" fill="#D8E3EC" stroke="#587A9B" stroke-width="2"/>
+      <path d="M411 444 Q445 461 479 444 M411 461 Q445 478 479 461" fill="none" stroke="#587A9B" stroke-width="1.3"/>
+      <line x1="479" y1="452" x2="515" y2="452" stroke="#587A9B" stroke-width="2.2" marker-end="url(#arrow-blue)"/>
+      <rect x="522" y="426" width="72" height="50" rx="8" fill="#F8FAFB" stroke="#587A9B" stroke-width="2"/>
+      <text class="serif body math" x="558" y="458" text-anchor="middle">zₜ</text>
+      <line x1="594" y1="452" x2="629" y2="452" stroke="#587A9B" stroke-width="2.2" marker-end="url(#arrow-blue)"/>
+      <path d="M637 420 H708 L733 452 L708 484 H637 Z" fill="#DCE6EE" stroke="#587A9B" stroke-width="2"/>
+      <text class="serif small" x="682" y="447" text-anchor="middle">Relevance</text>
+      <text class="serif small" x="682" y="468" text-anchor="middle">head</text>
+      <text class="serif tiny" x="558" y="507" text-anchor="middle">frozen latent</text>
+    </g>
+  </g>
+
+  <!-- Transition 2 -->
+  <g id="head-frozen">
+    <g transform="translate(730,294)">
+      <path d="M6 14 V8 A7 7 0 0 1 20 8 V14" fill="none" stroke="#363A3E" stroke-width="2.1"/>
+      <rect x="2" y="14" width="22" height="20" rx="3" fill="#363A3E"/>
+      <circle cx="13" cy="23" r="2.4" fill="#FFFFFF"/><line x1="13" y1="25" x2="13" y2="30" stroke="#FFFFFF" stroke-width="2"/>
+    </g>
+  </g>
+
+  <!-- Checkpoint 3: Blind, above the route -->
+  <g id="blind-checkpoint">
+    <circle cx="930" cy="352" r="29" fill="#C9D9E6" stroke="#587A9B" stroke-width="2.5"/>
+    <text class="serif title" x="930" y="361" text-anchor="middle">3</text>
+    <path d="M930 323 V292" stroke="#587A9B" stroke-width="2"/>
+    <text class="serif title" x="930" y="62" text-anchor="middle">Blind</text>
+    <text class="serif body" x="930" y="90" text-anchor="middle">800 cells</text>
+    <text class="serif body" x="930" y="127" text-anchor="middle">Rate-matched closed-loop test</text>
+
+    <g id="blind-loop">
+      <path d="M854 221 A77 77 0 1 1 1000 244" fill="none" stroke="#587A9B" stroke-width="2.4" stroke-dasharray="7 6" marker-end="url(#arrow-blue)"/>
+      <path d="M987 266 A77 77 0 0 1 858 253" fill="none" stroke="#587A9B" stroke-width="2.4" marker-end="url(#arrow-blue)"/>
+      <rect x="838" y="214" width="78" height="8" fill="#8FAAC1" stroke="#4F5961" stroke-width="1.4"/>
+      <line x1="852" y1="222" x2="852" y2="235" class="thin"/><line x1="902" y1="222" x2="902" y2="235" class="thin"/>
+      <circle cx="857" cy="189" r="9" fill="#DCE6EE" stroke="#4F5961" stroke-width="2"/>
+      <path d="M857 198 L876 207 L892 187" stroke="#6F8DAA" stroke-width="8" fill="none" stroke-linecap="round"/>
+      <circle cx="876" cy="207" r="5" fill="#FFFFFF" stroke="#4F5961"/><circle cx="892" cy="187" r="5" fill="#FFFFFF" stroke="#4F5961"/>
+      <rect x="940" y="184" width="83" height="53" rx="8" fill="#F7F9FB" stroke="#587A9B" stroke-width="2"/>
+      <text class="serif small math" x="982" y="228" text-anchor="middle">δ̂ₜ</text>
+    </g>
+  </g>
+
+  <!-- Transition 3 -->
+  <g id="oracle-substitution">
+    <g transform="translate(1118,274)">
+      <path d="M6 14 V8 A7 7 0 0 1 20 8 V14" fill="none" stroke="#363A3E" stroke-width="2.1"/>
+      <rect x="2" y="14" width="22" height="20" rx="3" fill="#363A3E"/>
+      <circle cx="13" cy="23" r="2.4" fill="#FFFFFF"/><line x1="13" y1="25" x2="13" y2="30" stroke="#FFFFFF" stroke-width="2"/>
+    </g>
+  </g>
+
+  <!-- Checkpoint 4: Oracle, below the route -->
+  <g id="oracle-checkpoint">
+    <circle cx="1320" cy="222" r="29" fill="#F1D8CA" stroke="#B96F55" stroke-width="2.5"/>
+    <text class="serif title" x="1320" y="231" text-anchor="middle">4</text>
+    <path d="M1320 251 V290" stroke="#B96F55" stroke-width="2"/>
+    <text class="serif title" x="1320" y="327" text-anchor="middle">Oracle</text>
+    <text class="serif body" x="1320" y="355" text-anchor="middle">400 cells</text>
+    <text class="serif body" x="1320" y="590" text-anchor="middle">Replace only the relevance signal</text>
+
+    <g id="oracle-loop">
+      <path d="M1244 466 A77 77 0 1 1 1390 489" fill="none" stroke="#B96F55" stroke-width="2.4" stroke-dasharray="7 6" marker-end="url(#arrow-peach)"/>
+      <path d="M1377 511 A77 77 0 0 1 1248 498" fill="none" stroke="#B96F55" stroke-width="2.4" marker-end="url(#arrow-peach)"/>
+      <rect x="1228" y="459" width="78" height="8" fill="#D5A58F" stroke="#4F5961" stroke-width="1.4"/>
+      <line x1="1242" y1="467" x2="1242" y2="480" class="thin"/><line x1="1292" y1="467" x2="1292" y2="480" class="thin"/>
+      <circle cx="1247" cy="434" r="9" fill="#F1D8CA" stroke="#4F5961" stroke-width="2"/>
+      <path d="M1247 443 L1266 452 L1282 432" stroke="#C78469" stroke-width="8" fill="none" stroke-linecap="round"/>
+      <circle cx="1266" cy="452" r="5" fill="#FFFFFF" stroke="#4F5961"/><circle cx="1282" cy="432" r="5" fill="#FFFFFF" stroke="#4F5961"/>
+      <rect x="1330" y="429" width="83" height="53" rx="8" fill="#FFF9F6" stroke="#B96F55" stroke-width="2"/>
+      <text class="serif small math" x="1372" y="473" text-anchor="middle">δₜ</text>
+      <circle cx="1439" cy="454" r="17" fill="#FFFFFF" stroke="#B96F55" stroke-width="2"/>
+      <path d="M1424 454 Q1439 439 1454 454 Q1439 469 1424 454 Z" fill="#F1D8CA" stroke="#B96F55" stroke-width="1.5"/>
+      <circle cx="1439" cy="454" r="5" fill="#B96F55"/>
+    </g>
+  </g>
+
+  <!-- Shared freeze discipline -->
+  <g id="freeze-discipline">
+    <path d="M108 624 C108 643 128 648 150 648 H1450 C1472 648 1492 643 1492 624"
+          fill="none" stroke="#6B7075" stroke-width="2.1"/>
+    <text class="serif body" x="800" y="680" text-anchor="middle">Freeze before advancing the claim</text>
+    <text class="serif small" x="800" y="715" text-anchor="middle">Frozen throughout: policy · world model · tasks · initial states · budgets · statistics</text>
+  </g>
+</svg>
+      <text class="serif tiny" x="95" y="158" text-anchor="middle">real</text>
+      <text class="serif tiny" x="203" y="158" text-anchor="middle">predicted</text>
+    <text class="serif tiny" x="145" y="306" text-anchor="middle">pixel RMS · SSIM · LPIPS · latent RMS</text>
+    <text class="serif small" x="345" y="257" text-anchor="middle">metric selected</text>
+    <text class="serif small" x="742" y="277" text-anchor="middle">head frozen</text>
+      <text class="serif tiny" x="982" y="205" text-anchor="middle">scheduler</text>
+    <text class="serif small" x="930" y="306" text-anchor="middle">Predicted relevance δ̂ₜ</text>
+    <text class="serif small math" x="1130" y="257" text-anchor="middle">δ̂ₜ → δₜ only</text>
+      <text class="serif tiny" x="1372" y="450" text-anchor="middle">scheduler</text>
+    <text class="serif small" x="1320" y="553" text-anchor="middle">True action divergence δₜ</text>

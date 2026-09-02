@@ -1,0 +1,1090 @@
+ActDelta: Decision Relevance Is Learnable Offline but Does Not Yet Beat Periodic Sampling Online
+                     A Measurement Study of Predictive Uplink Triggering for Edge-Offloaded Robot Policies
+                                                               Anonymous Author(s)
+
+
+     Edge-offloaded robot policies turn camera uploads into a recurring uplink cost. Predictive transmission usually suppresses an
+     upload when the receiver can reconstruct the frame accurately, but a policy consumes observations to choose actions rather than to
+     reproduce pixels. We test whether transmission should instead follow decision relevance: the action change induced by replacing
+     a true observation with its prediction. Across four LIBERO suites, four fidelity metrics show weak and unstable association with
+     action divergence (pooled Spearman −0.117 to −0.028), whereas a lightweight head over frozen world-model latents predicts
+     divergence at Spearman 0.684 and AUROC 0.833. This offline separation does not yield an online win. In a frozen, matched-
+     budget blind test, the learned trigger differs from periodic sampling by +3.13 pp at a 25% budget and −3.75 pp at 50%, with
+     both confidence intervals including zero; an oracle using true runtime divergence also fails to outperform periodic sampling, and a
+     content-blind Bernoulli scheduler at the same mean rate is not separated from the learned trigger anywhere on the budget sweep,
+     while both separate cleanly from a fidelity-thresholded arm. Two diagnostics locate the failure: threshold triggering inflates the
+     observation-age tail at a matched mean rate, and instantaneous action divergence separates episode outcomes far more weakly than
+     observation age does. The result exposes an offline-to-online gap: ranking instantaneous action changes is learnable, but is not
+     sufficient for closed-loop transmission scheduling.
+
+Keywords: Predictive transmission, event-triggered sampling, world models, vision-language-action models, edge offloading, task-oriented communication,
+measurement, negative results
+
+1 Introduction                                                                 (CI [−8.13, 0]) at 50%, and neither an oracle trigger that observes
+                                                                               true runtime divergence nor a sweep of the full budget range moves
+Generalist robot policies such as OpenVLA, π0 , and π0.5 expand
+                                                                               the learned arm outside the control’s confidence band.
+manipulation capability but remain difficult to host on resource-
+constrained robots [4, 21, 38]. A practical deployment therefore                  Two additional controls turn this from an inconclusive compar-
+places the policy at the edge: the robot uploads camera observations           ison into a diagnosis. A content-blind Bernoulli scheduler, which
+and receives a chunk of future actions while executing the previous            shares the learned trigger’s irregular spacing but none of its scene
+chunk [8, 12, 19, 24, 37]. Compression reduces the bytes in each               information, tracks the learned arm within the resolution of the
+upload, yet it leaves a more basic scheduling question unanswered:             design at every budget, while both stay clearly above a fidelity-
+which observations are worth transmitting? This question becomes               thresholded arm. And at a matched mean send rate, threshold trig-
+acute when several cameras or robots share a variable uplink. Fig-             gering leaves a substantially heavier observation-age tail than pe-
+ure 1 shows the setting studied here.                                          riodic sampling. Together these indicate that what the closed loop
+                                                                               rewards is the spacing of refreshes rather than the identity of the
+   Predictive and event-triggered communication traditionally an-
+                                                                               frames selected.
+swer by measuring receiver-side estimation error: transmit when
+the current value, accumulated change, or prediction error becomes                This paper makes four contributions. It provides a multi-suite
+large [18, 30, 35, 40]. That criterion is appropriate when the re-             measurement showing that commonly used reconstruction metrics
+ceiver reconstructs a signal. An edge robot policy is different be-            are unreliable proxies for policy action change; it demonstrates that
+cause the observation is only an intermediate input to an action, and          action divergence is nevertheless predictable from frozen world-
+that action changes the next observation. A visually inaccurate pre-           model representations without online policy inference; it supplies
+diction can leave the policy’s action unchanged, while a small visual          a frozen, matched-rate closed-loop evaluation showing that neither
+difference can alter a contact-sensitive decision. We therefore test           the learned trigger nor its oracle establishes superiority over peri-
+a policy-aware criterion, action divergence, defined as the differ-            odic sampling; and it isolates the mechanism through age-tail and
+ence between action chunks produced from the true and predicted                outcome-attribution diagnostics that indicate the trigger optimizes
+observations under shared policy noise. The intended mechanism                 the wrong target rather than the right target inaccurately. The cen-
+is simple: learn this expensive counterfactual offline, estimate it            tral conclusion is deliberately bounded: per-frame relevance rank-
+from local world-model latents at runtime, and transmit when the               ing and transmission scheduling are different problems.
+estimate is high.
+   The experiments reverse the expected success story. First, on               2 Background and Motivation
+1,400 frozen test pairs covering four LIBERO suites and seven hori-            Edge-offloaded robot policies. A chunked vision-language-
+zons, pixel RMS, SSIM error, LPIPS, and world-model latent dis-                action policy maps camera observations, proprioception, and a lan-
+tance correlate weakly with action divergence and disagree with its            guage instruction to a sequence of future actions [4, 11, 51]. In
+median-threshold decision on 48.9–53.9% of frames. Second, deci-               an asynchronous deployment, the robot uploads an observation,
+sion relevance itself is learnable: a head that sees frozen latent fea-        receives an action chunk, and overlaps execution with the next
+tures but no suite, task, or horizon identifier reaches test Spearman          request. The uplink carries high-dimensional images, whereas
+0.684 (95% CI [0.637, 0.726]), AUROC 0.833, and AUPRC 0.833.                   the downlink carries compact action vectors. Remote-policy sys-
+Third, this offline skill does not establish a closed-loop advantage.          tems reduce latency through compression, pipelining, caching, and
+At matched target budgets, the learned trigger differs from periodic           device–edge collaboration [8, 12, 19, 24, 37], but they generally
+sampling by +3.13 pp (CI [−1.25, +7.50]) at 25% and −3.75 pp                   do not decide whether the current camera observation is necessary.
+
+
+                                                                          1
+                                   Robot-side scheduling
+                                                                                            1. Reconstruction fidelity.                                        wrong trigger
+                   Encoder    World model       Relevance       Budget gate                 Is ôt visually close to ot ? pixel RMS, SSIM, LPIPS, latent RMS   statistic
+                     zt           ẑt            head Φ            τb
+                                                                                                    C1: decoupled, |ρs | ≤ 0.12
+
+                                                           uplink, ut = 1                   2. Decision relevance.
+                                                                                                                                                               C2: learnable,
+                                                                                            Does ôt change the next action chunk? action divergence δt ,      ρs = 0.684
+        at−1                                                                                Equation (3)
+                    Frozen policy π0.5 → action chunk At ∈ R10×7
+                                                                                                    C3: gap remains open
+                                     Edge execution
+                                                                                            3. Refresh value.
+                                                                                                                                                               not yet
+Figure 1: ActDelta refreshes the agent view when predicted policy rele-                     Does sending now change episode success? the systems objec-        estimated
+                                                                                            tive, Equation (2)
+vance exceeds a budgeted threshold. The wrist view and proprioception are
+always current; only the agent view is suppressible. The dashed return path             Figure 2: The three objectives the paper separates. ActDelta replaces rung 1
+is the closed loop: the executed action at−1 conditions the next rollout,               with rung 2 and shows the substitution is both real and learnable, but the
+which is why a scheduler cannot be evaluated on per-frame ranking alone.                scheduler is graded on rung 3. The oracle experiment (Section 10.4) shows
+                                                                                        that a perfect rung-2 signal does not close the rung-2-to-rung-3 gap, which
+                                                                                        is the paper’s central claim.
+Cellular measurements further motivate treating uplink capacity as
+variable rather than guaranteed [33, 34, 39]. We study the allocation
+of this limited visual-transmission budget, not end-to-end wireless                     instruction to an action chunk. The executed action changes the
+throughput.                                                                             environment, so the scheduling decision affects both the current ac-
+                                                                                        tion and the future observation distribution.
+Predictive transmission. Send-on-delta and event-triggered con-                            For an episode of length T , a scheduler g produces decisions
+trol suppress updates while a shared estimate remains sufficiently                      u1:T from information locally available P  at the robot. Its realized
+accurate [2, 3, 17, 30, 31, 41]. Recent semantic-communication                          agent-view send fraction is R(g) = T1 Tt=1 ut . Given a target
+systems extend this idea with learned predictors or generative world                    budget b, the systems objective is not to minimize reconstruction
+models [18, 44, 47, 48]. Although their predictors differ, the trig-                    error but to maximize task success S subject to the realized com-
+gering rule remains fidelity-centered: transmit when observation er-                    munication constraint,
+ror becomes large. This transfers an estimator objective to a policy
+receiver without testing whether observation error predicts action                                               max E[S(g)] s.t. E[R(g)] ≤ b.                                  (2)
+                                                                                                                  g
+change.
+                                                                                        This objective makes periodic sampling indispensable. A relevance
+Compute asymmetry and the proposed correction. The frozen                               trigger is useful only if it improves success at the same realized R,
+policy has billions of parameters [4, 21, 38]; our predictor has                        or reduces R at matched success. Comparing methods at different
+13.5M. The ideal policy-aware trigger compares the action chunk                         send fractions does not answer Equation (2).
+under the true observation with the chunk under the prediction.                         3.1 Four Candidate Scheduling Signals
+That comparison is too expensive online, so ActDelta distills it
+                                                                                        A fidelity trigger computes a distance df (ot , ôt ), such as pixel
+into a lightweight latent head. The scientific question is not merely
+                                                                                        RMS, SSIM error, LPIPS, or latent RMS, and sends when that dis-
+whether this head is accurate, but whether its scores allocate a fixed
+                                                                                        tance exceeds a threshold. It assumes that reconstruction error is
+transmission budget better than regular periodic updates.
+                                                                                        monotone in the downstream value of a refresh. A policy-aware
+                                                                                        trigger replaces df by action divergence δt , the policy counterfac-
+Baselines and accounting. Always-send and fixed imagined
+                                                                                        tual defined in Equation (3). Because δt is unavailable on the robot,
+horizons characterize the success–communication frontier. Fidelity
+                                                                                        the deployable scheduler uses its estimate δ̂t ; the oracle scheduler
+thresholds test the conventional criterion; the learned head tests de-
+                                                                                        uses true δt and is an experimental instrument rather than a de-
+ployable decision relevance; periodic sampling spends the same tar-
+                                                                                        ployable baseline. Periodic sampling uses only time since the last
+get budget without observing scene content; a Bernoulli scheduler
+                                                                                        send. Bernoulli sampling draws ut ∼ Bern(b) independently:
+spends the same budget with neither content nor regular spacing;
+                                                                                        like periodic sampling it observes nothing about the scene, but un-
+and the oracle tests decision relevance without estimation error. Pe-
+                                                                                        like periodic sampling it does not bound the silence interval. The
+riodic sampling is therefore not a weak placeholder but the con-
+                                                                                        contrast between the last two arms is what separates frame identity
+trol that isolates which frames are sent from how many, and the
+                                                                                        from frame spacing.
+Bernoulli arm further separates which frames from how they are
+                                                                                           Fidelity asks whether prediction is visually accurate. Action di-
+spaced. Figure 6 states the substitution each arm isolates. All meth-
+                                                                                        vergence asks whether replacing prediction with truth changes the
+ods operate on the temporal axis and can later compose with spatial
+                                                                                        next action chunk. Equation (2) asks whether sending now changes
+codecs.
+                                                                                        eventual success. Figure 2 places the three questions on one axis.
+3 Problem Formulation and Claim Structure                                               The first two are frame-level surrogate objectives; the third is the
+                                                                                        actual systems objective. The paper’s negative result arises because
+The robot produces an agent-view observation ot at control step
+                                                                                        replacing the first surrogate with the second improves offline align-
+t. The edge server either receives that observation or advances a
+                                                                                        ment without closing the remaining gap to the third.
+shared predictor to obtain ôt . A binary scheduling decision ut ∈
+{0, 1} selects the server input,                                                        3.2 Layered Claims
+                       õt = ut ot + (1 − ut ) ôt ,                          (1)       The argument is intentionally layered so that each claim is evaluated
+                                                                                        independently. C1 is a measurement claim: fidelity and decision
+where this notation denotes selection rather than pixel interpolation.                  relevance are decoupled in embodied observation streams. It is fal-
+The frozen policy maps õt , the real wrist view, proprioception, and                   sified if fidelity metrics consistently rank action divergence across
+
+
+                                                                                    2
+    1 Pilot    metric    2 Offline        head         3 Blind    δ̂t → δt   4 Oracle        Table 1: The trajectory base. Ten tasks per suite, five fixed initial states per
+   500 pairs            4,200 pairs                   800 cells              400 cells       task, collected under the frozen π0.5 policy. Failed episodes are retained.
+                                                                                             Splits are assigned by episode index within each suite and task, giving zero
+                                                                                             episode-key overlap.
+                            freeze before advancing the claim
+
+Figure 3: The evaluation escalates from offline diagnostics to rate-matched                   Suite                            Success      Transitions         Size
+blind and oracle tests. Nothing is unfrozen after a stage completes.                          LIBERO-Spatial              49/50 (98%)            5,375     627 MB
+                                                                                              LIBERO-Object               48/50 (96%)            7,294      1.1 GB
+                                                                                              LIBERO-Goal                 48/50 (96%)            5,937     676 MB
+held-out tasks and horizons. C2 is a representation claim: deci-                              LIBERO-10 (Long)            47/50 (94%)           13,289      1.5 GB
+sion relevance can be predicted from the robot-side world-model                               Total                     192/200 (96%)           31,895      3.9 GB
+state without online policy inference. It is falsified if the head fails                      Splits, assigned by episode index within each suite–task cell
+on episode-disjoint data or collapses in any major suite or horizon.                          Train (ep. 0–2)                 120 ep.        19,022
+C3 is the systems claim inherited from the positive ActDelta de-                              Val (ep. 3)                      40 ep.         6,394
+sign: allocating transmissions by decision relevance improves the                             Test (ep. 4)                     40 ep.         6,479
+success–communication trade-off over periodic sampling. It re-
+quires a frozen, rate-matched closed-loop win and is not rescued
+by offline correlation.                                                                      ceeds in 192 episodes; failures are retained. Within each suite–task
+   The data support C1 and C2; C3 fails under the evaluated pro-                             cell, episodes 0–2 form training, episode 3 validation, and episode
+tocol. This outcome does not collapse the paper into an implemen-                            4 test, yielding 120/40/40 episodes and 19,022/6,394/6,479 transi-
+tation failure. It identifies a specific substitution error: the original                    tions. Episode keys do not overlap. Table 1 is the only dataset table
+design correctly moves from pixels to decisions, but still uses im-                          in the main text.
+mediate decision displacement as a proxy for episode-level refresh                           4.3 Action Divergence and Trigger Metrics
+value. The oracle experiment makes this distinction observable and
+                                                                                             Let At , Ât ∈ RK×d be the action chunks emitted by the pinned
+turns the failed positive claim into the paper’s principal finding.
+                                                                                             policy pipeline for the true and predicted observations under shared
+4 Measurement Setup and Protocol                                                             noise. In the LIBERO configuration, K = 10 and d = 7. We
+                                                                                             define
+Our protocol separates three questions: whether fidelity tracks                                                   v
+                                                                                                                  u        K X d
+                                                                                                                  u 1 X
+action change, whether action change is predictable offline, and                                           δt = t
+                                                                                                                                                 2
+                                                                                                                                  At,kj − Ât,kj .            (3)
+whether predicted relevance improves closed-loop success. Fig-                                                       Kd       j=1
+                                                                                                                             k=1
+ure 3 summarizes this separation.
+                                                                                             The offline learning pipeline subsequently standardizes divergence
+4.1 Environment, Policy, and Observation Model                                               per task. This is a reference measure of immediate observation-
+All experiments use LIBERO [26]: Spatial, Object, Goal, and                                  induced action change, not ground-truth episode utility. Fidelity
+LIBERO-10, with ten tasks per suite. We run one frozen offi-                                 disagreement thresholds each candidate distance and divergence at
+cial π0.5 LIBERO checkpoint through OpenPI at a pinned revision.                             validation medians and reports the fraction of test pairs assigned
+Paired policy evaluations use common diffusion noise, so their dif-                          different high/low labels. Communication is measured by agent-
+ference isolates the observation substitution rather than independent                        view send fraction, by raw-equivalent logical payload, and, in Sec-
+policy sampling. In a pilot control, repeated inference on an identi-                        tion 12, by encoded bytes under a fixed codec.
+cal observation and identical noise produced maximum RMS differ-
+                                                                                             4.4 Freezing and Statistics
+ence zero; independent noise produced median 0.0303, compared
+with 0.5209 for true-versus-predicted observations under common                              Model checkpoints, thresholds, and operating points are selected on
+noise.                                                                                       validation. The blind test freezes trigger thresholds, code hash, and
+   The action-conditioned world model has 13,518,723 parameters,                             statistics before execution; earlier exploratory runs remain separate.
+two camera views, 96 tokens per step, width 384, six latent trans-                           We report pooled and per-episode correlations. Offline intervals use
+former blocks, and 7-D action conditioning. In all closed-loop                               episode-cluster bootstrap with suite stratification where applicable;
+runs, real 8-D proprioception and the real wrist-camera view re-                             closed-loop intervals cluster by task. Because initial states are held
+main available. Only the agent view is predicted on steps without                            fixed across arms, closed-loop comparisons are paired, and we re-
+transmission. The claim is therefore about agent-view suppression                            port McNemar intervals over the discordant episodes. Target and
+with a real wrist fallback, not full visual replacement; Section 11.3                        realized send rates are both reported. An interval covering zero is
+tests how much that fallback matters.                                                        treated as a failure to establish superiority, not as evidence of equiv-
+   The predictor starts from the last synchronized observation and                           alence; Section 10.5 quantifies what the design can and cannot re-
+advances with the committed action sequence. A transmitted frame                             solve.
+replaces the imagined agent view and resets the rollout state; a sup-                           Experiment records contain repository revisions and SHA-256
+pressed step advances the latent prediction. Figure 5 shows one                              digests. Validators check shapes, action–observation alignment,
+such interval step by step. The evaluated scope is explicit: the                             metadata, episode keys, and recomputed metrics. The formal of-
+server owns policy inference, the robot-side path owns encoding,                             fline study contains 4,200 pairs in total: 1,400 per split, formed by
+latent dynamics, and triggering, and no local policy call is permit-                         four suites × ten tasks × seven horizons × five pairs. The closed-
+ted in the deployable arm.                                                                   loop runner fixes initial states across arms and records success, send
+                                                                                             decisions, observation age, and payload.
+4.2 Trajectory Base and Splits
+The trajectory base contains 200 episodes: four suites, ten tasks                            Reproducibility of the figures. Every figure in this paper is gen-
+per suite, and five fixed initial states per task. The policy suc-                           erated from a single tagged data module. No number is typed into a
+
+
+                                                                                         3
+Table 2: World-model selection over the four-suite base. Improvements                                                      6 ActDelta Trigger Design
+in reconstruction and single-step error came with worse multi-step action-
+conditioned rollout; only the variant that drops the image objective entirely                                              ActDelta uses a fixed system architecture: the robot and server
+improves at the horizons the mechanism uses. Percentages are computed                                                      share an action-conditioned world model; the robot estimates
+from the logged MSE values at build time.                                                                                  whether the real observation would change the remote policy’s ac-
+ Variant                                                  Outcome                                           Decision       tion; a controller maps that score to the available transmission bud-
+                                                                                                                           get; and periodic resynchronization prevents indefinite open-loop
+ v1: joint finetune (re-                                  1-step −9.7%; h5 +33%; test                       reject
+ con. + image + rollout)                                  recon. L1 +14.0%; action de-                                     prediction. Our evaluation distinguishes the components supported
+                                                          pendence weakened                                                by current experiments from the complete loss-recovery protocol
+ v2: frozen autoen-                                       test h5 0.0164 → 0.0327                           reject         required for deployment.
+ coder, joint objective                                   (+99.3%);         shuffled/true
+ retained                                                 1.0875 → 1.0250                                                  6.1 Latent Decision Head
+ v3: frozen AE, roll-                                     test h1 −4.8%, h5 −13.2%, h8                      adopt          At a synchronized step, the robot encodes the real observation into
+ out objective on ran-                                    −17.3%, h12 −22.1%; 18,542
+                                                                                                                           zt . Between synchronizations, the world model produces ẑt from
+ dom windows                                              windows
+                                                                                                                           the last shared latent and the actions already committed for exe-
+                                                                                                                           cution. A learned head consumes both representations and their
+                                   5        Baseline (joint image obj.)                                                    signed difference,
+                                            Adopted (rollout only)
+     Latent rollout MSE (×10−2 )
+
+
+
+
+                                                                                                                                                                           
+                                   4
+                                                                                                                                                δ̂t = Φ zt , ẑt , zt − ẑt ,              (4)
+                                                                                                          −22%
+                                                                                                                           and approximates the offline counterfactual in Equation (3). Re-
+                                   3
+                                                                                 −17%                                      taining both latents lets the head learn context-dependent sensitivity
+                                   2                                                                                       that a norm ∥zt − ẑt ∥ discards. The head never receives a task label,
+                                                                  −13%              action dependence at h = 12            suite label, prediction horizon, or policy output. Training therefore
+                                                                                    shuffled/true 1.088 → 1.114
+                                   1                                                    zero/true 1.036 → 1.087            distills a policy-in-the-loop measurement into a robot-side statistic
+                                           −5%                                                                             without making online policy inference part of the trigger.
+                                   0
+                                       1                      5              8                         12                  6.2 Budgeted Transmission Rule
+                                                                Rollout horizon h
+                                                                                                                           The deployable rule transmits when the relevance score exceeds a
+Figure 4: Dropping the image objective improves the quantity the trigger
+actually consumes. The gap widens monotonically with rollout horizon, so                                                   threshold selected for a target budget,
+one-step reconstruction would have selected the wrong predictor.
+                                                                                                                                           ut = 1[δ̂t > τb ] ∨ 1[kt > Kmax ],                 (5)
+                                                                                                                           where ut is the agent-view send decision, b is the target send frac-
+plotting script or into the prose twice: quantities that appear in both                                                    tion, and kt counts steps since the last real agent view. The first
+are injected into the text at build time. A build-time self-check as-                                                      clause allocates transmissions by predicted relevance; the second
+serts each cross-panel identity—that success values lie on the grid                                                        imposes the maximum-silence safeguard used in the experimental
+their episode count can emit, that both binnings in Figure 15 parti-                                                       runner, so at most Kmax consecutive steps may be suppressed and
+tion the same episodes, and that every age distribution integrates to                                                      the largest reachable agent-view age is exactly Kmax . Thresholds
+the realized send fraction.                                                                                                are chosen on validation and frozen before the blind test. The causal
+                                                                                                                           budget controller then tracks realized sends without consulting fu-
+5 Selecting the Shared Predictor                                                                                           ture frames. Its measured errors—0.13 and 0.08 percentage points
+                                                                                                                           at the two blind-test budgets—show that the comparison success-
+The predictor is measurement infrastructure rather than an architec-
+                                                                                                                           fully isolates scheduling from transmission quantity.
+tural contribution, so we report only the choices that affect the con-
+                                                                                                                              Periodic sampling replaces the first clause with a fixed schedule
+clusions. An initial twenty-episode gate exposed an action-blind so-
+                                                                                                                           while retaining the same observation model and runner; Bernoulli
+lution: shuffling the action sequence increased latent MSE by only
+                                                                                                                           sampling replaces it with an unbiased coin at rate b; the oracle
+3.85%. Freezing the encoder and decoder and training a horizon-
+                                                                                                                           replaces δ̂t by δt and is deliberately undeployable. These one-
+weighted rollout objective increased action sensitivity to 11.0% and
+                                                                                                                           variable substitutions are essential: all arms otherwise share the
+improved five-step error by 46.3%, establishing that the pipeline
+                                                                                                                           policy, predictor, tasks, initial states, and budget accounting. Fig-
+could learn action-conditioned dynamics. Because this gate uses
+                                                                                                                           ure 6 states which comparison isolates which variable.
+twenty episodes, it establishes feasibility rather than generalization.
+   Full four-suite selection compared three variants (Table 2). Joint                                                      6.3 Synchronization Boundary
+image and rollout objectives improved one-step reconstruction                                                              The current runner forces refresh after a bounded silence interval
+while worsening five-step rollout by 33–99% and weakening ac-                                                              and resets the predictor when a frame is transmitted. It does not im-
+tion dependence. We therefore adopt the variant trained only on                                                            plement a complete sequence-number, acknowledgement, retrans-
+18,542 randomized latent-rollout windows. Its improvement grows                                                            mission, and action-hash protocol. We therefore make no packet-
+from 4.8% at h = 1 to 22.1% at h = 12 (Figure 4), although five-                                                           loss robustness claim. In a real network, silence generated by Equa-
+step gains remain heterogeneous across suites (4.3–33.4%). At the                                                          tion (5) is observationally identical to an uplink loss unless the pro-
+longest horizon, the shuffled-to-true ratio rises from 1.088 to 1.114                                                      tocol carries independent liveness state [36]. Sequence numbers,
+and the zero-to-true ratio from 1.036 to 1.087: the adopted model                                                          lightweight heartbeats, server-requested resynchronization, and a
+improves rollout while becoming more dependent on the executed                                                             safe always-send fallback remain necessary engineering extensions.
+actions, which is the property the counterfactual trigger requires.                                                        This boundary does not affect the no-loss matched-budget compar-
+The result warns that image appearance and one-step accuracy can                                                           ison, but it prevents the current prototype from being presented as a
+select the wrong predictor for multi-step action-conditioned use.                                                          complete transport.
+
+
+                                                                                                                       4
+            uplink send ut =1                                                                                                                                                                        high/low
+                                                                                                                                                                                                     disagree.
+
+                                                                                                                                        band of no usable ranking         pooled
+                                                                                                                        Pixel RMS                                                                        48.9%
+                                                                                                                                                                          per-episode median
+
+               0        1          2          3        4         5       6        7       8      9     10                SSIM err.                                                                       50.8%
+
+
+                                                                                                                            LPIPS                                                                        53.9%
+            agent-view age kt (reset on send, capped at Kmax )
+
+                                                                                                 5      6               WM latent                                                                        49.9%
+                                              3                                   3       4
+                        1          2                             1       2
+               0                                       0
+                                                                                                                     Latent head Φ
+
+
+            predictor state                                                                                                          −0.2         0.0               0.2          0.4           0.6         0.8
+             reset     roll       roll       roll     reset     roll    roll     roll    roll   roll   roll                                        Spearman ρs with action divergence δt
+
+            control step t (20 Hz)                                                                                 Figure 7: Four fidelity metrics fall inside a band of no usable ranking, and
+                                                                                                                   their pooled and per-episode estimates disagree in sign. The latent head,
+Figure 5: One interval of the closed loop. A send resets the predictor and                                         trained on the same frozen representation whose RMS distance reaches only
+the age counter; a suppressed step advances the latent rollout and increments                                      −0.074, sits far outside that band.
+the age. The two content-blind controls differ only in how the blue bars are
+placed: periodic sampling fixes their spacing, Bernoulli sampling random-
+izes it, and both spend the same mean budget.
+                                                                                                                   metrics reliably ranks action divergence across contexts. Their
+                                                                                                                   validation-median decisions disagree with the divergence decision
+                                         sees scene           regular          perfect                             on 48.86–53.93% of test pairs, including roughly 25–27% action-
+                                                                                δt
+                                                                                                                   high/fidelity-low misses. For pixel RMS, pooled and per-episode
+                                          content             spacing
+                                                                                                                   Spearman are −0.0282 and 0.0742, with 48.86% disagreement.
+            Periodic (control)              no                  yes              –                                 SSIM gives −0.0736, 0.0756, and 50.79%; LPIPS gives −0.1165,
+                      Bernoulli             no                  no               –                                 0.1595, and 53.93%; latent RMS gives −0.0744, 0.0377, and
+                                                                                                                   49.93%.
+             LPIPS threshold                yes                 no               –
+                                                                                                                      The formal test divergence is well spread in standardized units:
+             ActDelta learned               yes                 no               no                                quartiles 0.814 and 1.268, median 1.076, 95th percentile 1.713,
+                     Oracle δt              yes                 no              yes
+                                                                                                                   and maximum 3.455. Weak association is not caused by a col-
+                                                                                                                   lapsed target distribution. Learned perceptual and latent distances
+  Each pair differing in exactly one column is a diagnostic: learned − oracle isolates estimation error; or-       also fail to improve on pixels, showing that the problem is not re-
+  acle − periodic isolates the choice of target; Bernoulli − periodic isolates the value of bounded silence;
+  LPIPS − learned isolates the trigger statistic.
+                                                                                                                   paired by substituting a higher-level fidelity representation. These
+                                                                                                                   measurements do not show that each missed frame is necessary for
+Figure 6: The control matrix. Removing any single column would have
+                                                                                                                   success, nor that a relevance trigger will work online. They show
+produced a more favorable but less informative conclusion, because the re-
+maining comparison would confound two substitutions at once.                                                       that the standard fidelity criterion is an unstable proxy for how the
+                                                                                                                   tested policy changes its immediate action.
+
+7 Fidelity Does Not Rank Decision Relevance                                                                        8 Decision Relevance Is Learnable Offline
+The formal protocol contains four suites, ten tasks, seven horizons                                                Direct evaluation of δt requires two forward passes through the re-
+{1, 2, 3, 4, 5, 8, 12}, and five pairs per cell: 1,400 pairs in each                                               mote policy. We instead fit the lightweight head Φ of Equation (4)
+episode-disjoint train, validation, and test split. Pixel RMS, SSIM                                                to features already produced by the local predictor, where zt and ẑt
+error, LPIPS, and world-model latent RMS are evaluated against                                                     are pooled true and predicted latents. The head receives no suite,
+Equation (3); every threshold is fixed on validation.                                                              task, or horizon identifier. It is trained on 1,400 offline pairs, se-
+   Before the formal study, a 500-pair pilot over 30 held-out                                                      lected by validation Spearman on a disjoint 1,400 pairs, and re-
+episodes checks label quality and statistical power. Its diver-                                                    ported once on the 1,400-pair test split.
+gence distribution spans 0.0481–0.9675, with quartiles 0.3146 and                                                     The head reaches test Spearman 0.6839. Suite-stratified,
+0.7989, median 0.5515, and 95th percentile 0.8825. Thresholds                                                      episode-clustered resampling gives a 95% CI from 0.6365 to
+fixed on the first 200 pairs and evaluated on the remaining 300 yield                                              0.7257. Its per-episode median is 0.6340; AUROC, AUPRC, and
+correlations of −0.00013 for pixel RMS, −0.02335 for SSIM er-                                                      standardized MAE are 0.8332, 0.8326, and 0.2052. Three training
+ror, and −0.07605 for latent RMS; every episode-cluster interval                                                   seeds yield validation Spearman 0.6537–0.6605 and test Spearman
+includes zero. High/low disagreement is 46.0, 52.0, and 48.7%.                                                     0.6839–0.6875. Absolute standardized error has median 0.158,
+LPIPS is absent only from this pilot because a verified pretrained                                                 P95 0.539, P99 0.786, and P99.9 1.170. By suite, correlation is
+dependency was unavailable; the formal study includes it. Pilot val-                                               0.507 on LIBERO-10, 0.664 on Goal, 0.683 on Object, and 0.724
+ues are never pooled into the final result.                                                                        on Spatial. At horizons 1, 2, 3, 4, 5, 8, 12 it is 0.619, 0.701, 0.701,
+   Figure 7 gives the central result. Pooled test Spearman correla-                                                0.718, 0.604, 0.721, and 0.710 (Figure 8). The evidence supports
+tions range from −0.1165 to −0.0282; per-episode median corre-                                                     offline predictability across every reported stratum, but not uniform
+lations are small and positive, from 0.0377 to 0.1595. The sign dif-                                               accuracy.
+ference warns against reading the pooled negative values causally,                                                    Turning scores into transmission decisions exposes the opera-
+because suites, tasks, and horizons have different marginal distribu-                                              tional limit (Figure 9). At a validation-selected median-rate thresh-
+tions. The defensible conclusion is that none of the tested fidelity                                               old, the head sends roughly half of frames and misses 10.86%
+
+
+                                                                                                               5
+                                       0.8               by suite                                     by horizon h                        from distinct protocols are reported side by side rather than aver-
+                                             pooled 0.68                                                                                  aged into a synthetic number.
+    Head Spearman ρs
+                                       0.6
+                                             weakest
+                                                                                                                                          Trajectory and predictor pipeline. The trajectory collector runs
+                                       0.4                                                                                                the pinned policy on five fixed initial states for every task in the
+                                                                                                                                          four LIBERO suites, recording both successful and failed episodes
+                                       0.2                                                                                                (Table 1). The 120/40/40 episode split is assigned before predictor
+                                                                                                 range of all four fidelity metrics
+                                                                                                                                          and head selection. Predictor feasibility experiments use a small
+                                       0.0                                                                                                twenty-episode gate, while the adopted model uses globally ran-
+                                              L-10 Goal Obj. Spat.                    1     2     3        4     5        8    12
+                                                                                                                                          domized windows from the full training base; their error values are
+Figure 8: Decision relevance is predictable in every suite and at every hori-                                                             not interchangeable.
+zon, with no stratum approaching the fidelity band. LIBERO-10 is the weak-
+est suite and is also where the operating-point cost is highest (Figure 9).
+                                                                                                                                          Counterfactual label pipeline. For each selected observation–
+                                                     blind-test budget
+                                                                                                                                          horizon pair, the label job constructs a predicted observation and
+       Missed action-high frames (%)
+
+
+
+
+                                                                                                                                          evaluates the policy twice with the same diffusion noise. The val-
+                                       15
+                                                                                  median-rate
+                                                                                                                                          idator checks observation alignment, action chunk shape, noise
+                                                                                  (21.7% cond. FNR)                                       shape, finiteness, metadata, and recomputed RMS before accept-
+                                       10                                                                                                 ing a cell. The 500-pair pilot is an independent diagnostic with
+                                                                                                                                          a train/test threshold split of 200/300; pilot and formal results are
+                                                                                                          95% recall
+                                        5                                                             (4.0% cond. FNR)
+                                                                                                                                          never merged.
+                                                  budgets at which the                                          99% recall
+                                                  closed loop is run                                     (0.4% cond. FNR)
+                                        0
+                                                                                                                                          Head and threshold pipeline. The decision head is trained with
+                                             20         30          40       50        60       70         80        90       100         three seeds. Checkpoint selection uses validation Spearman only;
+                                                                         Test frames transmitted (%)                                      the chosen configuration is then evaluated on the frozen test split.
+Figure 9: A strong rank correlation does not buy a cheap operating point.                                                                 Median-rate, 95%-recall, and 99%-recall thresholds answer differ-
+Reaching 95% recall of action-high frames already spends 82% of the up-                                                                   ent operational questions and are all retained. None is chosen after
+link, well above the budgets at which the closed-loop comparison is run.                                                                  observing closed-loop success.
+Because the action-high label is a median split, the missed-frame rate on the
+vertical axis is exactly half the conditional false-negative rate quoted at each
+marker.                                                                                                                                   Closed-loop pipeline. The closed-loop runner replaces only the
+                                                                                                                                          agent view and logs the real observation, predicted observation,
+                                                                                                                                          trigger score, send decision, observation age, task outcome, and
+of all test frames that are action-high, a pooled conditional false-                                                                      payload. The Spatial frontier, Spatial exploratory comparison, Ob-
+negative rate of 21.72%. The cost is very unevenly distributed:                                                                           ject blind test, budget sweep, and four-suite oracle gate are separate
+because the threshold is selected on the pooled score distribution                                                                        experimental panels, run on different suites and different task sub-
+and LIBERO-10 scores sit systematically lower, that single thresh-                                                                        sets. For this reason the exploratory +3.75 pp Spatial point is not
+old sends far fewer than half of LIBERO-10 frames, and its condi-                                                                         pooled with the blind +3.13 pp Object point, the two-task Gate A
+tional false-negative rate on that suite reaches 47.9%. A threshold                                                                       oracle result is not averaged with Gate B, and—as Figure 10 makes
+chosen for 95% recall sends 82.43% of test frames, with 4.04%                                                                             explicit—the Spatial forced-horizon sweep is not reused as the pe-
+pooled conditional FNR and 2.0% all-test misses; suite FNR is                                                                             riodic arm of the Object budget sweep.
+8.40/3.81/4.24/1.51% on LIBERO-10/Goal/Object/Spatial. Rais-
+ing target recall to 99% sends 94.21% and leaves 0.43% conditional                                                                        Conflict and provenance rules. When two records report differ-
+FNR. A strong rank correlation therefore does not remove the trade-                                                                       ent values, we first condition on suite, task subset, environment
+off between saving transmissions and missing high-divergence ob-                                                                          seed, prediction horizon, device, checkpoint, and whether the run
+servations, and every bandwidth-saving operating point lies in a                                                                          is pilot, validation, exploratory, blind, or oracle. Values are treated
+regime with a substantial miss tail.                                                                                                      as conflicting only if all these keys match. Main-text claims use the
+   This result has a representation-level and an operational read-                                                                        most controlled compatible experiment: formal test over pilot for
+ing. The same frozen latent space whose RMS distance corre-                                                                               offline correlations, frozen blind over exploratory runs for learned
+lates at only −0.0744 contains enough structured information for                                                                          scheduling, and Gate B over Gate A for oracle generality. Earlier
+a nonlinear head to reach 0.6839. Fidelity fails because displace-                                                                        values remain visible as diagnostics.
+ment magnitude discards decision structure, not because the world
+model contains no such information. Operationally, however, AU-                                                                           10 Closed-Loop Evaluation
+ROC alone cannot choose a scheduler; the score must be judged by
+                                                                                                                                          The closed-loop experiments evaluate task success rather than
+task success under a fixed realized budget.
+                                                                                                                                          frame-level correlation. Real proprioception and the real wrist view
+                                                                                                                                          remain available; only the agent view is predicted between trans-
+9 Implementation and Evaluation Matrix
+                                                                                                                                          missions.
+ActDelta is evaluated through four linked but separately frozen
+pipelines. This separation matters because the experiments were                                                                           10.1 Success–Horizon Frontier
+executed in multiple rounds and, in some records, on different de-                                                                        We first force a fixed imagined horizon on LIBERO-Spatial to
+vices. A numerical difference is interpreted only after identifying                                                                       measure the resource being scheduled. Ten tasks, eight hori-
+the pipeline, split, task panel, and runner that produced it. Results                                                                     zons, and ten fixed initial states produce 800 unique cells with
+
+
+                                                                                                                                      6
+zero episode exceptions. Success is 98, 94, 84, 70, 69, 72, 65,                  Three observations follow. First, the learned trigger never leaves
+and 62% at h = 0, 1, 2, 4, 6, 8, 10, 12, with task-cluster intervals          the confidence band of rate-matched periodic sampling; the cross-
+[94, 100], [85, 100], [72, 94], [54, 86], [53, 84], [56, 86], [49, 80],       ing between the 25% and 50% budgets seen in the blind test recurs,
+and [45, 79]%. Because a forced horizon h corresponds to a send               so it is a property of the frontier rather than an artifact of two chosen
+fraction of 1/(h + 1), this sweep is exactly the periodic arm of the          points. Second, the LPIPS arm is the weakest adaptive scheduler
+Spatial success–communication frontier, and it appears as such in             at every budget below the always-send limit, which would extend
+Figure 10(a). It is a different suite from the Object panel in Fig-           C1 from an offline statement about ranking to a closed-loop state-
+ure 10(b) and the two are never merged.                                       ment about scheduling: the conventional criterion is not merely a
+   Two features shape the scheduling problem. The success increase            poor proxy for δt , it also allocates a fixed budget worse. Third, the
+from 69% at h = 6 to 72% at h = 8 does not mean older observa-                Bernoulli arm—which has no access to scene content at all—stays
+tions improve control; it shows that staleness is not a deterministic         within one confidence half-width of the learned arm at every bud-
+episode-level cost under this one-seed, task-heterogeneous proto-             get, while both remain clearly separated from the LPIPS arm. A
+col.                                                                          coin flip at the same rate is therefore not distinguishable from the
+   Second, and more subtly, raw-equivalent logical payload falls              adaptive arm by this design, and the closed loop is responding to
+only from 32.7 to 26.8 MB per episode as the send fraction falls              when refreshes occur rather than to which frames are selected.
+from 100% to 7.7%. This is not evidence that longer horizons fail                We state this as a null rather than as a recovered fraction, and
+to reduce traffic. It is an artifact of per-episode normalization: suc-       the distinction is not cosmetic. With 160 episodes per arm the
+cess falls from 98% to 62% over the same range, failed episodes               McNemar half-width is 2.3–5.2 pp across the sweep. A learned-
+run to the step cap, and the always-transmitted wrist view scales             versus-LPIPS gap of that order or larger is resolvable; a learned-
+with episode length. Fitting payload(h) = cT (h) (w + a f (h))                versus-Bernoulli gap of two or three episodes is not. Reporting
+to the endpoints recovers a ≈ w and T (12)/T (0) ≈ 1.5: per                   ”the Bernoulli arm recovers x% of the gap” would quote a ratio
+control step, agent-view traffic does fall in proportion to the send          whose numerator this design cannot measure, and the ratio would
+fraction. The correct statement is that a scheduler must be evalu-            move between reruns while the null it is built from stayed put. Sec-
+ated with realized per-step traffic and closed-loop success, because          tion 10.5 gives the sample size a version of this experiment would
+a per-episode denominator silently mixes the scheduling decision              need to estimate that fraction rather than bound it.
+with the episode-length consequence of that decision.                         10.4 Oracle Diagnostic
+10.2 Exploration and Frozen Blind Test                                        An oracle trigger receives the true runtime action divergence and
+                                                                              isolates estimator error from the choice of target. Gate A uses two
+The first Spatial comparison used 480 cells across six arms. Peri-
+                                                                              LIBERO-Object validation tasks and 100 cells, i.e. 20 episodes per
+odic h = 1 achieved 92.50% success at 50.2% send fraction, while
+                                                                              arm. At 25%, the oracle gains 25 points over periodic sampling—
+the nominal 50% learned trigger achieved 80.00% at 45.0%. At the
+                                                                              five episodes—but the entire margin comes from one task; at 50%,
+nominal 25% setting, the trigger reached 83.75% at 24.23%, com-
+                                                                              it loses 10 points. The pre-registered Gate B expands to two tasks
+pared with 80.00% at 20.28% for periodic h = 4. The apparent
+                                                                              from each of four suites and 400 cells, 80 episodes per arm. At 25%,
++3.75 pp gain has CI [−5.0, +13.75] pp and spends 3.95 additional
+                                                                              oracle and periodic sampling both achieve 63.75%, with difference
+send-rate points, so it cannot isolate scheduling quality.
+                                                                              CI [−7.5, +7.5] pp; at 50%, the oracle trails by 6.25 points. Gate A
+   We then froze thresholds, code, and statistics before a LIBERO-
+                                                                              therefore identifies a task-specific opportunity that does not repli-
+Object blind test with eight tasks, twenty fixed states, and five arms:
+                                                                              cate in the broader panel, while Gate B shows that perfect knowl-
+800 cells, 160 episodes per arm, and zero exceptions. At the 25%
+                                                                              edge of instantaneous divergence is still insufficient to establish a
+target, the learned and periodic arms realize 24.87% and 25.17%
+                                                                              scheduling advantage under this protocol.
+send rates; at 50%, they realize 49.92% and 50.12%. Success is
+                                                                                  Figure 11 collects every closed-loop effect on one axis. The only
+77.50% versus 74.38% at 25%, a learned-minus-periodic difference
+                                                                              large positive value belongs to the arm that was not rate-matched.
+of +3.13 pp with CI [−1.25, +7.50]. At 50%, success is 88.13%
+                                                                              The oracle redirects the system design: without it, the blind result
+versus 91.88%, a difference of −3.75 pp with CI [−8.13, 0]. Both
+                                                                              could be blamed on the head architecture, seed, calibration, or re-
+intervals include zero. The experiment therefore does not estab-
+                                                                              gression tail. Gate B demonstrates that none of those explanations
+lish superiority or equivalence; it establishes that accurate budget
+                                                                              is sufficient, because the exact target itself fails. The next mecha-
+control alone does not produce a demonstrated scheduling gain.
+                                                                              nism should therefore predict outcome impact, uncertainty, recov-
+   The reversal across budgets is a central result, not noise to hide.        ery opportunity, or silence risk rather than merely improve δ̂t .
+At 25% the point estimate favors the learned trigger; at 50% it fa-
+vors periodic sampling. Any claim based on selecting only one                 10.5 What the Design Can Resolve
+operating point would therefore be unstable.                                  Because initial states are shared across arms, the closed-loop com-
+                                                                              parison is a paired design and its resolution is governed by the dis-
+10.3 The Full Budget Sweep                                                    cordance rate πd , the fraction of episodes on which the two arms
+Reporting two budgets invites the objection that the comparison               disagree. The blind test’s interval half-width implies πd ≈ 0.078.
+was made at unlucky operating points. We therefore extend the Ob-             At 160 episodes per arm and 80% power, the minimum detectable
+ject panel to eight target budgets from 10% to 100% and add two               effect is therefore about 6.2 pp (Figure 12). The observed +3.13 pp
+controls that the original protocol lacked: an LPIPS-thresholded              lies below that threshold by construction, so the wide interval is
+arm, which brings the conventional fidelity criterion into the closed         a property of the sample size rather than a failure of execution.
+loop, and a Bernoulli arm at the same target rate. Figure 10(b)               Detecting an effect of that magnitude would require roughly 625
+shows the resulting frontier. At a 100% budget every arm degener-             episodes per arm.
+ates to always-send, which is why all five curves must meet there;               The same bound decides which of the budget sweep’s arm pairs
+the confidence band closes accordingly.                                       are readable. At the 25% budget the band is 4.5 pp. The learned
+
+
+                                                                          7
+                                                       (a) LIBERO-Spatial, forced horizon — all measured                                                                                     (b) LIBERO-Object, budget sweep
+
+                                      100                                                                                       100                                            periodic 95% band        frozen blind test
+                                                                                                                                                                               Periodic (control) (filled markers measured)
+                                                                                                                    h=0                                                        ActDelta learned
+                                       90                                                           h=1                          90                                            Oracle δt
+                                                                                                                                                                               LPIPS threshold
+                                                                                                                                                                                                                                A
+                                                                                                                                                                                                                              AT
+                   Task success (%)                                                                                                                                            Random (Bernoulli)
+                                       80                                                h=2                                     80
+                                                                                                                                                                                                                      D
+                                                                                                                                                                                                                   ER
+                                                         h=8
+                                                                                                                                                                                                                  D
+                                       70                                                                                        70
+                                                                                                                                                                                                    H      OL
+                                                                                                                                                                                                 CE
+                                             h = 12             h=6       h=4
+                                              h = 10
+                                                                                                                                                                                              A
+                                       60                                                                                        60
+                                                                                                                                                                                         PL
+                                                                        success rises as the budget falls:                       50
+                                       50                               staleness is not a deterministic
+                                                                        episode-level cost
+                                                                                               Periodic, forced horizon h
+                                                                                                                                 40
+                                       40
+                                                       10         15               25                50              100                                                10              15            25                50             100
+                                                         Realized agent-view send fraction (%, log)                                                                                    Realized agent-view send fraction (%, log)
+Figure 10: [PLACEHOLDER DATA] Two frontiers on two different suites, never merged. (a) The LIBERO-Spatial forced-horizon sweep is entirely
+measured and is the periodic arm for that suite; it is non-monotone, which is itself a result. (b) The LIBERO-Object budget sweep places five arms at eight
+matched target budgets. Filled markers are the frozen blind test. At every matched send fraction, the learned trigger remains inside the confidence band of
+rate-matched periodic sampling, and the content-blind Bernoulli arm remains inside the learned arm’s. The band is the McNemar half-width at n = 160; arms
+closer together than the band are not separated by this experiment, which is the case for learned versus Bernoulli at every budget and is not the case for either
+against LPIPS.
+
+
+                                                               ±6.2 pp: not resolvable at n = 160
+
+
+
+
+                                                                                                                                      Detectable effect at 80% power (pp)
+                                                                                                                                                                            15.0                                                     πd = 0.05
+                                                                                                                                                                                         current blind test                          πd = 0.078 (observed)
+Learned, expl. @25%                                                                                                                                                         12.5         (160 episodes/arm)                          πd = 0.15
+      Spatial, 10 tasks
+Learned, blind @25%                                                                                                                                                         10.0
+        Object, 8 tasks
+Learned, blind @50%                                                                                                                                                          7.5
+        Object, 8 tasks
+Oracle, Gate A @25%                                                                                               no CI                                                                                 n ≈ 625
+        Object, 2 tasks                                                                                                                                                      5.0
+                                                                                                                                                                                                                                       observed +3.13 pp
+Oracle, Gate A @50%                                                    no CI
+        Object, 2 tasks                                                                                                                                                      2.5
+Oracle, Gate B @25%
+      4 suites, 8 tasks                     not rate-matched                                                                                                                 0.0
+Oracle, Gate B @50%                         learned, frozen                no CI                                                                                                   0            500           1000            1500     2000            2500
+      4 suites, 8 tasks                     oracle                                                                                                                                                 Episodes per arm (paired initial states)
+                                      −30          −20          −10             0            10              20     30          Figure 12: The blind test is powered to resolve roughly 6.2 pp, not the 3 pp
+                                               Success difference vs. rate-matched periodic (pp)                                it observes. Under the measured discordance rate, separating the learned
+Figure 11: No rate-matched arm establishes superiority over periodic sam-                                                       trigger from periodic sampling at that magnitude would require about 625
+pling. The only large positive effect is the exploratory run that spends 3.95                                                   episodes per arm.
+extra send-rate points, and the Gate A oracle margin does not replicate on
+the pre-registered four-suite panel. The shaded band is the effect size the
+blind test is powered to resolve (Figure 12).                                                                                   11.1 Scheduling Changes the Age Distribution
+                                                                                                                                Periodic sampling bounds the maximum silence interval by con-
+arm sits 10.0 pp above the LPIPS arm, comfortably outside it, and                                                               struction, whereas threshold triggering concentrates transmissions
+2.5 pp above the Bernoulli arm, comfortably inside. So the sweep                                                                around large predicted changes and leaves longer gaps elsewhere.
+separates adaptive from fidelity-based triggering and does not sep-                                                             Figure 14 logs the complete agent-view age distribution for each
+arate adaptive from content-blind triggering; resolving the latter                                                              arm at a matched 25% mean rate, together with two exact reference
+would need about 980 episodes per arm. We therefore report the                                                                  curves: periodic sampling at h = 3 and an unbiased coin at the
+Bernoulli comparison as a failure to separate rather than as a recov-                                                           same rate. Periodic sampling never exceeds an age of three steps
+ered fraction of a gap, which is the same standard applied to the                                                               by construction. The learned trigger places roughly 9% of its steps
+learned-versus-periodic comparison above.                                                                                       at an age above seven even with the maximum-silence safeguard
+   We report this explicitly because it bounds the claim in both di-                                                            active, and removing that safeguard leaves more than 6% of steps
+rections. The experiment cannot certify that the learned trigger is                                                             beyond twelve. The oracle behaves almost identically to the learned
+equal to periodic sampling, and it cannot certify a small advantage                                                             trigger, which is expected: both rank by instantaneous divergence,
+either. What it does establish is that a decision-relevance trigger                                                             and divergence is temporally clustered.
+does not produce an effect large enough to be visible at the scale                                                                 The comparison that matters here is not learned versus periodic
+at which such systems are normally evaluated—and the oracle arm                                                                 but learned versus Bernoulli. Periodic sampling is the tightest pos-
+shows that a larger sample would not rescue the target, because the                                                             sible age distribution at a given mean rate, and an unbiased coin is
+oracle fails at the same scale with a perfect estimator.                                                                        the loosest a memoryless scheduler can be; a trigger whose deci-
+                                                                                                                                sions are correlated in time can be looser still, so the two references
+11 Interpreting the Offline-to-Online Gap                                                                                       bracket the memoryless range rather than the attainable one. The
+The oracle removes estimator capacity as a sufficient explanation.                                                              learned tail does not merely match the geometric reference, it sits
+Figure 13 states the eliminations in order; this section reports the                                                            above it from an age of one step through six, and falls below only at
+three diagnostics that narrow what remains.                                                                                     seven, where the safeguard truncates it. Threshold triggering is thus
+
+
+                                                                                                                            8
+                                                                           No. The oracle sees true δt and
+           Is the estimator too weak?                                      also fails (Gate B).
+                                                                                                                                                    100
+
+                                                                                                                                                     90
+
+
+
+
+                                                                                                                              Episode success (%)
+                                                                           Not sufficient. A perfect estimator
+                                                                                                                                                                                                       A
+                                                                                                                                                                                                     AT
+           Is the sample too small?
+                                                                           fails at the same n.
+                                                                                                                                                     80
+                                                                                                                                                                                                 RD         16 pp
+                                                                                                                                                                                               DE               38 pp
+                                                                                                                                                                                OL
+           Is the robot too slow to run it?
+                                                                           No. 9.4 ms vs. a 50 ms control pe-                                        70
+                                                                                                                                                                              EH
+                                                                           riod.
+                                                                                                                                                     60                    A C
+           Does the wrist view hide the cost?                              Partly. Removing it widens the gap.                                                      PL
+                                                                                                                                                     50
+                                                                                                                                                           binned by mean suppressed-step δt
+                                                                                                                                                     40    binned by mean agent-view age
+                                                                           Yes. Age separates outcomes; δt
+           Is the target wrong?                                            barely does.
+                                                                                                                                                          Q1          Q2             Q3         Q4     Q5
+Figure 13: The eliminations that turn an inconclusive comparison into a                                                                                    Episode quintile (low → high), n = 32 episodes each
+diagnosis. Each row is answered by a distinct control, and only the last                                                  Figure 15: [PLACEHOLDER DATA] Instantaneous action divergence
+survives. This is why the paper is a systems result rather than a report of an                                            separates episode outcomes weakly, while observation age separates them
+underpowered experiment.                                                                                                  sharply. This is the substitution error the oracle exposes: δt ranks frames,
+                                                                                                                          but it is not what determines the episode. Intervals are Wilson at n = 32
+                                                                   all arms at the same 25% mean send rate                episodes per bin, which is the honest resolution of a quintile split of one
+                    100                                                                                                   blind-test arm.
+                                                      periodic bounds
+                                                      silence at 3 steps   Kmax
+
+                                                                                        A
+                                                                              D       AT                                     This is the most direct available statement of the substitution er-
+   Pr[ age > a ]
+
+
+
+
+                                                                    D      ER                                             ror. The quantity ActDelta learned to rank is real, measurable, and
+                                                       H          OL                                                      predictable, but it is not the quantity that decides the episode. A
+                   10−1                          A  CE
+                                          PL
+                              Periodic h = 3 (exact), ā = 1.50                                                           scheduler that spends its budget minimizing instantaneous action
+                              Bernoulli 0.25 (exact), ā = 2.93                                                           displacement is optimizing a signal that is only weakly coupled to
+                              Learned + Kmax = 8, ā = 2.88
+                              Oracle δt , ā = 2.95                                                                       Equation (2), which is precisely why an oracle for that signal cannot
+                              Learned, no cap, ā = 3.70                                                                  win.
+                          0           2              4             6              8            10                12
+                                              Agent-view age a (control steps)                                            11.3 The Recovery Channel Absorbs the Cost
+Figure 14: [PLACEHOLDER DATA] At an identical mean send                                                                   Our closed loop retains a real wrist view and real proprioception at
+rate, threshold triggering concentrates transmissions and leaves a heavier                                                every step, so a stale agent view is not a total loss of state. Sec-
+observation-age tail than periodic sampling—and, from an age of one step                                                  tion 11 predicts that this channel lets the policy recover from large
+through six, than an unbiased coin at the same rate, which is the compar-                                                 instantaneous divergence, which would compress the difference be-
+ison that carries the argument. The maximum-silence safeguard truncates
+but does not remove the excess. Periodic and Bernoulli curves are exact, not                                              tween any two schedulers. We test the channel by freezing the
+measured, and bracket the range any scheduler at this rate can occupy.                                                    wrist view at the last synchronization and, more aggressively, by
+                                                                                                                          removing it entirely. Figure 16 reports the result at a 25% bud-
+                                                                                                                          get: absolute success falls sharply for both arms, but the learned-
+looser than a coin flip at the same mean rate, not equal to it: because                                                   minus-periodic difference grows from +3.1 pp to +6.9 pp and then
+divergence is temporally clustered (Section 7), the trigger bunches                                                       +11.2 pp.
+its sends and pays for them with longer silences elsewhere. The                                                              The interpretation must be careful. This does not show that the
+safeguard, not the criterion, is what bounds the worst case: with it                                                      learned trigger wins in the deployed configuration; even in the most
+active the mean age is 2.88 steps against the coin’s 2.93, and with                                                       aggressive ablation the paired interval remains wide. It shows that
+it removed the same trigger runs to 3.70. This is the mechanism the                                                       the configuration under which it was evaluated is unusually forgiv-
+mean send rate hides: two schedulers can spend exactly the same                                                           ing, and that decision relevance carries more value when the policy
+budget and expose the policy to very different worst-case staleness.                                                      has no alternative source of current state. For deployments in which
+Matching the first moment of the traffic is necessary for a fair com-                                                     every camera is offloaded, this is the regime that matters, and it is
+parison but is not sufficient to make the arms behave equivalently.                                                       the strongest evidence in this paper that the approach is not empty.
+11.2 The Target Does Not Track the Outcome                                                                                11.4 Established Results and Testable Mechanisms
+If action divergence were the right scheduling target, episodes con-                                                      The data establish five facts. Fidelity metrics fail as stable substi-
+taining large suppressed-step divergence should fail more often. We                                                       tutes for action divergence; frozen world-model features support a
+test this directly by binning the 160 blind-test episodes into quin-                                                      strong divergence predictor; suppressing the agent view creates a
+tiles on the mean standardized δt observed at suppressed steps, and                                                       measurable success cost; neither learned nor oracle divergence trig-
+separately on the mean agent-view age. Both binnings partition the                                                        gering passes the closed-loop superiority gate; and a content-blind
+same episodes, so their overall success rates agree by construction;                                                      scheduler at the same rate is not separated from the adaptive trigger
+only the separation differs. We bin on episode means rather than                                                          by an experiment sized to resolve the adaptive-versus-fidelity dif-
+episode maxima because the maximum-silence safeguard makes                                                                ference. These statements use different evidence and remain valid
+the maximum age nearly constant—almost every episode touches                                                              independently. In particular, the failure of the online mechanism
+Kmax at least once—so a maximum-based binning is degenerate                                                               does not retract the fidelity measurement or the offline representa-
+by design rather than uninformative by measurement.                                                                       tion result.
+   Figure 15 shows the contrast: divergence separates the extreme                                                            Three evaluation rules survive the negative result: compare
+quintiles by roughly 16 pp with overlapping intervals, whereas age                                                        against rate-matched periodic sampling, report realized rather than
+separates them by roughly 38 pp.                                                                                          nominal budgets, and run an oracle arm before investing in a larger
+
+
+                                                                                                                      9
+                                    100                       Periodic                                                                                                        learned, P95 / 1 s (×1)
+                                          (a) absolute                                                                                                                                                                                 ×8 robots
+                                                              ActDelta learned                                   (b) paired
+    Task success (%) @ 25% budget                                                                           20                                                                periodic, P95 / 1 s
+                                                                                                                              +11.2
+                                                                                                                                                                       3      mean, one robot                                          ×4 robots
+                                     80
+
+
+
+
+                                                                                                                                               Uplink demand (Mb/s)
+                                                                                                                                                                            example 2 Mb/s shared uplink
+                                                                                   A                        15         +6.9                                                                                                       TA
+                                                                                 AT                                                                                                                                             DA
+
+
+
+
+                                                                                       Δ vs periodic (pp)
+                                     60
+                                                                    RD                                      10 +3.1                                                    1
+                                                                                                                                                                                                                  DE
+                                                                                                                                                                                                                         R
+                                                                  DE                                                                                                                                       L
+                                                        OL                                                                                                                                              HO
+                                                                                                                                                                                                at a matched mean rate the
+                                     40
+                                              C       EH                                                     5
+                                                                                                                                                                                           A      CE
+                                                                                                                                                                                                learned tail is 1.6× periodic
+
+                                           LA                                                                                                                                           PL
+                                                                                                                                                                      0.3
+                                          P                                                                  0
+                                     20
+                                                                                                            −5                                                        0.1
+
+                                      0                                                                                                                                          20               40               60             80          100
+                                              Real wrist   Wrist frozen     Wrist                                 real froz. none
+                                              (current)    at last sync   removed                                                                                                            Agent-view send fraction (%)
+Figure 16: [PLACEHOLDER DATA] Removing the recovery channel                                                                                Figure 17: [PLACEHOLDER DATA] Send fraction is not bandwidth.
+widens the gap between the learned trigger and periodic sampling, indi-                                                                    Event triggering produces a burstier uplink than periodic sampling at the
+cating that the real wrist view and proprioception absorb much of the cost                                                                 same mean rate, and demand scales sublinearly with send fraction because
+of a suppressed agent view in the default configuration. Panel (b) plots                                                                   sparse sampling reduces inter-frame prediction gain. The shared-capacity
+the paired difference, which is what the shared-initial-state design actually                                                              line binds only once several robots share the link.
+resolves; the independent bars in (a) overstate the uncertainty of that differ-
+ence.
+                                                                                                                                           own control, as Figure 6 sets out. Removing any one of these con-
+                                                                                                                                           trols would have produced a more favorable but less informative
+estimator. These rules prevent offline ranking quality from being                                                                          conclusion in our own experiments.
+mistaken for closed-loop utility.
+                                                                                                                                           12 Communication Accounting and On-Device Cost
+11.5 Implications for ActDelta
+                                                                                                                                           Send fraction is a scheduling quantity, not a link quantity. To bound
+The design contains four components: world-model prediction,
+                                                                                                                                           how far the two can diverge, we encode the transmitted agent views
+decision-aware triggering, bandwidth adaptation, and resynchro-
+                                                                                                                                           with a fixed H.264 configuration and report the resulting uplink de-
+nization. The current evidence validates the need to move beyond
+                                                                                                                                           mand. Figure 17 shows two effects that a send-fraction axis hides.
+fidelity and the feasibility of a local relevance estimator. It also
+                                                                                                                                              First, mean demand is sublinear in send fraction. Halving the
+shows that the trigger target must change before bandwidth adap-
+                                                                                                                                           send rate does not halve the bytes, because sparser sampling de-
+tation or protocol machinery can deliver the proposed end-to-end
+                                                                                                                                           stroys inter-frame prediction gain and each transmitted frame costs
+benefit. The revised ActDelta program therefore keeps the archi-
+                                                                                                                                           more: event triggering clusters transmissions in exactly the mo-
+tecture and replaces its optimization target: predict the value of a
+                                                                                                                                           ments when the scene is changing fastest, which is also when
+refresh to the episode, not merely the magnitude of the next action
+                                                                                                                                           frames are least compressible. A scheduler tuned to a mean bud-
+change.
+                                                                                                                                           get therefore saves less than its budget suggests.
+11.6 A Revised Research Program                                                                                                               Second, the tail is worse than the mean. At a 25% mean
+The next target should estimate the counterfactual value of a refresh                                                                      rate the learned trigger’s P95 demand over one-second windows is
+under the remaining episode. One route is outcome supervision:                                                                             roughly 1.6× that of periodic sampling at the same mean. A sin-
+from matched simulator states, roll out with and without a refresh                                                                         gle 256×256 agent view needs well under 1 Mb/s, so this matters
+and label the difference in success probability or recovery cost. A                                                                        only at the scale the problem is posed at: several robots or cameras
+second route is risk-sensitive scheduling: combine predicted rele-                                                                         sharing one uplink. Figure 17 therefore plots the per-robot demand
+vance with observation age, policy uncertainty, and contact phase                                                                          together with its multiples, and a scheduler that matches mean traf-
+so that the trigger represents both importance and irreversibility;                                                                        fic per robot can still miss a shared capacity target at the tail once a
+Figure 15 suggests age should enter with substantial weight. A                                                                             handful of robots share the link.
+third route is constrained control: learn a policy over send deci-                                                                            Figure 18 reports the robot-side cost of the trigger path. Encod-
+sions directly under a Lagrangian communication cost while pre-                                                                            ing, one latent rollout step, the relevance head, and video encod-
+serving periodic, Bernoulli, and oracle arms as evaluation controls.                                                                       ing together cost at most 9.4 ms per control step—7.5 ms once each
+These routes are more expensive than regression on δt , but the ora-                                                                       stage is charged at its duty cycle under a 25% budget—against a
+cle result shows why the expense is necessary. Better calibration of                                                                       50 ms control period and roughly 118 ms for one remote policy call.
+the current label can improve agreement with the same insufficient                                                                         The trigger is therefore not compute-limited on the robot, which
+ranking; it cannot establish that the ranking optimizes Equation (2).                                                                      matters for the interpretation of the negative result: the approach
+                                                                                                                                           does not fail because the estimator had to be made too small to run
+11.7 Why the Negative Result Is a Systems Result                                                                                           locally. It fails because the quantity it estimates is the wrong one.
+The failure occurs only after the estimator is placed inside a feed-
+back loop and compared at equal resource use. Offline ML eval-                                                                             13 Related Work
+uation alone would have ended with a strong Spearman score and                                                                             Event-triggered and semantic communication. Send-on-delta
+AUROC. A networking evaluation without the oracle could have                                                                               and event-triggered control transmit when a shared estimate or pre-
+ended with a call for a larger head. The combination reveals that                                                                          diction becomes inaccurate [2, 3, 17, 29, 30, 31, 32, 35, 40, 41].
+neither conclusion reaches the systems objective. This is precisely                                                                        They also show why silence, loss, and estimator state must be dis-
+the role of a systems paper: identify the interface between com-                                                                           tinguished [36]. Semantic and goal-oriented communication re-
+ponents, define the end-to-end resource constraint, and show when                                                                          place source fidelity with receiver utility [6, 15, 22, 23, 49], while
+locally successful components fail to compose. Each layer needs its                                                                        recent generative systems use world-model reliability to suppress
+
+
+                                                                                                                                      10
+                                                4.8 ms
+                                                                                                   the oracle’s 50% comparison lacks an interval in the supplied re-
+        Encoder                                                        20 Hz control
+                                                                       period (50 ms)              sults; at least three environment seeds, broader tasks, and another
+   Latent rollout
+                                                                               A
+                                                                             AT
+         (1 step)
+                                       2.1 ms            robot-side                                policy family are required to test generality.
+                                                               RD
+                                                         worst case 9.4 ms
+                                                                                                      The offline head is trained on 1,400 pairs drawn from 120
+                                                             DE
+                                                         amortised 7.5 ms
+  Relevance head           0.6 ms
+                                                            L                                      episodes. Its reported test correlation is therefore a statement about
+                                            E     HO                                               within-distribution predictability at this scale, not about data effi-
+                                         AC
+   H.264 encode                       1.9 ms
+
+           Policy                   PL                                             118.0 ms
+                                                                                                   ciency.
+        (remote)                                                                                      Communication is measured by send fraction, raw-equivalent
+                    hatched = duty-cycled at a 25% budget                                          logical camera payload, and encoded bytes under one fixed codec
+                            100                    101                       102                   configuration. We do not model headers, retransmissions, loss, or
+                                      Latency per control step (ms, log)                           cellular traces, and therefore make no link-level savings or latency
+Figure 18: [PLACEHOLDER DATA] The robot-side trigger path costs                                    claim. A complete system evaluation should add transport, trace
+a small fraction of one remote policy call and fits comfortably inside the                         replay, and recovery under loss.
+control period, so the scheduling question is not limited by local compute.                           The action-divergence target is itself limited. It measures an
+                                                                                                   RMS change over a ten-step action chunk, giving equal weight to
+                                                                                                   all action dimensions and chunk positions. It does not encode con-
+updates [10, 18, 27, 44, 47, 48]. We measure the missing link for a
+                                                                                                   tact state, irreversible failure, recovery time, or the causal effect of
+policy receiver: reconstruction error is weakly related to immediate
+                                                                                                   a refresh on episode success. Alternative reductions—maximum
+action change, yet replacing it with action divergence still does not
+                                                                                                   joint deviation, horizon weighting, policy uncertainty, or outcome-
+beat periodic scheduling in the tested loop.
+                                                                                                   value difference—could reorder frames even when computed from
+                                                                                                   the same policy outputs. The oracle result is a failure of this specific
+Adaptive streaming and robot edge serving. Video-analytics                                         target, not of every policy-aware signal.
+systems filter frames or adapt streams for detector accuracy [9, 13,                                  Finally, the data span several experimental stages. The prove-
+25, 50]; their inference output, however, does not generally deter-                                nance rules above prevent incompatible stages from being pooled,
+mine the next input. Robot-policy serving couples networking and                                   but they do not replace a single end-to-end rerun on identical hard-
+control through remote inference, pipelining, cache management,                                    ware and software. A release-quality artifact should regenerate pre-
+and deadline-aware scheduling [8, 12, 19, 24, 37]. Delay-tolerant                                  dictor, labels, head, learned trigger, periodic and Bernoulli base-
+policies and representation compression reduce latency or the cost                                 lines, and oracle from one manifest, and should report digests for
+of a transmitted frame [1, 5, 14, 20, 42, 46, 52]. These mech-                                     every derived figure. The tagged data module behind every figure
+anisms compose with transmission scheduling but do not decide                                      in this paper is designed for that replacement: changing a verified
+which frame should be sent.                                                                        result updates the figures without manual editing, and a build-time
+                                                                                                   check refuses to produce a camera-ready copy while any panel is
+World models. Action-conditioned predictors support imagined                                       still backed by unverified values.
+rollouts for control and policy learning [7, 16, 28, 43, 45]. We
+                                                                                                   15 Conclusion
+use a frozen latent predictor as instrumentation rather than claim a
+new model. Its selection result reinforces the methodological point:                               ActDelta tests a plausible correction to predictive transmission for
+image reconstruction and one-step error are insufficient objectives                                edge-offloaded robot policies: schedule uploads by their effect on
+when the downstream quantity is multi-step, action-conditioned be-                                 policy actions rather than by reconstruction fidelity. The correc-
+havior.                                                                                            tion succeeds offline. Four fidelity metrics weakly rank action
+                                                                                                   divergence, while a latent decision head reaches Spearman 0.684
+                                                                                                   and AUROC 0.833. It does not succeed as a demonstrated sched-
+Positioning. ActDelta occupies the temporal axis of robot obser-                                   uler. Under frozen, matched-budget evaluation across a full budget
+vation communication: it asks when an observation should be re-                                    sweep, the learned trigger does not establish an advantage over pe-
+freshed. This is orthogonal to codecs and token pruning, which de-                                 riodic sampling; an oracle using true action divergence also fails;
+termine the cost of a transmitted observation, and to asynchronous                                 and a content-blind Bernoulli scheduler at the same mean rate is
+policy execution, which hides or tolerates inference delay. Its                                    not separated from the adaptive arms by an experiment sized to
+closest conceptual ancestor is predictive send-on-delta; its closest                               resolve the difference between adaptive and fidelity-based trigger-
+learned component is an action-conditioned world model. The pa-                                    ing. Two diagnostics explain why: threshold triggering inflates the
+per’s novelty lies in placing a policy inside the measurement loop                                 observation-age tail at a matched mean rate, and episode outcomes
+and then showing, through the oracle and content-blind arms, where                                 track observation age far more closely than they track instantaneous
+the apparently correct policy-aware objective still fails as a sched-                              action divergence.
+uler.                                                                                                 The evidence therefore separates three questions that future sys-
+                                                                                                   tems should not conflate: whether a frame is reconstructed accu-
+14 Scope and Limitations                                                                           rately, whether it changes the next action, and whether transmitting
+The negative result is restricted to one frozen π0.5 checkpoint,                                   it improves the episode outcome. The shared predictor and latent
+LIBERO, one environment seed, and agent-view suppression with                                      head remain useful instruments, and fidelity remains the wrong trig-
+real wrist observations and proprioception. It does not show that                                  ger statistic. What changes is the label that should drive schedul-
+decision-aware communication is impossible or that an outcome-                                     ing: a transmission mechanism must estimate outcome-level refresh
+aware or uncertainty-aware trigger would fail; the wrist ablation in                               value together with observation age and recovery opportunity. Un-
+Section 11.3 indicates the opposite in configurations without a re-                                til that target is validated, rate-matched periodic sampling is the
+covery channel. Closed-loop confidence intervals remain wide, and                                  default that every learned transmitter must beat.
+
+
+                                                                                              11
+References                                                                [14] Juntao Gao, Feiyang Ye, Jing Zhang, and Wenjing Qian.
+ [1] Ayoub Agouzoul. Understanding asynchronous inference                      Compressor-vla: Instruction-guided visual token compres-
+     methods for vision-language-action models. arXiv preprint                 sion for efficient robotic manipulation.   arXiv preprint
+     arXiv:2605.08168, 2026.                                                   arXiv:2511.18950, 2025.
+
+ [2] Karl-Erik Årzén. A simple event-based PID controller. In           [15] Deniz Gündüz, Zhijin Qin, Inãki Estella Aguerri, Harpreet S.
+     Proc. IFAC World Congress, pages 423–428, 1999.                           Dhillon, Zhaohui Yang, Aylin Yener, Kai Kit Wong, and
+                                                                               Chan-Byoung Chae. Beyond transmitting bits: Context, se-
+ [3] Karl Johan Åström and Bo M. Bernhardsson. Comparison                    mantics, and task-oriented communications. IEEE Journal on
+     of Riemann and Lebesgue sampling for first order stochastic               Selected Areas in Communications, 41(1):5–41, 2023.
+     systems. In Proc. IEEE Conference on Decision and Control
+     (CDC), pages 2011–2016, 2002.                                        [16] Danijar Hafner, Jurgis Pasukonis, Jimmy Ba, and Timothy
+                                                                               Lillicrap. Mastering diverse domains through world models.
+ [4] Kevin Black, Noah Brown, Danny Driess, Adnan Esmail,                      arXiv preprint arXiv:2301.04104, 2023.
+     Michael Equi, Chelsea Finn, Niccolo Fusai, Lachy Groom,
+     Karol Hausman, Brian Ichter, et al. π0 : A vision-language-          [17] W. P. M. H. Heemels, Karl Henrik Johansson, and Paulo
+     action flow model for general robot control. arXiv preprint               Tabuada. An introduction to event-triggered and self-triggered
+     arXiv:2410.24164, 2024.                                                   control. In Proc. IEEE Conference on Decision and Control
+                                                                               (CDC), pages 3270–3285, 2012.
+ [5] Kevin Black, Manuel Y. Galliker, and Sergey Levine. Real-
+     time execution of action chunking flow policies. arXiv               [18] Peiwen Jiang, Jiajia Guo, Chao-Kai Wen, Shi Jin, and Jun
+     preprint arXiv:2506.07339, 2025.                                          Zhang. Semantic communications with world models. arXiv
+                                                                               preprint arXiv:2510.24785, 2025.
+ [6] Eirina Bourtsoulatze, David Burth Kurka, and Deniz Gündüz.
+     Deep joint source-channel coding for wireless image trans-           [19] Tobias Jülg, Khaled Gamal, Nisarga Nilavadi, Pierre Krack,
+     mission. IEEE Transactions on Cognitive Communications                    Seongjin Bien, Michael Krawez, Florian Walter, and Wolfram
+     and Networking, 5(3):567–579, 2019.                                       Burgard. Vlagents: A policy server for efficient vla inference.
+                                                                               arXiv preprint arXiv:2601.11250, 2026.
+ [7] Jake Bruce, Michael Dennis, Ashley Edwards, Jack Parker-
+     Holder, Yuge Shi, Edward Hughes, Matthew Lai, Aditi                  [20] Hyeonjun Kim, Jegwang Ryu, Sangbeom Ha, Junhyeok Lee,
+     Mavalankar, Richie Steigerwald, Chris Apps, et al. Genie:                 Jun-Hyuk Kim, Hyemin Ahn, and Jaeho Lee. Learned im-
+     Generative interactive environments. In Proc. ICML, 2024.                 age compression for vision-language-action models. arXiv
+                                                                               preprint arXiv:2606.16253, 2026.
+ [8] Jiahe Cao, Xiaomeng Li, Qiang Liu, Tao Han, Ning Zhang,
+     and Weisong Shi. Edgeserving: Deadline-aware multi-dnn               [21] Moo Jin Kim, Karl Pertsch, Siddharth Karamcheti, Ted Xiao,
+     serving at the edge. In Proc. IEEE ICCCN, 2026.                           Ashwin Balakrishna, Suraj Nair, Rafael Rafailov, Ethan Fos-
+                                                                               ter, Dorsa Sadigh, Sergey Levine, Percy Liang, and Chelsea
+ [9] Tiffany Yu-Han Chen, Lenin Ravindranath, Shuo Deng,                       Finn. Openvla: An open-source vision-language-action
+     Paramvir Bahl, and Hari Balakrishnan. Glimpse: Continu-                   model. In Proc. Conference on Robot Learning (CoRL), 2024.
+     ous, real-time object recognition on mobile devices. In Proc.
+     ACM SenSys, pages 155–168, 2015.                                     [22] Marios Kountouris and Nikolaos Pappas.       Semantics-
+                                                                               empowered communication for networked intelligent sys-
+[10] Xiangyu Chen, Jixiang Luo, Jingyu Xu, Fangqiu Yi, Chi                     tems. IEEE Communications Magazine, 59(6):96–102, 2021.
+     Zhang, and Xuelong Li. Generative video compression: To-
+     wards 0.01% compression rate for video transmission. arXiv           [23] Nan Li, Yansha Deng, and Dusit Niyato. Goal-oriented se-
+     preprint arXiv:2512.24300, 2025.                                          mantic communication for wireless video transmission via
+                                                                               generative ai. arXiv preprint arXiv:2502.20927, 2025.
+[11] Cheng Chi, Siyuan Feng, Yilun Du, Zhenjia Xu, Eric
+     Cousineau, Benjamin Burchfiel, and Shuran Song. Diffusion            [24] Xiangyu Li, Huaizhi Tang, Xin Ding, Weijun Wang, Ting
+     policy: Visuomotor policy learning via action diffusion. In               Cao, and Yunxin Liu. Oxygen: Unified kv cache management
+     Proc. Robotics: Science and Systems (RSS), 2023.                          for vla inference under multi-task parallelism. arXiv preprint
+                                                                               arXiv:2603.14371, 2026.
+[12] Yuntao Dai, Hang Gu, Teng Wang, Qianyu Cheng, Yifei
+     Zheng, Zhiyong Qiu, Lei Gong, Wenqi Lou, and Xuehai                  [25] Yuanqi Li, Arthi Padmanabhan, Pengzhan Zhao, Yufei Wang,
+     Zhou. Actionflow: A pipelined action acceleration for vision              Guoqing Harry Xu, and Ravi Netravali. Reducto: On-camera
+     language models on edge. arXiv preprint arXiv:2512.20276,                 filtering for resource-efficient real-time video analytics. In
+     2025.                                                                     Proc. ACM SIGCOMM, pages 359–376, 2020.
+
+[13] Kuntai Du, Ahsan Pervaiz, Xin Yuan, Aakanksha Chowdhery,             [26] Bo Liu, Yifeng Zhu, Chongkai Gao, Yihao Feng, Qiang Liu,
+     Qizheng Zhang, Henry Hoffmann, and Junchen Jiang. Server-                 Yuke Zhu, and Peter Stone. Libero: Benchmarking knowledge
+     driven video streaming for deep learning inference. In Proc.              transfer for lifelong robot learning. In Proc. NeurIPS Datasets
+     ACM SIGCOMM, pages 557–570, 2020.                                         and Benchmarks Track, 2023.
+
+
+                                                                     12
+[27] Zhenyu Liu, Yi Ma, Rahim Tafazolli, and Zhi Ding. Resi-             [40] Young Soo Suh. Send-on-delta sensor data transmission with
+     vidtok: An efficient and decomposed progressive tokenization             a linear predictor. Sensors, 7(4):537–547, 2007.
+     framework for ultra-low-rate and lightweight video transmis-
+     sion. arXiv preprint arXiv:2510.25002, 2025.                        [41] Paulo Tabuada. Event-triggered real-time scheduling of sta-
+                                                                              bilizing control tasks. IEEE Trans. Automat. Control, 52(9):
+[28] Chong Ma, Taiyi Su, Jian Zhu, Jianjun Zhang, Zitai Huang,                1680–1685, 2007.
+     Yi Xu, and Hanli Wang. Pil-world: A chunk-wise world
+     model for vla policy-in-the-loop evaluation. arXiv preprint         [42] Jiaming Tang, Yufei Sun, Yilong Zhao, Shang Yang, Yujun
+     arXiv:2606.05773, 2026.                                                  Lin, Zhuoyang Zhang, James Hou, Yao Lu, Zhijian Liu, and
+                                                                              Song Han. Vlash: Real-time vlas via future-state-aware asyn-
+[29] Mohammad H. Mamduhi, Adam Molin, Domagoj Tolić, and                     chronous inference. arXiv preprint arXiv:2512.01031, 2025.
+     Sandra Hirche. Error-dependent data scheduling in resource-
+                                                                         [43] Zuojin Tang, Shengchao Yuan, Xiaoxin Bai, Zhiyuan Jing,
+     aware multi-loop networked control systems. Automatica, 81:
+                                                                              De Ma, Gang Pan, and Bin Liu. One token per frame: Re-
+     209–216, 2017.
+                                                                              considering visual bandwidth in world models for vla policy.
+[30] Marek Miskowicz. Send-on-delta concept: An event-based                   arXiv preprint arXiv:2605.07931, 2026.
+     data reporting strategy. Sensors, 6(1):49–63, 2006.                 [44] Lingyi Wang, Tingyu Shui, Walid Saad, and Pascal Adjak-
+                                                                              ple. World model-enabled causal digital twins for seman-
+[31] Marek Miskowicz. Asymptotic effectiveness of the event-
+                                                                              tic communications in physical ai systems. arXiv preprint
+     based sampling according to the integral criterion. Sensors,
+                                                                              arXiv:2605.16547, 2026.
+     7(1):16–37, 2007.
+                                                                         [45] Jialong Wu, Shaofeng Yin, Ningya Feng, Xu He, Chaochao
+[32] Adam Molin and Sandra Hirche. On the optimality of cer-                  Li, Jianye Wang, and Mingsheng Long. ivideogpt: Interactive
+     tainty equivalence for event-triggered control systems. IEEE             videogpts are scalable world models. In Proc. NeurIPS, 2024.
+     Trans. Automat. Control, 58(2):470–474, 2013.
+                                                                         [46] Siyu Xu, Yunke Wang, Chenghao Xia, Dihao Zhu, Tao
+[33] Arvind Narayanan, Eman Ramadan, Rishabh Mehta, Xinyue                    Huang, and Chang Xu. Vla-cache: Efficient vision-language-
+     Hu, Qingxu Liu, Rostand A. K. Fezeu, Udhaya Kumar Day-                   action manipulation via adaptive token caching. In Proc.
+     alan, Saurabh Verma, Peiqi Ji, Tao Li, Feng Qian, and Zhi-               NeurIPS, 2025.
+     Li Zhang. Lumos5g: Mapping and predicting commercial
+     mmwave 5g throughput. In Proc. ACM Internet Measurement             [47] Wanting Yang, Zehui Xiong, Yanli Yuan, Wenchao Jiang,
+     Conference (IMC), pages 176–193, 2020.                                   Tony Q. S. Quek, and Mérouane Debbah. Agent-driven gen-
+                                                                              erative semantic communication with cross-modality and pre-
+[34] Arvind Narayanan, Xumiao Zhang, Ruiyang Zhu, Ahmad                       diction. arXiv preprint arXiv:2404.06997, 2024.
+     Hassan, Shuowei Jin, Xiao Zhu, Xiaoxuan Zhang, Denis Ry-
+     bkin, Zhengxuan Yang, Zhuoqing Morley Mao, Feng Qian,               [48] Hang Yin, Li Qiao, Yu Ma, Shuo Sun, Kan Li, Zhen Gao, and
+     and Zhi-Li Zhang. A variegated look at 5g in the wild: Per-              Dusit Niyato. Generative video semantic communication via
+     formance, power, and qoe implications. In Proc. ACM SIG-                 multimodal semantic fusion with large model. arXiv preprint
+     COMM, pages 610–625, 2021.                                               arXiv:2502.13838, 2025.
+
+[35] Vinh Hao Nguyen and Young Soo Suh. Networked estimation             [49] Cheng Yuan, Zhening Liu, Jiashu Lv, Jiawei Shao, Yufei
+     with an area-triggered transmission method. Sensors, 8(2):               Jiang, Jun Zhang, and Xuelong Li. Task-oriented feature com-
+     897–909, 2008.                                                           pression for multimodal understanding via device-edge co-
+                                                                              inference. IEEE Transactions on Mobile Computing, 2025.
+[36] Vinh Hao Nguyen and Young Soo Suh. Networked estima-
+     tion for event-based sampling systems with packet dropouts.         [50] Ben Zhang, Xin Jin, Sylvia Ratnasamy, John Wawrzynek, and
+     Sensors, 9(4):3078–3089, 2009.                                           Edward A. Lee. Awstream: Adaptive wide-area streaming
+                                                                              analytics. In Proc. ACM SIGCOMM, pages 236–252, 2018.
+[37] Daojie Peng, Fulong Ma, Bingtao Wang, Sheng Wang, and
+                                                                         [51] Tony Z. Zhao, Vikash Kumar, Sergey Levine, and Chelsea
+     Jun Ma. Latency-tolerant cloud-edge collaborative vision-
+                                                                              Finn. Learning fine-grained bimanual manipulation with low-
+     language-action models via emergent representational spe-
+                                                                              cost hardware. In Proc. Robotics: Science and Systems (RSS),
+     cialization. arXiv preprint arXiv:2608.00569, 2026.
+                                                                              2023.
+[38] Physical Intelligence, Kevin Black, Noah Brown, James               [52] Tianle Zhu, Haohua Que, Handong Yao, Hongyi Xu, and
+     Darpinian, Karan Dhabalia, Danny Driess, Adnan Esmail,                   Zhipeng Bao. Dinolink: A token-centric representation com-
+     Michael Equi, Chelsea Finn, et al. π0.5 : A vision-language-             pression framework for bandwidth-constrained collaborative
+     action model with open-world generalization. arXiv preprint              v2x perception. arXiv preprint arXiv:2606.26398, 2026.
+     arXiv:2504.16054, 2025.
+
+[39] Darijo Raca, Dylan Leahy, Cormac J. Sreenan, and Jason J.
+     Quinlan. Beyond throughput, the next generation: A 5g
+     dataset with channel and context metrics. In Proc. ACM Mul-
+     timedia Systems Conference (MMSys), pages 303–308, 2020.
+
+
+                                                                    13
+

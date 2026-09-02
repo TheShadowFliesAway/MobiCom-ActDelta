@@ -1,0 +1,1188 @@
+                                                                                                                                       PDF Download
+                                                                                                                                       3680207.3723456.pdf
+                                                                                                                                       10 March 2026
+                                                                                                                                       Total Citations: 0
+                                                                                                                                       Total Downloads: 946
+    .
+    .
+        Latest updates: hps://dl.acm.org/doi/10.1145/3680207.3723456
+
+
+
+
+                                                                                                                                       .
+                                                                                                                                       .
+                                                                                                                             Published: 21 November 2025
+        .
+        .
+                                                                                                                             .
+    RESEARCH-ARTICLE
+
+
+
+
+                                                                                                                             .
+                                                                                                                             Citation in BibTeX format
+    PolarVisor: Cluer-free, Electronics-free Fiducial Markers for mmWave
+
+
+
+
+                                                                                                                             .
+                                                                                                                             .
+                                                                                                                             ACM MOBICOM '25: 31st Annual
+    Radars Printed on Paper                                                                                                  International Conference on Mobile
+                                                                                                                             Computing and Networking
+    JUNBO ZHANG, Carnegie Mellon University, Pisburgh, PA, United States                                                    November 4 - 8, 2025
+                                                                                                                             Hong Kong, China
+    .
+    YIWEN SONG, Carnegie Mellon University, Pisburgh, PA, United States
+
+
+
+
+                                                                                                                             .
+                                                                                                                             .
+                                                                                                                             Conference Sponsors:
+    .
+    SWARUN KUMAR, Carnegie Mellon University, Pisburgh, PA, United States                                                   SIGMOBILE
+    .
+    .
+    .
+    Open Access Support provided by:
+    .
+    Carnegie Mellon University
+    .
+                                     ACM MOBICOM '25: Proceedings of the 31st Annual International Conference on Mobile Computing and Networking (November 2025)
+                                                                                                                            hps://doi.org/10.1145/3680207.3723456
+                                                                                                                                               ISBN: 9798400711299
+.
+      PolarVisor: Clutter-free, Electronics-free Fiducial
+       Markers for mmWave Radars Printed on Paper
+              Junbo Zhang                                      Yiwen Song                                  Swarun Kumar
+        junboz2@alumni.cmu.edu                          yiwens2@andrew.cmu.edu                             swarun@cmu.edu
+       Carnegie Mellon University                      Carnegie Mellon University                    Carnegie Mellon University
+       Pittsburgh, PA, United States                   Pittsburgh, PA, United States                 Pittsburgh, PA, United States
+ABSTRACT                                                                      ACM Reference Format:
+In this paper, we design and fabricate cost-effective, electronics-           Junbo Zhang, Yiwen Song, and Swarun Kumar. 2025. PolarVisor:
+                                                                              Clutter-free, Electronics-free Fiducial Markers for mmWave Radars
+free millimeter-wave (mmWave) fiducial markers that sup-
+                                                                              Printed on Paper. In The 31st Annual International Conference on
+port clutter-free detection on radars. Fiducial markers are
+                                                                              Mobile Computing and Networking (ACM MOBICOM ’25), November
+widely used in camera-based systems to provide spatial infor-                 4–8, 2025, Hong Kong, China. ACM, New York, NY, USA, 16 pages.
+mation in robotic navigation applications. QR-code-like fidu-                 https://doi.org/10.1145/3680207.3723456
+cial markers can be readily printed on paper – low-cost, easy
+to produce, and electronics-free. Yet, an analogous mmWave
+solution is yet to appear, which stems from the unique chal-                  1 INTRODUCTION
+lenge in the mmWave context: its vulnerability to clutter. Ex-                In this paper, we investigate a cost-effective, electronics-free
+isting solutions either trade hardware simplicity for clutter                 design of fiducial markers for millimeter-wave (mmWave)
+resilience or stay simple but remain vulnerable to environ-                   radars by leveraging signal polarization. MmWave radars
+mental multipath. This paper seeks to solve this dilemma.                     are widely used sensing platforms in automotive, robotic,
+   We introduce PolarVisor, where we imprint mmWave fidu-                     and augmented reality (AR) applications. They are particu-
+cial markers with paper and foils. Its key insight is manip-                  larly invaluable when traditional optics-based sensing (e.g.
+ulating signal polarization to enable clutter-free detection                  cameras and LIDARs) fail due to occlusions such as mist or
+on its markers. Meanwhile, it builds on recent advances in                    smoke. In this paper, we are interested in enabling mmWave-
+passive metasurfaces where metallic patterns are readily hot-                 equipped platforms, such as robots or vehicles, to be able to
+stamped on paper with foils. PolarVisor adopts an innovative                  locate themselves (i.e., self-localize) relative to pre-deployed,
+design where the radar wears a visor (also paper-based) to                    low-cost tags (markers) in the environment at fine-grained
+eliminate clutter, leaving the markers readily visible. We in-                accuracy. We draw inspiration from AprilTags [38], printed
+clude an in-depth analysis of its design and fabrication and                  on paper akin to QR codes that are used as similar fiducial
+we show that: (1) PolarVisor can support clutter-free detec-                  markers for cameras (e.g., on AR headsets) to self-localize
+tion at up to 25 m. (2) PolarVisor reports a self-localization                relative to the environment. Our proposed mmWave fiducial
+accuracy of 0.0297 m (mean) and 0.0232 m (median) across                      markers draw several key attributes from the simplicity of
+multiple real-world, multipath-rich indoor environments.                      AprilTags: (1) Ultra-low-cost; (2) Printable on paper; (3) En-
+                                                                              tirely electronics- and battery-free; (4) Operating at ranges
+CCS CONCEPTS                                                                  of several meters; (5) Enabling centimeter-level localization
+· Hardware → Sensor applications and deployments;                             accuracy. Yet, quite unlike AprilTags, our design must be
+Wireless devices.                                                             resilient to obstructions such as smoke or fog and operate
+                                                                              within extremely cluttered environments.
+KEYWORDS                                                                         Indeed, there have been several recent efforts to build
+                                                                              tags to support RF localization at mmWave frequencies. Yet,
+Millimeter-wave, metasurface, polarization, localization                      none can offer the unique blend of simplicity and accuracy
+                                                                              that AprilTags offer in the vision context. Much of the rich
+                                                                              work on RF backscatter tags [6, 11, 31, 32, 34, 35, 37, 42, 50]
+                                                                              would require a battery, increasing hardware complexity.
+This work is licensed under a Creative Commons Attribution 4.0 Interna-       More recent passive frequency-coded retroreflectors [1, 3, 7,
+tional License.
+ACM MOBICOM ’25, November 4–8, 2025, Hong Kong, China
+                                                                              17, 20, 22–24, 27, 43–45] can be limited in range (e.g., a meter)
+© 2025 Copyright held by the owner/author(s).
+                                                                              and susceptible to multipath from ambient clutter, or require
+ACM ISBN 979-8-4007-1129-9/2025/11.                                           dedicated instruments like vector network analyzers (VNA).
+https://doi.org/10.1145/3680207.3723456                                       Therefore, we ask: can we build mmWave tags (markers) for
+
+
+
+
+                                                                          1
+ACM MOBICOM ’25, November 4–8, 2025, Hong Kong, China                                            Junbo Zhang, Yiwen Song, and Swarun Kumar
+
+
+                                                                        marker to deliberately shift the incident polarization by pre-
+                                                                        cisely 90◦ and observe along the perpendicular direction (i.e.,
+                                                                        cross-polar reception), we should only see the marker, while
+                                                                        having nearly all other objects in the scene extremely faint, if
+                                                                        not entirely invisible, in the radar image. Therefore, PolarVi-
+              Normal operation:             Visor equipped:
+              mmWave QR code                mmWave QR code              sor’s main idea is to design a marker that deliberately shifts
+              buried under clutter.         readily detectable.
+                                                                        polarization, and then equip commodity radars with the abil-
+Figure 1: A normal radar might fail to detect a fidu-
+                                                                        ity to perform cross-polar reception that distinctly observes
+cial marker (an analogous mmWave QR code) due to
+                                                                        these markers with minimal hardware modification.
+background clutter. PolarVisor eliminates background
+                                                                           Specifically, PolarVisor consists of two main components:
+reflectors with its visor, detecting only its markers.
+                                                                        a marker that manipulates signal polarization and a visor
+self-localization that are cost-effective, completely passive,          that selects a certain polarization attached to the radar. It
+able to offer a range of several meters, and can operate in             is loosely inspired by the “technical visors” envisioned in
+environments with high clutter?                                         fiction and games – upon activating a visor at the radar, the
+   We present PolarVisor, a passive design for mmWave fidu-             background clutter is suppressed while the marker is sharply
+cial markers that can be located from distances of several              visible. As shown in Fig. 1, to a traditional radar, the PolarVi-
+meters at centimeter-level accuracy, enabling robust radar              sor marker and background reflectors appear together on the
+self-localization in environments with high clutter. PolarVi-           radar and may be hard to distinguish. However, with the vi-
+sor offers a passive and cost-effective design – made with              sor “on”, background reflectors are significantly suppressed,
+paper and foils, it does not involve any electronics and sup-           leaving the marker readily visible and locatable.
+ports rapid prototyping. Our detailed experiments show that                The rest of this paper discusses the key challenges in Po-
+PolarVisor can provide reliable clutter suppression and sup-            larVisor. First, designing a polarization-shifting reflector that
+port clutter-free detection at up to 25 m; meanwhile, across            can be printed on paper is not trivial. Without the manufac-
+multiple indoor test spaces, it reports a self-localization ac-         turing precision in printed circuit boards (PCB), polarization-
+curacy of 0.0297 m (mean) and 0.0232 m (median).                        shifting structures based on Van-Atta arrays [4, 6, 11, 21,
+   PolarVisor tackles a key challenge in designing entirely             34, 35, 37, 50, 53] are hard to realize. PolarVisor draws from
+electronics-free tags for mmWave: ambient clutter. Specifi-             metasurfaces, where sub-wavelength structures are arranged
+cally, in the absence of a battery, it is challenging to separate       on a surface to manipulate the amplitude and phase of EM
+markers in the environment from other objects that also                 waves. Specifically, a fast prototyping method has been pro-
+reflect radar signals. Telling markers apart from these back-           posed [15, 25, 33, 48] where paper, foils, and laminating
+ground reflectors is not a problem unique to radars. In the             machines are used to produce THz and mmWave metasur-
+realm of visual sensing, AprilTags are distinguishable from             faces with relatively simple structures. These single-layer
+ambient objects owing to their special bar-code-like spatial            metasurfaces are low-cost and electronics-free, but none of
+structure (i.e., spatial coding). However, instrumenting pas-           them can realize the function PolarVisor needs – completely
+sive RF tags with similar structures does not fundamentally             shifting signal polarization by 90◦ . Meanwhile, researchers
+solve the issue because there is no way to tell a “pixel” in            have looked into polarization-shifting structures (i.e., polar-
+the spatial code apart from background reflectors. Indeed,              izers) [5, 8, 9, 14, 18, 28–30, 36, 40, 54, 56, 57, 62, 64], but their
+this is why traditional long-range mmWave tags are battery-             sophisticated, multi-layer designs are only realized with pre-
+powered in order to emit on/off codes and stand out from                cise PCB prototypes. Can we build mmWave polarizers with
+ambient clutter (i.e., temporal coding).                                high performance while being inexpensively printable on
+   PolarVisor’s secret sauce is to manipulate mmWave sig-               paper? In Sec. 4, we dive deep into the design of our marker
+nal polarization. Generally, mmWave radars are equipped                 (reflective polarizer) and visor (transmissive polarizer).
+with microstrip patch antennas. They transmit and receive                  While a polarizer-based marker effectively suppresses clut-
+electromagnetic (EM) waves along one linearly polarized                 ter, it introduces a new problem: RF waves that bounce off
+direction. Such design works well in practice because most              its flat surface follow the laws of specular reflection. As a
+target objects do not change signal polarization [16, 34].              result, the cross-polar reflection from the PolarVisor marker
+While some structures with varied orientations (e.g., tree              will never be observed unless it perfectly faces the radar,
+leaves) can scatter and depolarize radar signals, it happens in         rendering our design impractical. To resolve this, our marker
+a random manner while also weakening the reflected signal               must be re-designed to be retroreflective, i.e., it must reflect
+significantly. Hence, they still manifest in the radar image,           the radar signal along the incident direction. We build on
+albeit as much fainter objects, and are usually not of interest.        the well-known retroreflective geometry of corner reflectors
+This opens up an opportunity: If we engineer the fiducial               to achieve this. Specifically, we propose a corner reflector
+
+
+
+
+                                                                    2
+PolarVisor: Clutter-free, Electronics-free mmWave Fiducial Markers Printed on Paper             ACM MOBICOM ’25, November 4–8, 2025, Hong Kong, China
+
+
+with one face in the form of a reflective polarizer. In Sec. 5,                   (a)                                      Marker
+                                                                                                                    Reflective Polarizer
+                                                                                                                                                Metallic Sheet
+                                                                                         Synergistic                         +
+we elaborate on this marker design.                                                       Operation
+                                                                                        for Practical
+                                                                                                                      Retroreflector              Diversifier
+                                                                                                                                                                          rotate
+                                                                                                                                                                        meta-atoms
+                                                                                                                                                                                            Selector
+
+
+   Finally, we demonstrate how multiple PolarVisor markers                              Applications                        Visor
+                                                                                                                  Transmissive Polarizer
+                                                                                                                                                Grating Pattern
+
+                                                                                  (b)
+work with the visor in synergy to facilitate self-localization                             Scenario 1: Clutter experiences                                Scenario 2: Marker can be
+in real-world environments in Sec. 6. Thanks to the clutter-                                   polarization mismatch.                                      successfully detected.
+
+free design, a PolarVisor marker is significantly easier to                           supported 𝐸                               supported 𝐸     supported 𝐸                               supported 𝐸
+                                                                                                          Tx          Rx                                              Tx         Rx
+identify among background reflectors, making standard spa-                                            𝐸                                                           𝐸
+tial coding (akin to bar codes) viable. PolarVisor hence per-                               𝐻                                                         𝐻
+
+
+forms spatial coding by arranging multiple markers that                                          𝑘෠                                 𝑘෠                      𝑘෠
+                                                                                                                                                                                      𝐸
+                                                                                                                                                                                            𝑘෠
+                                                                                   visor covering
+can be deployed at fixed and known locations within in-                             either Tx or
+                                                                                    Rx converts                                     𝐸                                                       𝐻
+door spaces (e.g., attached to natural wall corners) to encode                      polarization          Visor             𝐻                                         Visor
+                                                                                                𝐸                                                          𝐸
+room/floor/building information. The radar, equipped with
+                                                                                                 𝑘෠                                                         𝑘෠
+the visor, then moves around this indoor space and localizes                                                𝐻                                                           𝐻
+                                                                                                                                                                                      marker changes
+itself by looking for pre-deployed spatial patterns of markers.                                                             clutter does not
+                                                                                                                          change polarization                                          polarization
+
+   We detail PolarVisor’s fabrication and experimental setup                                                    Clutter                                                     Marker
+
+                                                                                                      Figure 2: PolarVisor in a nutshell.
+in Sec. 7 and we evaluate its performance with a COTS 24
+GHz radar [10] in multiple real-world, multipath-rich envi-
+ronments in Sec. 8. PolarVisor achieves 0.0297 m (mean) and                   antennas, so their Tx and Rx antennas align to the same
+0.0232 m (median) self-localization accuracy across three                     polarization direction. In other words, they support co-polar
+practical indoor test spaces. We include a comprehensive                      operations but not cross-polar operations.
+study of PolarVisor’s performance where we vary multiple
+factors, such as range, blockage, and test environment. Mean-
+                                                                              2.2 Electromagnetic Metasurface
+while, we also investigate PolarVisor’s clutter suppression
+performance with two micro-benchmarks. We show that a                         An electromagnetic metasurface refers to a surface (usually
+PolarVisor marker can suppress clutter and be robustly de-                    2D) with specific repetitive elements that manipulates the
+tected at up to 25 m from the radar. These promising results                  properties of an incident EM wave, such as its amplitude,
+validate PolarVisor’s unique and novel design.                                phase, and propagation direction. A simple intuition of its
+                                                                              working principle is a macro-scale realization of individ-
+2 PRIMER                                                                      ual micro-scale operating elements. The individual element,
+                                                                              usually at a sub-wavelength scale, is also known as the meta-
+In PolarVisor, metasurfaces manipulate mmWave signal po-
+                                                                              atom and interacts with an incident EM wave.
+larization. We briefly introduce signal polarization (Sec. 2.1),
+metasurfaces (Sec. 2.2), and their connection (Sec. 2.3).
+                                                                              2.3 Metasurface Manipulating Polarization
+2.1 Polarization of Wireless Signals                                          How can a metasurface manipulate signal polarization? Here,
+RF signals are polarized in different ways. We limit our dis-                 we provide an intuitive example. Suppose we have an inci-
+cussion to transverse EM (TEM) waves propagating in homo-                     dent wave with 𝑘ˆ = −ˆ𝑧 and a 45◦ linear polarization, i.e., its
+geneous, isotropic media as seen in mmWave radar contexts.                    𝐸® can be decomposed into two equal-amplitude, in-phase
+   A propagating EM wave is essentially an EM field traveling                 components 𝐸®𝑥 along the 𝑥-axis and 𝐸®𝑦 along the 𝑦-axis (i.e.,
+                           ˆ It can be further decomposed into
+along a certain direction 𝑘.                                                  𝐸® = 𝐸®𝑥 + 𝐸®𝑦 and 𝐸®𝑥 = 𝐸®𝑦 ). Now imagine a certain meta-
+an electric field 𝐸® and a magnetic field 𝐻® oscillating along
+the direction indicated by 𝐸® and 𝐻® , respectively. According                surface that does not react to 𝐸®𝑥 but selectively delays 𝐸®𝑦
+                                                                                                                                       ′
+to Maxwell’s equations, 𝑘ˆ // 𝐸® × 𝐻® follows right-handed                    by 180◦ , effectively flipping the sign of the field: 𝐸®𝑦 = −𝐸®𝑦 .
+                                                                                                                    ′     ′
+law. The plane spanned by 𝐸® and 𝐻® is hence traverse to 𝑘.    ˆ              The resulting electric field 𝐸®′ = 𝐸®𝑥 + 𝐸®𝑦 = 𝐸®𝑥 − 𝐸®𝑦 will be
+We refer to this plane as the traverse plane. Further, the                    perpendicular to 𝐸.® This can also be interpreted as a counter-
+direction of 𝐸® is defined as the polarization direction.                                   ◦
+                                                                              clockwise 90 shift on 𝐸, ® so this metasurface is a polarization
+   In practice, antennas determine the signal polarization.                   converter, or in short, a polarizer for 𝐸® in effect.
+Common antennas (e.g., monopole, dipole, patch) all gener-                       This example shows how selectively manipulating the
+ate linear polarization, where 𝐸® direction is time-invariant. If             phase of electric field components effectively shifts polariza-
+two such antennas orient perpendicularly to each other, they                  tion. In summary, designing a polarizer mainly explores: (1)
+cannot talk to each other. This is referred to as polarization                how to realize selectivity along different directions; (2) how
+mismatch. COTS mmWave radars generally adopt patch                            to apply the correct phase shift to the desired direction.
+
+
+
+
+                                                                          3
+ACM MOBICOM ’25, November 4–8, 2025, Hong Kong, China                                                    Junbo Zhang, Yiwen Song, and Swarun Kumar
+
+
+3    POLARVISOR OVERVIEW                                                  (a)     𝒗          (b)          𝒗               (c)       𝒚
+                                                                                                                                                𝒖 and 𝒗 always
+                                                                                              𝑹𝒐𝒖𝒕                              𝒗       𝒖
+PolarVisor is a cost-effective, passive fiducial marker solu-                                                 𝒘                                 denote the
+                                                                                                                  𝜶                             symmetrical
+tion for mmWave radars. As shown in Fig. 2(a), it has two                                𝒖                            𝒖                     𝒙   axes of the ring
+important components: the marker and the visor.                                                    𝑹𝒊𝒏                                          regardless of its
+                                                                                                                                                rotations.
+Marker: A PolarVisor marker is a reflector that can dis-
+tinguish itself from background reflectors by manipulating                Figure 3: (a) A classical SRR. (b) A DSRR’s parameters.
+signal polarization. Therefore, it is both a reflector and a              (c) A DSRR rotated by 45◦ counterclockwise.
+polarizer (i.e., reflective polarizer). We further design it as
+a retroreflector to make it visible within a sufficiently large           searches this known spatial pattern in an unknown envi-
+field of view across both azimuth and elevation angles.                   ronment. Upon detecting a certain pattern in its database, it
+Visor: A PolarVisor visor is designed to enable cross-polar               localizes itself relative to the spatial code to infer its location.
+reception on COTS radars, which by design only support
+co-polar reception. It is a planar structure with two sides               4 CRAFTING A PAPER POLARIZER
+(e.g., denote them as 𝐴 and 𝐵). 𝐴 and 𝐵 are polarization                  In this section, we walk through how a PolarVisor polarizer
+filters allowing only certain polarization 𝐸®𝐴 or 𝐸®𝐵 to pass.            is built. While researchers have explored PCB polarizers,
+An incident wave at 𝐴 with 𝐸®𝐴 polarization is converted to               in PolarVisor, we design unique paper polarizers that offer
+its cross-polar direction 𝐸®𝐵 (i.e., 𝐸®𝐴 ⊥ 𝐸®𝐵 ) before exiting           high performance while being extremely tolerant of manu-
+from 𝐵. This process is reversible, so only EM waves with                 facturing imperfections. As mentioned in Sec. 2.3, a polarizer
+𝐸®𝐵 polarization can enter from 𝐵 and will be converted to                design breaks down into a metasurface that selects a certain
+𝐸®𝐴 polarization before exiting from 𝐴. We call this a trans-             polarization and a mechanism to apply a desired phase shift.
+missive polarizer, where a polarization conversion is cast
+on the EM wave passing through the structure. The visor                   4.1 Selector: the Foundational Structure
+is installed at either the radar transmitter (Tx) or receiver             PolarVisor’s key building block is a selector – a meta-surface
+(Rx) – it should not cover both. In Fig. 2’s example, it covers           that permits only one polarization. Specifically, it is engi-
+Tx, but covering Rx also works. The side (𝐴/𝐵) closer to the              neered to let signals polarized along one specific direction
+radar should share the same polarization as the antennas.                 to pass through and the orthogonal direction to be reflected
+Relationship Between the Marker and Visor: Fig. 2(b)                      back. As we will later discuss, the selector is a foundational
+explains how PolarVisor works. When the radar is equipped                 structure on which PolarVisor’s other elements are built.
+with a visor (e.g., at its Tx), signals from the Tx are converted             In PolarVisor, the selector is based on a variant of classical
+to the cross-polar direction immediately after transmission.              split ring resonators (SRR). Fig. 3(a) shows a classical SRR.
+Hence, signals in the environment are all cross-polar rela-               It has two symmetry axes – the 𝑢-axis passing through the
+tive to the radar. Thus, background reflectors, which do not              splits and the 𝑣-axis perpendicular to 𝑢. SRRs have been ex-
+significantly change polarization, respond with cross-polar               tensively studied in the metasurface literature. A metasurface
+reflections. This will not be perceived by the Rx due to po-              with SRR meta-atoms is known to be capable of selecting po-
+larization mismatch. In contrast, the PolarVisor marker, as a             larization directions at its resonant frequencies – determined
+reflective polarizer, converts polarization again in its reflec-          by its effective perimeter 𝐿𝑒 and the wavelength 𝜆 [49].
+tion. This effectively shifts signal polarization back to the                 Instead of a single split as seen in classical SRRs, PolarVisor
+co-polar direction and hence will be perceived by the radar.              implements two, which is sometimes called a double-split
+   The PolarVisor marker and visor share the same building                ring resonator (DSRR). However, we note that DSRR is also
+blocks – components we call diversifier and selector. Hence,              interchangeably used in the metasurface literature to refer
+we organize our design sections following their architecture.             to a pair of two single-split ring resonators, which is not
+In Sec. 4, we start by describing the selector (Sec. 4.1) and             the case for PolarVisor. The DSRR structure in PolarVisor
+diversifier (Sec. 4.2), then build reflective polarizers (Sec. 4.3)       possesses similar properties and its design procedure does
+and transmissive polarizers (Sec. 4.4) upon them. Next, in                not significantly differ from that of an SRR. In the following
+Sec. 5, we complete the PolarVisor marker as a retroreflector             discussion, we denote its resonant frequency as 𝑓𝑐 and it
+with a detailed geometric analysis.                                       corresponds to the radar operating frequency.
+End-to-end Operation: In Sec. 6, we describe how PolarVi-                     For the DSRR in Fig. 3(b), upon perfect resonance at 𝑓𝑐 , a
+sor supports self-localization. Specifically, we leverage mul-            𝑢-polarized EM wave will be completely reflected, while a
+tiple markers to form a spatial code that embeds certain                  𝑣-polarized EM wave can completely pass through. If we use
+room/floor/building information similar to a QR code. Fur-                𝑟𝑖 𝑗 to express the reflection coefficient where a 𝑗-polarized
+ther, the mmWave radar, equipped with the PolarVisor visor,               incident EM wave becomes an 𝑖-polarized reflection (i.e., 𝑗
+
+
+
+
+                                                                      4
+PolarVisor: Clutter-free, Electronics-free mmWave Fiducial Markers Printed on Paper     ACM MOBICOM ’25, November 4–8, 2025, Hong Kong, China
+
+
+to 𝑖 conversion), then at 𝑓𝑐 , 𝑟𝑢𝑢 = 1 and 𝑟 𝑣𝑣 = 0. I.e., the meta-                  (a)               (b)             (c)
+
+
+
+
+                                                                                             incident
+surface acts as a mirror for 𝑢-polarized waves. We can also
+define the transmission coefficient 𝑡𝑖 𝑗 where a 𝑗-polarized
+incident EM wave becomes an 𝑖-polarized wave after passing                             𝑨𝑨
+
+through the metasurface, then at 𝑓𝑐 , 𝑡𝑢𝑢 = 0 and 𝑡 𝑣𝑣 = 1, i.e.,
+                                                                                       𝑩𝑩
+the metasurface is transparent for 𝑣-polarized waves.
+   While various meta-atom designs exist in the metasurface
+literature, PolarVisor’s is designed for maximum tolerance                    Figure 4: (a) A Fabry–Pérot cavity with two mirrors 𝐴
+of manufacturing imperfections.                                               and 𝐵 at the top and bottom. (b) PolarVisor’s reflective
+(1) Meta-atom Shape: We recommend avoiding sharp cor-                         polarizer. (c) PolarVisor’s transmissive polarizer.
+ners – it is empirically observed in our fabrication that it is
+easier to produce round shapes than to imprint acute corners.                 half is transmitted. Further, since the reflection is 𝐸®𝑢 , which
+Therefore, although L-shape resonators are also popular in                                                   ®    𝐸®
+                                                                              can be re-written as 𝐸®𝑢 = 𝐸√𝑥 + √𝑦 , we know that half of
+the metasurface literature, we choose C-shape ones instead.                                                   2     2
+                                                                              the reflection is a 𝑢 wave and the other half is a 𝑣 wave. A
+(2) Meta-atom Size: It is intuitive to understand that a
+                                                                              similar analysis can be performed for the transmission. In
+smaller meta-atom generally leads to a smaller metasurface.
+                                                                              summary, the 45◦ orienting meta-atoms form a “splitter”:
+Thus, to design a compact metasurface, if a meta-atom struc-
+                                                                              It splits the incident 𝑥 wave into four quarters – a pair of
+ture can meet a target effective perimeter while occupying
+                                                                              co-polar reflection/transmission and a pair of cross-polar
+less surface area, it should be preferred. In this case, struc-
+                                                                              reflection/transmission. This provides a way to generate 𝑦
+tures based on SRRs are favored compared to simple rod or
+                                                                              components with pure 𝑥 incidence and vice versa.
+compass needle structures, although they have also been
+demonstrated as effective resonators in the literature.
+(3) Trace Length: The SRR structure is a single metallic trace,               4.3 Reflective Polarizer for Markers
+which has a higher risk of breaking during manufacture.                       A reflective polarizer is designed to reflect only and mean-
+Hence, a DSRR structure is chosen.                                            while change the polarization in the reflected wave. Yet,
+(4) Printer Resolution: A printer’s resolution translates to                  simply employing a 45◦ diversifier from Sec. 4.2 does not
+its DPI (dots per inch). To accommodate most printers, the                    suffice, since it produces four E-field components. Instead,
+trace in a meta-atom should not be too thin. This applies to                  for an 𝑥 incidence, we desire only the 𝑦 reflection and wish
+the spacing between adjacent traces as well. In practice, we                  to eliminate the other three. How can we achieve this?
+found an empirical value of 0.3 mm. It is recommended that                       PolarVisor leverages a concept widely used in optics and
+both the trace width and spacing be larger than this value.                   THz: the Fabry–Pérot resonant cavity [47]. Fig. 4(a) shows its
+   Table 1 shows PolarVisor’s 24 GHz DSRR parameters.                         basics. A Fabry–Pérot cavity consists of two reflective mir-
+  Outer Radius 𝑅𝑜𝑢𝑡 2.4 mm             Ring Width 𝑤           1 mm            rors 𝐴 and 𝐵 facing each other and separated by a distance
+   Inner Radius 𝑅𝑖𝑛     1.4 mm          Split Angle 𝛼          30◦            𝐿𝐹 𝑃 . EM waves enter the cavity (e.g., from 𝐴) and bounce
+  Element Spacing 𝑃 7 mm Metal Thickness ℎ 40 µm                              back and forth. 𝐴 and 𝐵 are partially transmissive, allow-
+Table 1: Geometric parameters of PolarVisor’s selector.                       ing a small portion of waves to pass through. As the wave
+                                                                              undergoes multiple reflections, constructive or destructive
+                                                                              interference can happen inside the cavity. When a construc-
+4.2     Diversifier: Building Block of Polarizers                             tive one happens, the wave builds up and leads to a strong
+What happens when the meta-atoms are rotated in a selector?                   transmission at the exit 𝐵. When a destructive one happens,
+The metasurface will become a diversifier – it generates                      a strong reflection is observed at the entrance 𝐴. As one can
+diverse polarizations. This is the building block of polarizers.              imagine, the dominating interference depends on 𝐿𝐹 𝑃 .
+   Consider the 45◦ orienting meta-atom in Fig. 3(c). We                         Now, imagine 𝐴 being a 45◦ diversifier and 𝐵 being a
+define a new coordinate system 𝑥, 𝑦. In this paper, we keep                   fully reflective metallic sheet. We can build a Fabry–Pérot-
+𝑢 and 𝑣 defined as the symmetry axes of the ring no matter                    like cavity for polarization conversion purposes. Specifically,
+how it rotates. Hence, in Fig. 3(c), 𝑥ˆ //𝑢ˆ − 𝑣ˆ and 𝑦ˆ //𝑢ˆ + 𝑣.
+                                                                ˆ             suppose we have an 𝑥 incidence, and 𝐿𝐹 𝑃 is chosen such
+   An incident 𝑥-polarized wave 𝐸®𝑥 can be decomposed into                    that 𝑥 components inside the cavity will keep bouncing until
+two equal-amplitude components along 𝑢 and 𝑣: 𝐸®𝑥 = 𝐸®𝑢 + 𝐸®𝑣                 they are converted by the diversifier mirror to 𝑦 components
+                                                                              when they can finally exit the cavity, then such a cavity can
+and 𝐸®𝑢 = 𝐸®𝑣 . Upon perfect resonance, 𝐸®𝑢 is completely
+                                                                              effectively serve as an 𝑥-to-𝑦 polarizer. In this case, the cavity
+reflected and 𝐸®𝑣 completely passes through. Hence, in ef-                    needs to make sure that the co-polar components not only
+fect, half of the incident power is reflected and the other                   vanish eventually inside but also experience a destructive
+
+
+
+
+                                                                          5
+ACM MOBICOM ’25, November 4–8, 2025, Hong Kong, China                                          Junbo Zhang, Yiwen Song, and Swarun Kumar
+
+
+   (a)                       (b)                          (c)                    (d)                      (e)
+
+
+
+
+Figure 5: (a)-(b) The performance of a reflective polarizer varies with substrate height. (c) Rotating the meta-atoms
+changes polarizers’ performance. (d)-(e) The performance of a transmissive polarizer varies with substrate height.
+interference outside of 𝐴, such that the total field outside of         will only work as a 90◦ shifter if the incident EM wave has
+the cavity is dominated by the cross-polar components.                  an equal-amplitude decomposition onto the 𝑢 and 𝑣 axes,
+Cavity Design: To see if an 𝐿𝐹 𝑃 for such a cavity exists, we           meaning that a 45◦ diversifier is indeed the best choice.
+perform a simulation using ANSYS HFSS. We examine the
+𝑥-to-𝑦 reflective coefficient 𝑟 𝑦𝑥 and polarization conversion          4.4 Transmissive Polarizer for Visors
+                                                𝑟2
+ratio (PCR) for 𝑥-to-𝑦 conversion 𝑃𝐶𝑅𝑥 = 𝑟 2 𝑦𝑥
+                                             +𝑟 2
+                                                  . We vary             Designing a transmissive polarizer leverages Fabry–Pérot
+                                               𝑦𝑥    𝑥𝑥
+𝐿𝐹 𝑃 (here, the substrate height) from 20 mils (≈ 508 µm) to            cavities as well – this time, we would like to maximize trans-
+100 mils (≈ 2540 µm) with a step size of 20 mils.                       mission at 𝐵 instead of reflection at 𝐴 in Fig. 4(a). To achieve
+   As shown in Fig. 5(a) and (b), when 𝐿𝐹 𝑃 is close to its opti-       this, PolarVisor leverages two cascaded Fabry–Pérot-like
+mal value (in this case, roughly around 60 mils ≈ 1524 µm),             cavities to form a sandwich structure where a diversifier is
+both 𝑟 𝑦𝑥 and 𝑃𝐶𝑅𝑥 are maximized. If 𝐿𝐹 𝑃 is far from its op-           in between two grate mirrors as shown in Fig. 4(c).
+timal value, the performance becomes unstable, especially                  A grating pattern can be viewed as the simplest polariza-
+towards higher frequencies. In addition, the polarizer has a            tion selector. An incident wave with perpendicular polariza-
+wide operating bandwidth when operating optimally. This                 tion to the grate passes through. It is reflected otherwise. For
+is especially important since we are targeting a maximum                an 𝑥 incidence, an 𝑥-to-𝑦 polarizer has 𝐴 as an 𝑥 filter and 𝐵
+tolerance of manufacturing imperfections.                               as a 𝑦 filter. In this case, unconverted 𝑥 components cannot
+   For this reflective polarizer design, the required substrate         exit at 𝐵. Meanwhile, successfully converted 𝑦 components
+height can be approximated by stacking multiple pieces of               cannot escape from 𝐴 but exit through B. The key to suc-
+paper together. At first glance, one may wonder if such a               cessful polarization conversion is controlling 𝐿𝐹 𝑃 such that
+method is inaccurate since an air gap might exist between               𝑥 components inside the cavity keep bouncing until they get
+adjacent pieces of paper. Hence, we carried out a simulation            converted to 𝑦 components and exit the cavity at 𝐵.
+where a 100 µm-thick air gap insulates multiple layers of                  Similar to Sec. 4.1, PolarVisor took multiple practical fac-
+paper. The simulation results showed negligible diversion               tors into consideration when designing its grating patterns.
+from Fig. 5(a) and (b). In practice, as we detail our fabrication       (1) Pattern Choice: Since we need two semi-transmissive
+in Sec. 7, air gaps are minimized by lamination sealing.                mirrors for surfaces 𝐴 and 𝐵, at first glance, one may pro-
+Optimizing the Diversifier: To better understand if our                 pose using the DSRR selectors in Sec. 4.1. In fact, we imple-
+reflective polarizer design is optimal, we next analyze key             mented this idea both in ANSYS HFSS simulations and in
+design parameters for our diversifier. For example, we began            real-world fabrications and we observed complex coupling
+with a diversifier with meta-atoms oriented at 45◦ – but is             effects among these three layers of DSRR structures. As a
+this choice optimal? Suppose in Fig. 3(c), the angle between            result, the transmissive polarizer could not function as ex-
+unit √vectors 𝑢ˆ and 𝑥ˆ is 30◦ instead of 45◦ . We will have            pected. One possible explanation for such a phenomenon
+                ˆ Then, an 𝑥-polarized incident wave 𝐸®𝑖 = 𝑎𝑥ˆ
+𝑥ˆ = 23 𝑢ˆ + 12 𝑣.                                                      could be that the resonant nature of DSRR structures would
+                                                     √
+with an amplitude of 𝑎 can be re-written as 𝐸®𝑖 = 3 𝑎𝑢ˆ + 1 𝑎𝑣. ˆ       divert them from acting as pure semi-transmissive mirrors.
+                                      √               2         2
+                                                                        Hence, we chose simple grates as semi-transmissive mirrors.
+The reflection will thus be 𝐸®𝑟 = 23 𝑎𝑢ˆ − 21 𝑎𝑣, ˆ which can           (2) Printer Resolution: The printer’s DPI affects both the
+                                                √
+be written in 𝑥𝑦-coordinates as 𝐸®𝑟 = 2 𝑎𝑥ˆ + 2 𝑎𝑦.
+                                          1      3
+                                                    ˆ One can           minimum possible trace width and spacing. We conducted
+readily infer that instead of 90 , such a vector√ 𝐸®𝑟 is a 60◦
+                                  ◦                                     an in-depth simulation where we studied the performance of
+counterclockwise rotation of 𝐸®𝑖 with 𝑃𝐶𝑅𝑥 = ( 23 ) 2 = 75%.            the grating pattern relative to the width of individual grates
+   We carry out a simulation where the angle between unit               𝑤𝑔 and the number of grates 𝑁 in a single unit cell, which
+vectors 𝑢ˆ and 𝑥ˆ varies from 0◦ to 90◦ . As shown in Fig. 5(c),        contains a single meta-atom and has a width/length of 𝑃.
+when this angle is 30◦ , the simulation indeed suggests a PCR           The grate spacing is then implicitly determined as 𝑃/𝑁 . The
+of 75%, validating our analysis. Hence, reflective polarizer            evaluation metric is intuitive: a better pattern corresponds
+                                                                        to more transmission and less reflection. Our simulation
+
+
+
+
+                                                                    6
+PolarVisor: Clutter-free, Electronics-free mmWave Fiducial Markers Printed on Paper     ACM MOBICOM ’25, November 4–8, 2025, Hong Kong, China
+
+
+suggests: (a) 𝑤𝑔 should be as thin as possible. (b) 𝑁 should                     While normal CRs are well-known retroreflectors, will
+not be too large. While the latter is easy to satisfy and we                  they work as polarization-converting retroreflectors if we
+set 𝑁 = 5, PolarVisor sets 𝑤𝑔 to be 0.3 mm, the thinnest                      attach a polarizer? Below, we detail our theoretical analysis.
+possible trace that a general printer can handle – a practical
+constraint that does lead to some performance loss.
+                                                                              5.2 Geometrical Analysis
+  We verify our design in ANSYS HFSS. This time, the eval-
+uation metrics are the 𝑥-to-𝑦 transmissive coefficient 𝑡 𝑦𝑥                   We consider trihedral corner reflectors formed by three mutu-
+                                                𝑡2                             ally perpendicular, intersecting flat surfaces. This geometry
+and the polarization conversion ratio 𝑃𝐶𝑅𝑥 = 𝑡 2 𝑦𝑥 2 . We let                 ensures that incoming radar waves are reflected multiple
+                                              𝑦𝑥 +𝑡𝑥𝑥
+the two cascaded cavities have an equal 𝐿𝐹 𝑃 (i.e., substrate                  times within the structure, causing the waves to exit the
+height) and vary its value from 10 mils (≈ 254 µm) to 70                       reflector parallel to the direction they entered, regardless
+mils (≈ 1778 µm) with a step size of 15 mils (≈ 381 µm). As                    of the incident angle. CRs have been serving as reference
+shown in Fig. 5(d) and (e), when 𝐿𝐹 𝑃 is close to its optimal                  targets in radar systems for calibrating the radar’s accuracy
+value (around 40 mils ≈ 1524 µm), both 𝑡 𝑦𝑥 and 𝑃𝐶𝑅𝑥 are                       and sensitivity because their radar cross section (RCS), al-
+maximized. Again, an unstable performance is observed to-                      though closely correlated with the physical dimensions, can
+wards higher frequencies if 𝐿𝐹 𝑃 is far from its optimal value.                be significantly larger [46]. The maximum RCS is reached
+A similarly high bandwidth is seen at the optimal 𝐿𝐹 𝑃 . This                 when the radar illuminates the CR from the direction of the
+validates PolarVisor’s polarizer design.                                       symmetry axis (i.e., boresight).
+                                                                                  PolarVisor builds on top of a standard CR. Hence, it shares
+5 DESIGNING A RETROREFLECTOR                                                   the pros and cons of common CR structures: (1) The RCS is
+While the reflective polarizers in Sec. 4 hold promise in re-                  fundamentally correlated to the physical size of the CR. (2)
+moving background clutter, a new issue arises. As a 2D planar                 The radar has to illuminate the CR within its field of view,
+structure, metasurfaces generally follow the law of specular                   and vice versa, the CR has to be within the radar’s field of
+reflection, similar to a mirror reflecting light. Since PolarVi-              view (both azimuth and elevation). In the following analysis,
+sor is not designed to induce phase shift gradient, it obeys                  we assume the field of view condition.
+this law. As a result, a reflective polarizer has a limited field                 Mathematical and physical analyses have shown that a
+of view – it is only visible when the mmWave radar is nearly                   normal CR does not change signal polarization during the
+perfectly facing it. It disappears with even a tiny misalign-                  multi-reflection process [16] – the electric field 𝐸® may flip
+ment, limiting the practicality of our design.                                 sign upon reflecting off a surface, but will not change its
+   PolarVisor’s solution is to implement retroreflective mark-                 direction. Hence, to construct a polarizer CR, PolarVisor
+ers, which reflect EM waves along their incident direction.                    can substitute either one or three surfaces in a CR with a
+Since mmWave systems are designed to be highly directional,                    reflective polarizer to have an odd number of polarization
+researchers have proposed various retroreflective structures,                  conversions. However, note that our reflective polarizer is
+such as corner reflectors (CR), Van-Atta arrays, and Luneburg                  not an ideal, perfectly reflective surface – dielectric loss is
+lenses. So which one works best for PolarVisor?                                inevitable when EM waves travel back and forth inside the
+                                                                               substrate (paper). Hence, PolarVisor chooses to substitute
+5.1     Determining a Retroreflective Structure                                only one of the three surfaces in a CR.
+A Van-Atta array is an interconnected array of antennas                           How should the reflective polarizer be oriented relative to
+where transmission lines are designed to inverse the phase                     the radar? To see why its orientation can make a difference,
+gradient of an incident wave – a tiny fabrication mismatch                    we look at Fig. 6. All objects are shown in their isometric
+could cause the reflection to faint. Hence, it is challenging                 view, and we assume the incident EM wave travels in the
+for paper-based PolarVisor, which is expected to suffer from                  -𝑧 direction (i.e., 𝑘ˆ = −ˆ𝑧) and is 𝑦-polarized (i.e., 𝐸®//𝑦).
+                                                                                                                                          ˆ The
+large manufacturing imperfections. Likewise, Luneburg lens,                    radar faces the 𝑥𝑦-plane (i.e., the traverse plane), having its
+which relies on designing precise refractive index gradients,                  patch antenna arrays aligning parallel to the 𝑦-axis (Fig. 6(a)).
+is hard to realize in PolarVisor as well.                                      Consider a reflective polarizer (○)1 lying in the 𝑥𝑦-plane with
+   Aiming at fast prototyping, PolarVisor thus adopts corner                   its symmetry axes 𝑢 and 𝑣 following 𝑢ˆ //𝑥ˆ + 𝑦ˆ and 𝑣ˆ //−𝑥ˆ + 𝑦.
+                                                                                                                                                ˆ
+reflectors (CR). We construct CRs with a simple 3D-printed                    This orientation leads to 100% polarization conversion.
+corner model (more in Sec. 7) for fast substitution of polarizer                  To construct a CR while keeping 𝑧ˆ as the boresight direc-
+samples and easy installation. However, in practice, one can                   tion, the reflective polarizer (○)1 will be rotated around the √
+easily construct a CR with cupboard boxes or even by simply                   𝑥-axis as shown in Fig. 6(b). The rotation angle 𝜃 = arcsin 36 .
+gluing sheets of paper together. This can greatly reduce the                   Due to this rotation, vectors 𝑢ˆ and 𝑣ˆ are also rotated; hence,
+effort needed to construct a PolarVisor marker from scratch.                   they are no longer in the 𝑥𝑦-plane. The CR can be constructed
+
+
+
+
+                                                                          7
+ACM MOBICOM ’25, November 4–8, 2025, Hong Kong, China                                                Junbo Zhang, Yiwen Song, and Swarun Kumar
+
+                                𝒚                         𝒚
+ (a)
+              azimuth
+                                            (b)                   (e)        Linear Translation: If the radar moves along the 𝑥, 𝑦, or 𝑧
+                                                                             axis, it will no longer illuminate the CR from its boresight
+  elevation
+
+
+
+
+                                        𝒙                     𝒙
+                  radar
+                            ①                      ①                         direction (i.e., 𝑘ˆ ≠ −ˆ𝑧), leading to a decrease in the observed
+                            𝒗
+              𝒛                     𝒖       𝒛 𝒗 𝒖                            RCS. Yet, as long as the radar is readily in the field of view
+                                                      𝜽
+ (c)                            𝒚           (d)           𝒚                  of the CR (and vice versa), the CR will still function as a
+                    ③                             ② ①                        retroreflector and will be observed. Meanwhile, since the
+                            ②           𝒙         𝒖           𝒙
+                                                                             electric field still aligns with the 𝑦-axis (i.e., 𝐸®//𝑦),
+                                                                                                                                    ˆ the inner
+                        ①                         ③ 𝒗
+              𝒛 𝒗 𝒖                         𝒛                                products ⟨𝐸,  ® 𝑢⟩
+                                                                                             ˆ and ⟨𝐸,  ® 𝑣⟩
+                                                                                                           ˆ remain unchanged. Hence, the
+Figure 6: (a) A radar, whose traverse plane is parallel to                   reflective polarizer will function as expected.
+the 𝑥𝑦-plane, illuminates a reflective polarizer (○)
+                                                  1 with                     Azimuth Rotation: An azimuth rotation is equivalent to a
+𝑦-polarized signals. (b)-(c) To construct a polarization-                    rotation around the 𝑦-axis. Again, the radar will no longer
+converting CR, ○   1 is rotated around the 𝑥-axis by 𝜃 ,                     illuminate the CR from its boresight direction. Yet, if we
+then we add two normal reflective surfaces (○  2 and ○).
+                                                       3                     assume that the radar is in the field of view of the CR and
+The CR’s boresight direction aligns with the 𝑧-axis. (d)                     vice versa, the CR will still function. In addition, since such
+The CR is further rotated around the 𝑧-axis by 120◦ . (e)                    a rotation around the 𝑦-axis does not change the direction of
+Simulation result of traverse plane rotation.                                the EM wave, we still have 𝐸/   ® /ˆ
+                                                                                                                𝑦. Therefore, the inner products
+                                                                             will still have an equal amplitude (i.e., ⟨𝐸,     ® 𝑢⟩
+                                                                                                                                 ˆ = ⟨𝐸,  ® 𝑣⟩
+                                                                                                                                            ˆ ),
+                                                                             and the reflective polarizer will function as expected.
+                                                                             Elevation Rotation: As seen in Fig. 6(a), the axis which an
+                                                                             elevation rotation happens around is parallel to the 𝑥-axis.
+                                                                             In this case, the radar plane will always be perpendicular to
+                                                                             the 𝑦𝑧-plane no matter how it rotates. Therefore, although
+                  (a)                                              (b)
+                                                                             the incident electric field 𝐸® might no longer be parallel to the
+Figure 7: The RCS of (a) a normal CR and (b) a PolarVi-                      𝑦-axis, the inner products ⟨𝐸,    ® 𝑢⟩       ® 𝑣⟩
+                                                                                                                  ˆ and ⟨𝐸, ˆ will still have an
+sor marker (polarization-converting CR).                                     equal amplitude. The reflective polarizer thus will function.
+                                                                             Traverse Plane Rotation (Polarizer Installation): Finally,
+by adding two normal reflective surfaces (○      2 and ○) 3 as in            we consider rotating the radar within the traverse plane (i.e.,
+Fig. 6(c). In this case, if an EM wave is incident along -𝑧, the             around the 𝑧-axis). When there is only one object of interest
+CR should be able to achieve its maximum RCS. To verify that                 (i.e., the CR), this is equivalent to rotating the CR around
+it still functions as a corner reflector, we carried out a simula-           the 𝑧-axis. In addition, it also coincides with analyzing the
+tion study in ANSYS HFSS. As shown in Fig. 7, with the same                  CR where the same polarizer is not installed on the bottom
+dimensions, the total RCS of our polarization-converting CR                  surface (○)1 as in Fig. 6(b) but on one of the other two surfaces.
+structure is roughly the same as a normal CR. This indicates                 As shown in Fig. 6(d), it is equivalent to rotating the CR in
+that replacing one surface of a CR structure with a reflective               Fig. 6(c) around the 𝑧-axis by 𝛿 = 120◦ counterclockwise. In
+polarizer does not impact its function as a corner reflector.                this case, 𝑣ˆ is parallel to the 𝑦𝑧-plane. A simple calculation
+    What happens to the polarization? As one can imagine,                    reveals that ⟨𝐸,  ® 𝑢⟩
+                                                                                                  ˆ = 21 ⟨𝐸,  ® 𝑣⟩
+                                                                                                                 ˆ , leading to a PCR of 80%.
+since its propagation direction 𝑘ˆ is not perpendicular to the                   The above example shows that a CR with one of its sur-
+polarizer surface, analyzing its polarization boils down to                  faces as a reflective polarizer should not be rotated after
+projecting its electric field onto the polarizer plane. More                 installation. This can be intuitively explained as a result of
+specifically, we need to calculate the inner products ⟨𝐸,     ® 𝑢⟩
+                                                                ˆ            breaking the symmetry of a CR – around the 𝑧-axis, it is no
+         ®
+and ⟨𝐸, 𝑣⟩ ˆ to determine the respective strengths along the                 longer rotational symmetric. Will this be an issue?
+symmetry axes of the polarizer. If these two components                          We carry out a simulation study in MATLAB where we
+have an equal amplitude (i.e., ⟨𝐸,    ® 𝑢⟩
+                                        ˆ = ⟨𝐸,  ® 𝑣⟩
+                                                    ˆ ), then the            rotate the CR in Fig. 6(c) around the 𝑧-axis by an angle of 𝛿 ∈
+                                                                             [0◦ , 360◦ ]. Fig. 6(e) shows the PCR experiences fluctuation,
+reflective polarizer can operate as expected. For Fig. 6(c),                 where a low PCR indicates reduced polarization conversion.
+this holds true. It can be intuitively understood by looking                 In practice, it is very unlikely that a radar will rotate within
+at the 𝑦𝑧-plane and the metasurface plane. Since they are                    the traverse plane drastically during normal operation, e.g.,
+perpendicular to each other and 𝐸® is a vector in the 𝑦𝑧-plane,              when it is mounted on a platform like a car or a robot. Thus,
+its projection onto the metasurface plane will align with                    the variation in PCR does not have a significant impact from
+𝑢ˆ + 𝑣.
+      ˆ Hence, the reflective polarizer works as usual. Next,                a deployment perspective. However, we acknowledge this
+we analyze the impact of four possible radar movements.
+
+
+
+
+                                                                         8
+PolarVisor: Clutter-free, Electronics-free mmWave Fiducial Markers Printed on Paper    ACM MOBICOM ’25, November 4–8, 2025, Hong Kong, China
+
+
+limitation in Sec. 9 and evaluate traverse plane rotation as a                to stand out even after suppression (which will then signifi-
+micro-benchmark in Sec. 8.8. We show that the range of 𝛿                      cantly contribute to the localization error). Hence, the radar
+in which our marker works as expected is reasonably large.                    would simply look at all strong targets and record their rel-
+When deploying a marker, one only needs to make sure it is                    ative positions w.r.t. itself. Further, it updates the recorded
+installed with an appropriate choice of 𝛿.                                    relative positions by tracking its own movement with the
+                                                                              help of other sensing units (e.g., IMU modules).
+6    DEPLOYING POLARVISOR IN PRACTICE                                         Reconstructing Spatial Codes: The radar tries to recon-
+In this section, we describe how PolarVisor markers work                      struct spatial codes in the database with some or all of the
+as equivalent pixels in an analogous mmWave QR code. The                      recorded markers. For example, if the radar has detected
+clutter-free design of each marker unlocks spatial coding for                 four potential markers and there is an L-shape code with
+PolarVisor, which can be challenging for normal reflectors,                   three markers is in its database, it will try to form a similar
+especially in highly cluttered scenes. With its visor clearing                L-shape code using three of the four potential markers. This
+out background reflectors, PolarVisor can readily identify                    might not succeed because the L-shape code in the database
+a spatial pattern formed by multiple markers. We note that                    requires the markers to arrange according to predetermined
+spatial coding has been explored in multiple fields (e.g., cam-               relative positions (as mentioned in Sec. 6.1) – in that case,
+eras [38] and mmWave [19]) and there have been dedicated                      the radar will simply proceed and try to detect more poten-
+papers to study its design and performance. In PolarVisor,                    tial markers. Note that this procedure does not necessarily
+we complete the system with a simple form of spatial coding,                  require that all markers that make up a certain spatial code
+but the design of spatial codes is not considered as a main                   manifest simultaneously. For example, if a rectangular code
+contribution and hence is not evaluated separately.                           has its markers deployed at the four corners of a wall, the
+                                                                              radar might not see all of them at once. However, since the
+                                                                              radar tracks its relative position to all detected potential
+6.1 Spatial Code Functions
+                                                                              markers, it can try reconstructing a spatial code at any time.
+In PolarVisor, we form an analogous mmWave QR code by                         Evaluating PolarVisor: We consider several real-world,
+arranging mmWave reflectors according to a specific 2D/3D                     multipath-rich environments. In each environment, we de-
+pattern to provide the following two functions.                               ploy a spatial code with a certain number of reflectors at
+Identification: Contextual information, such as geometric                     known locations. The location of this spatial code can be
+information (e.g., room/floor) or navigation information (e.g.,               defined as the center of all reflectors. Meanwhile, we eval-
+stop/detour), can be embedded. For example, an L shape can                    uate two systems – a baseline system, where the reflectors
+be formed with 3 reflectors to represent “lobby”, or a cross                  are normal CRs, and PolarVisor, where the reflectors are Po-
+with 5 reflectors can indicate “no trespassing”. As this is not               larVisor markers. In either of the two, the radar first tries to
+related to PolarVisor’s performance, it is not evaluated.                     detect potential markers, then tries to reconstruct the spatial
+Localization: Spatial codes are deployed at known locations.                  code with detected markers. Once it determines that it has
+In addition, in a certain spatial code, the relative positions                successfully reconstructed the spatial code, it outputs the es-
+between markers are also known. This information (e.g.,                       timated location of itself. The localization error is calculated
+coordinates of each marker), along with other necessary                       as the difference between this esimated location and the true
+complements (e.g., maps and floor plans), is stored in a data-                location obtained with laser rangefinders. Compared to the
+base. Later, when a radar tries to perform self-localization,                 baseline, PolarVisor is expected to be less vulnerable to back-
+upon successful detection of a certain spatial code, it first                 ground clutter, and hence should have a higher chance to
+estimates its relative position w.r.t. this code, then queries                reconstruct the spatial code with PolarVisor markers (instead
+the database to fetch the location of this code, and finally                  of mistakenly using background reflectors).
+combines these two to figure out its location.
+
+6.2 Practical Operation                                                       7 IMPLEMENTATION
+During a practical operation, the radar roams around a scene                  7.1 Fabrication
+and tries to localize itself by detecting spatial codes that                  Metasurfaces: Multiple fabrication methods exist for meta-
+are pre-deployed. This is a two-step procedure. It starts by                  surfaces, including PCB drilling [39], laser cutting [52], 3D-
+detecting potential markers, then tries to reconstruct spatial                printed PCB [55], microfluidic circuit [13], CVD [61], and
+codes in its database with these detected markers.                            LPD [66]. We chose hot-stamping due to its low cost and the
+Recording Potential Markers: As one can imagine, there                        flexibility of paper substrates. We envision that similar to
+is no mechanism for the radar to tell between a PolarVisor                    fiducial markers for cameras, PolarVisor can also be made
+marker and a normal reflector if the latter is strong enough                  and used easily. To start, single-layer metasurface patterns
+
+
+
+
+                                                                          9
+ACM MOBICOM ’25, November 4–8, 2025, Hong Kong, China                                                Junbo Zhang, Yiwen Song, and Swarun Kumar
+
+
+are first printed with a laser printer (Konica Minolta Bizhub              Reflective
+                                                                           Polarizer
+                                                                                               CR on Seat           (a)                   (b)
+300i) on 48-pound glossy brochure paper (HP Q1987A). Next,
+we place a heat transfer foil (Cricut) on top of the printer                                         CR Mold
+
+pattern and stack another piece of 48-pound paper. This sand-
+wich structure is fed into a laminating machine (SINCHI Pro-
+                                                                                                          Transmissive
+Lami F3410) using the 10-mil lamination mode. After the foil               Foil Sheet                       Polarizer
+cools down, we gently peel it off to get a paper metasurface.                                   CR Seat
+
+Reflective Polarizer: A reflective polarizer has three basic                                                  (c)                         (d)
+layers from top to bottom. (1) A diversifier metasurface: A
+single piece of printer paper, facing up. (2) Substrate: We
+find the best configuration is stacking 5 pieces of 65-pound
+paper (Recollections Cardstock Paper). (3) A metallic sheet:
+We use the same heat transfer foil as this reflective layer,
+with its shiny face facing down. All materials are trimmed
+to a proper size before we put them into a 3-mil laminating
+                                                                           Figure 8: (a) PolarVisor components. (b)-(d) Test envi-
+pouch and perform a standard lamination. Each reflective
+                                                                           ronments with clutter – a conference room, an office,
+polarizer in PolarVisor measures 5.5×5.5 inch2 .
+                                                                           and a lab. Four markers are shown in each photo.
+Transmissive Polarizer: A transmissive polarizer has six
+layers. (1) A grating pattern: A single piece of printer paper,            and micro-benchmarks since our blockage experiments in-
+facing up. (2) Substrate: We recommend stacking 3 pieces                   volve a fog generator, which cannot be used indoors.
+of 65-pound paper, or alternatively, stacking 2 pieces of 110-
+pound paper. (3) A piece of blank glossy printer paper to                  8 EVALUATION
+ensure structural symmetry. (4) A diversifier metasurface: A
+single piece of printer paper, facing up. (5) Substrate: Another
+                                                                           8.1 Localization: Evaluation Metric
+stack of thick paper, identical to step (2). (6) A grating pattern:        In Sec. 8.2, 8.3, 8.4, and 8.5, we evaluate PolarVisor’s local-
+Perpendicular to the one in step (1), facing down. We then                 ization performance. As outlined in Sec. 6.2, we evaluate
+trim, seal, and laminate same as above. Each transmissive                  PolarVisor with PolarVisor markers and a baseline system
+polarizer in PolarVisor also measures 5.5×5.5 inch2 .                      with normal CRs. As the radar moves to different locations,
+Corner Reflectors: We 3D-print a corner mold with three                    both systems try to reconstruct predetermined spatial codes
+mutually perpendicular faces, each measuring 3 mm in height                with detected reflectors and report their self-localization es-
+and 15 cm in width/length. A single piece of reflective polar-             timates. We calculate the localization error at each radar
+izer is installed on one of the inner walls. On the other two,             location using their self-localization estimate and their true
+we install reflective surfaces – we trim a piece of heat trans-            position (obtained using laser rangefinders). Each environ-
+fer foil, encapsulate it in a laminating pouch, and perform                ment is evaluated in a semi-static manner – the radar moves
+a standard lamination. To better hold the CR, a 3D-printed                 along a fixed trajectory with roughly 20 predetermined loca-
+base is attached by hot gluing to facilitate deployment.                   tions and captures 10 frames at each location. We then report
+                                                                           the cumulative distribution function (CDF) of this error.
+
+                                                                           8.2          Localization in Different Environments
+7.2 Experimental Setup                                                     Method: We deploy spatial codes with 3 or 4 reflectors in
+Radar: We evaluate PolarVisor’s performance with EVAL-                     the conference room, office, and lab environment.
+TINYRAD from Analog Devices [10]. It operates within 24-                   Result: In Fig. 9(a), 3 reflectors are used. We see that the base-
+24.25 GHz with 2 Tx and 4 Rx antennas co-located. We cover                 line has higher errors across all 3 environments. Meanwhile,
+only its Tx with the visor (as shown in Fig. 2).                           PolarVisor is confused by a strong background reflector in
+Environments: We consider 3 indoor environments (Fig. 8(b)-                the lab even after clutter suppression. It reports an average
+(d)). (1) A conference room: There is a slight blockage from               error of 0.0557 m, 0.0426 m, and 0.0639 m for the conference
+the tables. The metallic window frames and the table legs                  room, office, and lab environment, respectively, while the
+contribute to clutter. (2) An office: It has relatively scattered          baseline reports 0.211 m, 0.392 m, and 0.238 m. The issue is
+background reflectors. (3) A lab space: It is densely occupied             resolved in Fig. 9(b) with 4 reflectors. The localization ac-
+with tables, shelves, and equipment. In addition, a fourth                 curacy of both PolarVisor and the baseline is considerably
+testbed, a semi-indoor parking complex on the university                   improved, while PolarVisor still outperforms the baseline
+campus (photo omitted), is used for blockage experiments                   across all environments. Specifically, the average localization
+
+
+
+
+                                                                      10
+PolarVisor: Clutter-free, Electronics-free mmWave Fiducial Markers Printed on Paper    ACM MOBICOM ’25, November 4–8, 2025, Hong Kong, China
+
+
+errors are 0.0279 m, 0.0290 m, and 0.0322 m for PolarVisor
+and 0.0693 m, 0.064 m, and 0.07 m for the baseline.
+
+8.3 Localization with Multiple Markers
+Method: We deploy spatial codes consisting of up to 7 re-
+flectors in the lab environment.
+Result: As shown in Fig. 10(a), when the number of markers                                   (a)                          (b)
+                                                                              Figure 9: PolarVisor has lower localization error com-
+increases from 2 to 5, an impressive improvement in localiza-
+                                                                              pared to the baseline across three real-world indoor
+tion accuracy is observed. However, since in PolarVisor, we
+                                                                              environments with (a) 3 markers and (b) 4 markers.
+do not deliberately implement angular resolution enhance-
+ment techniques (e.g., synthetic apertures), reflectors in the
+environments cannot be placed too close to each other –
+otherwise, they cannot be independently detected. Hence,
+the radar will only see a subset of markers at a time even
+when abundant markers are deployed (Sec. 6.2). A complex
+spatial code with more markers can help the radar robustly
+detect and identify the code, but the improvement gradually
+                                                                                             (a)                          (b)
+becomes marginal. More advanced spatial codes can further                     Figure 10: (a) PolarVisor’s localization performance in
+improve PolarVisor’s performance (Sec. 9).                                    the lab environment with up to 7 markers. (b) PolarVi-
+                                                                              sor remains robust in multiple NLOS scenarios.
+8.4 Localization with Blockage
+Method: Normal reflectors are known to be operable un-                        farther from the radar, as long as the background clutter is
+der blockage for mmWave radars, so in this experiment, we                     suppressed, it is not negatively impacted.
+only consider PolarVisor. We consider four types of block-                       Large variances are observed in both PolarVisor and the
+age: (1) Fog generated from a fog machine using fog liquids.                  baseline. This is because the distance between the reflectors
+(2) Clear acrylic sheet (5 mm thick). (3) Wood board (2 mm                    and the radar is not the only factor impacting the localization
+thick). (4) Cardboard delivery package box (3 mm thick). We                   accuracy – in fact, a more significant impact comes from the
+deploy 3 markers in the parking complex due to security                       location of background reflectors. If some of them are very
+considerations (dense fog may trigger indoor fire alarms).                    strong, then no matter where we place our spatial code, the
+Result: As shown in Fig. 10(b), different blockages do not                    radar will be misled. Since we do not deliberately control
+pose a significant challenge. The acrylic sheet is relatively                 this, they can appear anywhere, making the variance large.
+thick (5 mm) and hence it slightly affects PolarVisor’s perfor-               Meanwhile, we see PolarVisor has a lower variance compared
+mance. Overall, PolarVisor remains robust across different                    to the baseline, indicating a more stable performance.
+NLOS scenarios where it is expected to operate robustly.
+                                                                              8.6 Clutter Suppression: Evaluation Metric
+8.5 Localization vs Varying Range                                             In Sec. 8.7 and 8.8, we evaluate PolarVisor’s clutter suppres-
+Method: We deploy spatial codes with 3 reflectors in the                      sion performance with two micro-benchmarks. We analyze
+office and lab and sample the scene with different spatial                    a single reflector in the parking complex, where we roughly
+code locations, leading to different distances to the radar.                  align the radar along the reflector’s boresight direction. We
+Result: Fig. 11 shows the comparison between PolarVisor                       consider the following three scenarios. ○:
+                                                                                                                       a A normal CR and
+and the baseline where we group the range values into bins                    a normal radar. ○:b A normal CR and a visor-equipped radar.
+of 1 m. At first glance, one will intuitively think the distance              ○:
+                                                                               c A PolarVisor marker and a visor-equipped radar.
+from the reflectors to the radar will impact the localization ac-                We first define relative amplitude as the reflector’s signal
+curacy because a farther reflector will have a weaker strength                strength on the radar after background noise subtraction
+detected by the radar. This is verified in the baseline results –             to see how strong the reflector manifests. Next, we define
+when the normal CRs are farther from the radar, the localiza-                 reflector suppression as the difference of relative amplitude
+tion error is slightly worsened. Meanwhile, we see PolarVisor                 between ○  a and ○  b to visualize how much a normal CR is
+does not fluctuate much across different ranges. This can be                  suppressed because of the visor. Finally, we define clutter
+attributed to its clutter-free design. Although the PolarVisor                contrast as the difference of relative amplitude between ○   b
+markers will also become weaker in strength as they get                       and ○c to show how much brighter a PolarVisor marker is
+
+
+
+
+                                                                         11
+ACM MOBICOM ’25, November 4–8, 2025, Hong Kong, China                                         Junbo Zhang, Yiwen Song, and Swarun Kumar
+
+
+compared to a normal CR with visor equipped. State-of-
+the-art markers without cross-polarization do not separate
+themselves from clutters as reported in [50].
+
+8.7 Suppression vs Varying Range
+Method: In this micro-benchmark, we evaluate the influ-                                (a)                           (b)
+
+ence of distance (i.e., range) between the radar and a single          Figure 11: Localization performance with 3 reflectors
+reflector – a normal CR or a PolarVisor marker. We report              in the (a) office and (b) lab environment where we vary
+reflector suppression and clutter contrast w.r.t. distance.            the distance from the reflectors to the radar (range).
+Result: As shown in Fig. 12(a), PolarVisor can successfully
+suppress clutter at a range of up to 25 m. We did not evaluate
+beyond 25 m because the normal CR already performed sim-
+ilarly to obstacles near the radar (e.g., load-bearing pillars
+in the parking complex). The reflector suppression curve
+shows an average of 17.87 dB clutter suppression. Mean-
+while, the clutter contrast curve indicates an average gain
+                                                                                       (a)                             (b)
+of 9.49 dB across all distances. The effective total gain curve
+                                                                       Figure 12: (a) Across various ranges, PolarVisor pro-
+is calculated as the sum of these two, whose intuition is a
+                                                                       vides reliable clutter suppression. (b) PolarVisor expe-
+combination of the suppression we get from the visor and
+                                                                       riences fluctuation with traverse plane rotations.
+the gain we get from the marker. It drops slightly when the
+distance is far, but largely remains more than 20 dB.
+Summary: An average of 17.87 dB clutter suppression val-               More importantly, the radars can still function normally
+idates our visor design – it is very effective in suppressing          when the visor is off. In practice, when a radar-equipped ro-
+normal reflectors. Meanwhile, an average of 9.49 dB clutter            bot is in action, mechanical systems (e.g., robotic arms) can
+contrast ensures that a PolarVisor marker is always signifi-           be implemented to help the radar wear the visor only when
+cantly brighter than a suppressed normal reflector.                    needed to support both co-polar and cross-polar operations.
+                                                                       Radar and CR Intrinsic Limitations: PolarVisor currently
+                                                                       builds on COTS radars and standard CRs; hence, it shares
+8.8    Suppression vs Traverse Plane Rotation
+                                                                       their intrinsic limitations: (1) PolarVisor’s scalability is lim-
+Method: In this micro-benchmark, we evaluate the influence             ited by radar angular resolution. However, algorithms that
+of traverse plane rotation. Since there is only one reflector,         improve angular resolution can help PolarVisor deploy dense
+rotation of the radar is equivalent to that of the reflector.          markers to support high-density localization. (2) PolarVisor
+We deploy the reflector at three different distances from              markers, as CRs, cannot support extremely slanted viewing
+the radar and perform a 360◦ traverse plane rotation with              angles. (3) Although PolarVisor remains robust with blockage
+a rotary motor. We report the relative amplitude w.r.t. the            (Sec. 8.4), extremely cluttered and dynamically obstructed en-
+rotation angle. We consider ○  b and ○ c – since the visor is          vironments are still challenging; we plan to further improve
+on for both, any discrimination between them reveals the               and evaluate PolarVisor there as future work.
+difference between a normal surface and a polarizer, and the           Rotational Symmetry: As we have elaborated in Sec. 5, a
+main goal of this micro-benchmark is to see this difference.           PolarVisor marker does not have rotational symmetry along
+Result: As shown in Fig. 12(b), a PolarVisor marker (PV, ○) c          its boresight direction. Hence, its installation should follow
+experiences more fluctuation compared to a normal CR (○).   b          Fig. 6(e) to ensure it operates correctly. Meanwhile, this also
+As the distance between the radar and the reflector increases,         implies that the radar should not rotate drastically within the
+both objects appear weaker, but ○  c is still brighter than ○.
+                                                             b         traverse plane. Although a radar with a fixed position (e.g.,
+Certain 𝛿 values, at which the marker appears weaker than a            mounted on a car or a robot) is unlikely to experience such
+normal CR, can be due to the imperfection of our polarizers.           a rotation, we admit that a handheld device is an exception.
+Summary: The observed pattern validates our analysis in                In application scenarios where an operator holds the device,
+Sec. 5 Fig. 6(e). We will have more discussion in Sec. 9.              PolarVisor can seek help from inertial measurement units
+                                                                       (IMU) and guide the operator to adjust the device’s orienta-
+9 DISCUSSION                                                           tion for a live scan. Meanwhile, an alternative approach is to
+Practical Visor Operation: Although cross-polarization                 leverage spherical structures (e.g., lens) and wrap a PolarVi-
+can be easily achieved by re-designing the radar PCB, Po-              sor polarizer around. New design and fabrication challenges
+larVisor chose a visor design to avoid altering COTS radars.           will arise there and we leave it as future work.
+
+
+
+
+                                                                  12
+PolarVisor: Clutter-free, Electronics-free mmWave Fiducial Markers Printed on Paper    ACM MOBICOM ’25, November 4–8, 2025, Hong Kong, China
+
+
+Spatial Coding: Although PolarVisor, in its current form,                     Metasurfaces: PolarVisor is closely related to passive meta-
+does not include an in-depth investigation into spatial code                  surfaces (i.e., without active components), in which a rich
+design, we believe this can be an important future direction.                 literature exists. PolarVisor draws its inspiration on meta-
+A properly designed spatial code can potentially improve                      surface manufacture from [15, 25, 33, 48], which introduced
+PolarVisor’s localization performance. For example, if a cer-                 and demonstrated an effective and convenient approach of
+tain arrangement of reflectors is unlikely to appear for back-                prototyping single-layer metasurfaces with paper, foils, and
+ground reflectors, then PolarVisor has a higher chance to                     laminating machines. Meanwhile, PolarVisor’s meta-atom
+correctly identify the markers constituting this spatial code.                has a double split-ring resonator structure (DSRR), which is
+System Complementation: PolarVisor can complement                             based on the classical split-ring resonator (SRR) that has been
+multiple mmWave methods. For example, radar adaptive                          demonstrated to have a good performance for mmWave and
+beamforming [12, 51] can improve the signal quality from                      THz applications [28, 49, 56, 63]. We build upon this literature
+specific directions, from which PolarVisor can benefit if the                 and propose to use metasurface polarizers as the building
+marker is beamformed towards. Machine learning [26] and                       block for clutter-free, electronics-free fiducial markers.
+super resolution algorithms [41] can also improve the detec-                  Polarization Manipulation: While signal polarization has
+tion accuracy and working range of PolarVisor. Electronically-                been explored in mmWave communication as a potential
+assisted and frequency-coded [58] design can improve Po-                      way to perform MIMO, it has been studied for sensing appli-
+larVisor’s performance, if an ultra-long range is needed.                     cations as well, for example, [2, 17, 65] design mmWave po-
+                                                                              larization tags. Polarization manipulation is also a hot topic
+                                                                              in metasurface research. Multiple passive polarizer designs
+10     RELATED WORK                                                           have been proposed for microwave [8, 9, 18, 28–30, 36, 64],
+MmWave Backscatter: There has been extensive research                         mmWave [5, 56], and THz [14, 40, 54, 57, 62] applications.
+on mmWave backscatter communication where low-power                           PolarVisor builds upon these and dedicates its efforts to de-
+tags modulate their reflection with information bits (i.e.,                   signing passive, clutter-free fiducial markers where it does
+temporal coding) [6, 11, 31, 32, 34, 35, 37, 42, 50]. A chip                  not enjoy the precise manufacturing process commonly seen
+and a battery are commonly seen because these tags are                        in printed circuit board (PCB) technologies.
+dedicated to communicating arbitrary information. Retrore-
+flective structures are also widely used to compensate for the                11      CONCLUSION
+well-known high path loss in order to improve communica-
+                                                                              In this paper, we present PolarVisor, an electronics-free fidu-
+tion range, such as Van-Atta arrays [6, 11, 17, 34, 35, 37, 50]
+                                                                              cial marker solution for mmWave radars to support accurate,
+and Luneburg lenses [42]. PolarVisor focuses on a solution
+                                                                              clutter-free robotic self-localization applications without any
+for fiducial markers where it only needs to convey predeter-
+                                                                              hardware modification to COTS mmWave radars. PolarVisor
+mined geometric and spatial information instead of arbitrary
+                                                                              designs passive, polarization-manipulating metasurfaces that
+bits. This opens up an opportunity to implement markers
+                                                                              can be rapidly manufactured with paper and foils without
+without chips and batteries, but only with paper and foils,
+                                                                              any electronics or batteries. It adopts an innovative design
+highlighting a convenient, cheap, and unique manufacturing
+                                                                              where the radar wears a visor as a polarization filter to sig-
+procedure rarely seen in the literature.
+                                                                              nificantly suppress background reflectors while highlighting
+Passive mmWave Retroreflectors: Passive retroreflectors,
+                                                                              PolarVisor markers in the scene. An in-depth evaluation
+even without embedded bit information, are shown capable
+                                                                              shows that PolarVisor can provide robust clutter suppres-
+of supporting a variety of sensing applications, such as cor-
+                                                                              sion at a range of up to 25 m. Meanwhile, a comprehensive
+ner reflectors (CR) [59, 60] and Van-Atta arrays [4, 21, 53]. To
+                                                                              investigation into its localization accuracy reveals 0.0297 m
+further encode information, frequency coding has been iden-
+                                                                              (mean) and 0.0232 m (median) localization error across mul-
+tified as an alternative to temporal coding when a battery is
+                                                                              tiple real-world, multipath-rich indoor environments.
+not present. This includes CRs [27, 44, 45], lenses [3, 7, 20, 22–
+24, 43], reflectarrays [17], and resonator arrays [1]. In addi-
+tion, [19] implements spatial coding with CRs in a compact                    ACKNOWLEDGMENTS
+form factor. Since frequency coding is sensitive to environ-                  We acknowledge the support of NSF (2106921, 2030154, 2007786,
+mental multipath, PolarVisor adopts spatial coding. On top of                 1942902, 2111751), ONR, AFRETEC, MFI, CISCO, and CyLab-
+that, it leverages signal polarization to improve the detection               Enterprise. Any opinions, findings, and conclusions or rec-
+of PolarVisor markers even in cluttered scenes. Compared to                   ommendations expressed in this material are those of the
+previous solutions, PolarVisor features achieving clutter resi-               author(s) and do not necessarily reflect the views of the
+lence at a longer range (several meters) with COTS hardware                   above. We also thank the shepherd and reviewers for their
+instead of dedicated instruments like VNAs.                                   help in improving this material.
+
+
+
+
+                                                                         13
+ACM MOBICOM ’25, November 4–8, 2025, Hong Kong, China                                                               Junbo Zhang, Yiwen Song, and Swarun Kumar
+
+
+REFERENCES                                                                               [14] Nathaniel K. Grady, Jane E. Heyes, Dibakar Roy Chowdhury, Yong
+ [1] Ali Alhaj Abbas, Aman Batra, and Thomas Kaiser. 2024. Chipless                           Zeng, Matthew T. Reiten, Abul K. Azad, Antoinette J. Taylor, Diego
+     Tag Identification in Cluttered Environments through mm-Wave SAR                         A. R. Dalvit, and Hou-Tong Chen. 2013. Terahertz Metamaterials for
+     Imaging. In 2024 15th German Microwave Conference (GeMiC). 185–188.                      Linear Polarization Conversion and Anomalous Refraction. Science
+     https://doi.org/10.23919/GeMiC59120.2024.10485305                                        340, 6138 (2013), 1304–1307. https://doi.org/10.1126/science.1235399
+ [2] Ali Alhaj Abbas, Mohamed Haj Hassan, Ashraf Abuelhaija, Daniel                           arXiv:https://www.science.org/doi/pdf/10.1126/science.1235399
+     Erni, Klaus Solbach, and Thomas Kaiser. 2021. Retrodirective Di-                    [15] Hichem Guerboukha, Yasith Amarasinghe, Rabi Shrestha, Angela Piz-
+     electric Resonator Tag with Polarization Twist Signature for Clutter                     zuto, and Daniel M. Mittleman. 2021. High-volume rapid prototyping
+     Suppression in Self-Localization System. IEEE Transactions on Mi-                        technique for terahertz metallic metasurfaces. Opt. Express 29, 9 (Apr
+     crowave Theory and Techniques 69, 12 (dec 2021), 5291–5299. https:                       2021), 13806–13814. https://doi.org/10.1364/OE.422991
+     //doi.org/10.1109/TMTT.2021.3108151                                                 [16] Yaomin He, Huafeng He, Changhua Hu, Junjun Yin, and Jian Yang.
+ [3] Ali Alhaj Abbas, Yamen Zantah, Ashraf Abuelhaija, and Thomas Kaiser.                     2022. Polarization Analysis of Trihedral Corner Reflector With High-
+     2022. Millimeter-Wave Retro-Directive Frequency Coded Lens by                            Frequency Approximation. IEEE Transactions on Antennas and Prop-
+     Curved One-Dimensional Photonic Crystal Resonator. IEEE Access 10                        agation 70, 10 (2022), 9607–9620. https://doi.org/10.1109/TAP.2022.
+     (2022), 132988–133000. https://doi.org/10.1109/ACCESS.2022.3226124                       3177536
+ [4] Paris Ang and George V. Eleftheriades. 2018. A Passive Redirecting Van              [17] Jimmy G. D. Hester and Manos M. Tentzeris. 2016. Inkjet-Printed Flex-
+     Atta-Type Reflector. IEEE Antennas and Wireless Propagation Letters                      ible mm-Wave Van-Atta Reflectarrays: A Solution for Ultralong-Range
+     17, 4 (apr 2018), 689–692. https://doi.org/10.1109/LAWP.2018.2812108                     Dense Multitag and Multisensing Chipless RFID Implementations for
+     arXiv:1803.02856                                                                         IoT Smart Skins. IEEE Transactions on Microwave Theory and Techniques
+ [5] Amjad Aziz, Babar Kamal, Zakriya Faraz, Usman Ali, Sadiq Ullah,                          64, 12 (2016), 4763–4773. https://doi.org/10.1109/TMTT.2016.2623790
+     Yingzeng Yin, and Jian Ren. 2024. Wideband and high efficient po-                   [18] Xiaojun Huang, Xiongwei Ma, Huanhuan Gao, Linyan Guo, and
+     larization conversion and RCS reduction based on compass needle                          Xiaoyan Li. 2023. Ultra-wideband linear-polarization conversion
+     shape metasurface. Optics & Laser Technology 177 (oct 2024), 111145.                     metasurface with high-efficient asymmetric transmission. Applied
+     https://doi.org/10.1016/J.OPTLASTEC.2024.111145                                          Physics A: Materials Science and Processing 129, 4 (apr 2023), 1–9.
+ [6] Kang Min Bae, Hankyeol Moon, Sung-Min Sohn, and Song Min Kim.                            https://doi.org/10.1007/s00339-023-06541-0
+     2023. Hawkeye: Hectometer-range Subcentimeter Localization for                      [19] Tatsuya Iizuka, Takuya Sasatani, Toru Nakamura, Naoko Kosaka,
+     Large-scale mmWave Backscatter. In Proceedings of the 21st Annual                        Masaki Hisada, and Yoshihiro Kawahara. 2023. MilliSign: mmWave-
+     International Conference on Mobile Systems, Applications and Services                    Based Passive Signs for Guiding UAVs in Poor Visibility Conditions.
+     (Helsinki, Finland) (MobiSys ’23). Association for Computing Machin-                     (oct 2023), 1–15. https://doi.org/10.1145/3570361.3613264
+     ery, New York, NY, USA, 303–316. https://doi.org/10.1145/3581791.                   [20] Alejandro Jimenez-Saez, Martin Schusler, Mohammed El-Absi, Ali Al-
+     3596869                                                                                  haj Abbas, Klaus Solbach, Thomas Kaiser, and Rolf Jakoby. 2020. Fre-
+ [7] Ryan A. Bahr, Ajibayo O. Adeyeye, Samantha Van Rijs, and Manos M.                        quency Selective Surface Coded Retroreflectors for Chipless Indoor
+     Tentzeris. 2020. 3D-Printed Omnidirectional Luneburg Lens Retrore-                       Localization Tag Landmarks. IEEE Antennas and Wireless Propagation
+     flectors for Low-Cost mm-Wave Positioning. In 2020 IEEE International                    Letters 19, 5 (may 2020), 726–730. https://doi.org/10.1109/LAWP.2020.
+     Conference on RFID (RFID). 1–7. https://doi.org/10.1109/RFID49298.                       2975143
+     2020.9244891                                                                        [21] Nicholas Junker, Jinqun Ge, Guoan Wang, and Sanjib Sur. 2022. Poster:
+ [8] Yongzhi Cheng, Yan Nie, Zhengze Cheng, and Rong Zhou Gong.                               FlexVAA: A Flexible, Passive Van Atta Retroreflector for Roadside
+     2014. Dual-band Circular Polarizer and Linear Polarization Trans-                        Infrastructure Tagging and Identification. SenSys 2022 - Proceedings of
+     former Based on Twisted Split-Ring Structure Asymmetric Chiral                           the 20th ACM Conference on Embedded Networked Sensor Systems (nov
+     Metamaterial. Progress In Electromagnetics Research 145 (2014), 263–                     2022), 820–822. https://doi.org/10.1145/3560905.3568089
+     272. https://doi.org/10.2528/PIER14020501                                           [22] Petr Kadera, Alejandro Jiménez-Sáez, Tom Burmeister, Jaroslav Lacik,
+ [9] Xingshuo Cui, Guangming Wang, Dengpan Wang, Xiaofeng Li, Tong                            Martin Schusbler, and Rolf Jakoby. 2020. Gradient-Index-Based
+     Cai, and Kaiyue Liu. 2021. Ultra-broadband transmissive gradient                         Frequency-Coded Retroreflective Lenses for mm-Wave Indoor Local-
+     metasurface based on the topologically coding optimization method.                       ization. IEEE Access 8 (2020), 212765–212775. https://doi.org/10.1109/
+     Optics Express, Vol. 29, Issue 14, pp. 22136-22145 29, 14 (jul 2021), 22136–             ACCESS.2020.3039986
+     22145. https://doi.org/10.1364/OE.426187                                            [23] Petr Kadera, Alejandro Jimenez-Saez, Lisa Schmitt, Martin Schusler,
+[10] Analog Devices. 2024.               Analog Devices EVAL-TINYRAD.                         Martin Hoffmann, Jaroslav Lacik, and Rolf Jakoby. 2021. Frequency
+     https://www.analog.com/en/resources/evaluation-hardware-                                 Coded Retroreflective Landmark for 230 GHz Indoor Self-Localization
+     and-software/evaluation-boards-kits/eval-tinyrad.html.                                   Systems. 15th European Conference on Antennas and Propagation, Eu-
+[11] Manideep Dunna, Kshitiz Bansal, Sanjeev Anthia Ganesh, Eamon Pata-                       CAP 2021 (mar 2021). https://doi.org/10.23919/EUCAP51087.2021.
+     masing, and Dinesh Bharadia. 2023. R-fiducial: Millimeter Wave Radar                     9410973
+     Fiducials for Sensing Traffic Infrastructure. In 2023 IEEE 97th Vehicular           [24] Petr Kadera, Jesus Sanchez-Pastor, Alejandro Jimenez-Saez, Martin
+     Technology Conference (VTC2023-Spring). 1–7. https://doi.org/10.1109/                    Schusler, Jaroslav Lacik, and Rolf Jakoby. 2021. QCTO Luneburg Lens-
+     VTC2023-Spring57618.2023.10199374                                                        Based Retroreflective Tag Landmarks for mm-Wave Self-Localization
+[12] Mahdi Fozi, Ahmad R Sharafat, and Mehdi Bennis. 2021. Fast MIMO                          Systems. 2021 IEEE-APS Topical Conference on Antennas and Propa-
+     beamforming via deep reinforcement learning for high mobility                            gation in Wireless Communications, APWC 2021 (aug 2021), 105–108.
+     mmWave connectivity. IEEE Journal on Selected Areas in Commu-                            https://doi.org/10.1109/APWC52648.2021.9539571
+     nications 40, 1 (2021), 127–142.                                                    [25] Subhajit Karmakar, Atsutse Kludze, and Yasaman Ghasempour. 2024.
+[13] Kaustav A Gopinathan, Avanish Mishra, Baris R Mutlu, Jon F Edd, and                      Meta-Sticker: Sub-Terahertz Metamaterial Stickers for Non-Invasive
+     Mehmet Toner. 2023. A microfluidic transistor for automatic control                      Mobile Food Sensing. In Proceedings of the 21st ACM Conference on
+     of liquids. Nature 622, 7984 (2023), 735–741.                                            Embedded Networked Sensor Systems (Istanbul, Turkiye) (SenSys ’23).
+                                                                                              Association for Computing Machinery, New York, NY, USA, 335–348.
+
+
+
+
+                                                                                    14
+PolarVisor: Clutter-free, Electronics-free mmWave Fiducial Markers Printed on Paper             ACM MOBICOM ’25, November 4–8, 2025, Hong Kong, China
+
+
+     https://doi.org/10.1145/3625687.3625815                                              https://doi.org/10.1145/3452296.3472896
+[26] Atsutake Kosuge, Satoshi Suehiro, Mototsugu Hamada, and Tadahiro                [38] Edwin Olson. 2011. AprilTag: A robust and flexible visual fiducial sys-
+     Kuroda. 2022. mmWave-YOLO: A mmWave imaging radar-based real-                        tem. In 2011 IEEE International Conference on Robotics and Automation.
+     time multiclass object recognition system for ADAS applications. IEEE                3400–3407. https://doi.org/10.1109/ICRA.2011.5979561
+     Transactions on Instrumentation and Measurement 71 (2022), 1–10.                [39] Hao Pan, Lili Qiu, Bei Ouyang, Shicheng Zheng, Yongzhao Zhang,
+[27] A. Lazaro, J. Lorenzo, R. Villarino, and D. Girbau. 2015. Modulated                  Yi-Chao Chen, and Guangtao Xue. 2023. PMSat: Optimizing Passive
+     corner reflector using frequency selective surfaces for FMCW radar                   Metasurface for Low Earth Orbit Satellite Communication. In Proceed-
+     applications. European Microwave Week 2015: "Freedom Through                         ings of the 29th Annual International Conference on Mobile Computing
+     Microwaves", EuMW 2015 - Conference Proceedings; 2015 45th Euro-                     and Networking. 1–15.
+     pean Microwave Conference Proceedings, EuMC (dec 2015), 111–114.                [40] Wu Pan, Yongrui Li, Zhen Zhang, Bin Zhang, and Haizhu Li. 2023.
+     https://doi.org/10.1109/EUMC.2015.7345712                                            Design and analysis of a multi-band and dual-functional terahertz wave
+[28] Wei Li, Yu Lan, Huanpeng Wang, and Yuehang Xu. 2021. Microwave                       polarization converter based on asymmetric cross-shaped metasurface.
+     polarizer based on complementary split ring resonators frequency-                    Optics Communications 530 (mar 2023), 129171. https://doi.org/10.
+     selective surface for conformal application. IEEE Access 9 (2021),                   1016/J.OPTCOM.2022.129171
+     111383–111389. https://doi.org/10.1109/ACCESS.2021.3102942                      [41] Akarsh Prabhakara, Tao Jin, Arnav Das, Gantavya Bhatt, Lilly Kumari,
+[29] Zhaomei Liu, Bei Zhao, Chunhong Jiao, Lihua Zhao, and Xingxing Han.                  Elahe Soltanaghai, Jeff Bilmes, Swarun Kumar, and Anthony Rowe.
+     2021. Broadband cross-polarization conversion metasurface based on                   2023. RadarHD: Demonstrating Lidar-like Point Clouds from mmWave
+     cross-shaped resonators. Applied Physics A: Materials Science and                    Radar. In Proceedings of the 29th Annual International Conference on
+     Processing 127, 11 (nov 2021), 1–9. https://doi.org/10.1007/S00339-                  Mobile Computing and Networking. 1–3.
+     021-04994-9                                                                     [42] Kun Qian, Lulu Yao, Kai Zheng, Xinyu Zhang, and Tse Nga Ng. 2023.
+[30] Fei Long, Shixing Yu, Na Kou, Can Zhang, Zhao Ding, and Zhengping                    UniScatter: A Metamaterial Backscatter Tag for Wideband Joint Com-
+     Zhang. 2020. Wideband and high-efficiency planar chiral structure                    munication and Radar Sensing. Proceedings of the Annual International
+     design for asymmetric transmission and linear polarization conversion.               Conference on Mobile Computing and Networking, MOBICOM (jul 2023),
+     Journal of Applied Physics 127, 2 (jan 2020), 23104. https://doi.org/10.             301–316. https://doi.org/10.1145/3570361.3592526
+     1063/1.5129912/566507                                                           [43] Jesús Sanchez-Pastor, Alejandro Jiménez-Sáez, Martin Schuessler,
+[31] Haofan Lu, Mohammad Hossein Mazaheri, Reza Rezvani, and Omid                         and Rolf Jakoby. 2021. Frequency-coded spherical retroreflector
+     Abari. 2023. A Millimeter Wave Backscatter Network for Two-Way                       for wide-angle indoor localization tag landmarks. 2021 4th Interna-
+     Communication and Localization. SIGCOMM 2023 - Proceedings of the                    tional Workshop on Mobile Terahertz Systems, IWMTS 2021 (jul 2021).
+     ACM SIGCOMM 2023 Conference (sep 2023), 49–61. https://doi.org/10.                   https://doi.org/10.1109/IWMTS51331.2021.9486810
+     1145/3603269.3604873                                                            [44] Jesus Sanchez-Pastor, Ahmed Kamel, Martin Schuler, Rolf Jakoby, and
+[32] Charles A. Lynch, Genaro Soto-Valle, Jimmy Hester, and Manos M.                      Alejandro Jimenez-Saez. 2024. Double-Notch Frequency-Coded Cor-
+     Tentzeris. 2023. MmIDs Enter the 3rd Dimension: A Camera Inspired                    ner Reflectors for sub-THz Chipless RFID Tags. IEEE Antennas and
+     Broadbeam High-Gain Retrodirective Backscatter Tag. IEEE MTT-S                       Wireless Propagation Letters (2024). https://doi.org/10.1109/LAWP.
+     International Microwave Symposium Digest 2023-June (2023), 1069–                     2024.3404625
+     1072. https://doi.org/10.1109/IMS37964.2023.10188156                            [45] Jesús Sánchez-Pastor, Martin Schüßler, Rolf Jakoby, and Alejandro
+[33] Ruichun Ma, Shicheng Zheng, Hao Pan, Lili Qiu, Xingyu Chen, Liangyu                  Jiménez-Sáez. 2024. Double-Layer Frequency Selective Surface-based
+     Liu, Yihong Liu, Wenjun Hu, and Ju Ren. 2024. AutoMS: Automated                      Corner Reflector for Indoor Self-localization Systems in the W-band.
+     Service for mmWave Coverage Optimization using Low-cost Meta-                        18th European Conference on Antennas and Propagation, EuCAP 2024
+     surfaces. In Proceedings of the 30th Annual International Conference on              (2024). https://doi.org/10.23919/EUCAP60739.2024.10501184
+     Mobile Computing and Networking (Washington D.C., DC, USA) (ACM                 [46] Kamal Sarabandi and Tsen-Chieh Chiu. 1996. Optimum corner reflec-
+     MobiCom ’24). Association for Computing Machinery, New York, NY,                     tors for calibration of imaging radars. IEEE Transactions on antennas
+     USA, 62–76. https://doi.org/10.1145/3636534.3649347                                  and Propagation 44, 10 (1996), 1348–1361.
+[34] Mohammad Hossein Mazaheri, Alex Chen, and Omid Abari. 2021. mm-                 [47] Daniel J. Schroeder. 2000. Chapter 13 - Dispersing Elements and Sys-
+     Tag: a millimeter wave backscatter network. In Proceedings of the 2021               tems. In Astronomical Optics (second edition ed.), Daniel J. Schroeder
+     ACM SIGCOMM 2021 Conference (Virtual Event, USA) (SIGCOMM ’21).                      (Ed.). Academic Press, San Diego, 321–351. https://doi.org/10.1016/
+     Association for Computing Machinery, New York, NY, USA, 463–474.                     B978-012629810-9/50014-1
+     https://doi.org/10.1145/3452296.3472917                                         [48] Zhambyl Shaikhanov, Fahid Hassan, Hichem Guerboukha, Daniel
+[35] Siddharth Mohan, Kshitiz Bansal, Manideep Dunna, and Dinesh Bhara-                   Mittleman, and Edward Knightly. 2022. Metasurface-in-the-Middle
+     dia. 2023. Retroreflection with Amplification for Long Range mmWave                  Attack: From Theory to Experiment. In Proceedings of the 15th ACM
+     Sensing. mmNets 2023 - Proceedings of the 2023 The 7th ACM Workshop                  Conference on Security and Privacy in Wireless and Mobile Networks (San
+     on Millimeter-Wave and Terahertz Networks and Sensing Systems, Part                  Antonio, TX, USA) (WiSec ’22). Association for Computing Machinery,
+     of: Mobicom 2023 23 (oct 2023), 1–6. https://doi.org/10.1145/3615360.                New York, NY, USA, 257–267. https://doi.org/10.1145/3507657.3528549
+     3625090                                                                         [49] Zijian Shao, Ruiyi Shen, William Xia, Yasaman Ghasempour, Kaushik
+[36] Thi Minh Nguyen, Huu Lam Phan, Dinh Lam Vu, Thi Quynh Hoa                            Sengupta, and Sundeep Rangan. 2023. A Hybrid Antenna-Metasurface
+     Nguyen, and Jung Mu Kim. 2022. Ultra-wideband and high-efficiency                    Architecture for mmWave and THz Massive MIMO. Conference Record
+     cross-polarization conversion using a double split ring shaped meta-                 - Asilomar Conference on Signals, Systems and Computers (2023), 1610–
+     surface for C, X, and Ku-band applications. AIP Advances 12, 11 (nov                 1616. https://doi.org/10.1109/IEEECONF59524.2023.10477069
+     2022), 115002. https://doi.org/10.1063/5.0125802/2819666                        [50] Elahe Soltanaghaei, Akarsh Prabhakara, Artur Balanuta, Matthew
+[37] John Nolan, Kun Qian, and Xinyu Zhang. 2021. RoS: passive smart sur-                 Anderson, Jan M. Rabaey, Swarun Kumar, and Anthony Rowe. 2021.
+     face for roadside-to-vehicle communication. In Proceedings of the 2021               Millimetro: mmWave retro-reflective tags for accurate, long range
+     ACM SIGCOMM 2021 Conference (Virtual Event, USA) (SIGCOMM ’21).                      localization. In Proceedings of the 27th Annual International Conference
+     Association for Computing Machinery, New York, NY, USA, 165–178.
+
+
+
+
+                                                                                15
+ACM MOBICOM ’25, November 4–8, 2025, Hong Kong, China                                                          Junbo Zhang, Yiwen Song, and Swarun Kumar
+
+
+     on Mobile Computing and Networking (New Orleans, Louisiana) (Mobi-                  Discontinuities. Advanced Materials 25, 33 (sep 2013), 4567–4572.
+     Com ’21). Association for Computing Machinery, New York, NY, USA,                   https://doi.org/10.1002/ADMA.201204850
+     69–82. https://doi.org/10.1145/3447993.3448627                                 [64] Rui Zhao, Haiyan Chen, Linbo Zhang, Fengxia Li, Peiheng Zhou, Jian-
+[51] Yiwen Song, Changhan Ge, Lili Qiu, and Yin Zhang. 2023. 2ACE:                       liang Xie, and Longjiang Deng. 2018. Design and implementation
+     Spectral Profile-driven Multi-resolutional Compressive Sensing for                  of high efficiency and broadband transmission-type polarization con-
+     mmWave Channel Estimation. In Proceedings of the Twenty-fourth                      verter based on diagonal split-ring resonator. Progress in Electromag-
+     International Symposium on Theory, Algorithmic Foundations, and Pro-                netics Research 161 (2018), 1–10. https://doi.org/10.2528/PIER17110604
+     tocol Design for Mobile Networks and Mobile Computing. 41–50.                  [65] Yuting Zhao, Simone Genovesi, Guliano Manara, and Filippo Costa.
+[52] Yiwen Song, Hao Pan, Longyuan Ge, Lili Qiu, Swarun Kumar, and                       2022. Frequency-Coded mm-Wave RFID Tags Using Cross Polarization.
+     Yi-Chao Chen. 2024. MicroSurf: Guiding Energy Distribution inside                   In 2022 3rd URSI Atlantic and Asia Pacific Radio Science Meeting (AT-AP-
+     Microwave Oven with Metasurfaces. In Proceedings of the 30th Annual                 RASC). 1–4. https://doi.org/10.23919/AT-AP-RASC54737.2022.9814422
+     International Conference on Mobile Computing and Networking. 1346–             [66] Kaichen Zhu, Chao Wen, Areej A Aljarb, Fei Xue, Xiangming Xu,
+     1360.                                                                               Vincent Tung, Xixiang Zhang, Husam N Alshareef, and Mario Lanza.
+[53] K. Trzebiatowski, M. Rzymowski, L. Kulas, and K. Nyka. 2020. 60                     2021. The development of integrated circuits based on two-dimensional
+     GHz microstrip van atta arrays for millimeter wave identification                   materials. Nature Electronics 4, 11 (2021), 775–785.
+     and localization. 2020 23rd International Microwave and Radar Con-
+     ference, MIKON 2020 (oct 2020), 132–135. https://doi.org/10.23919/
+     MIKON48703.2020.9253855
+[54] Jingwen Wei, Yunping Qi, Baohe Zhang, Jinghui Ding, Weiming Liu,
+     and Xiangxian Wang. 2022. Research on beam manipulate and RCS
+     reduction based on terahertz ultra-wideband polarization conversion
+     metasurface. Optics Communications 502 (jan 2022), 127425. https:
+     //doi.org/10.1016/J.OPTCOM.2021.127425
+[55] Stephanie J Woodman, Dylan S Shah, Melanie Landesberg, Anjali
+     Agrawala, and Rebecca Kramer-Bottiglio. 2024. Stretchable Arduinos
+     embedded in soft robots. Science Robotics 9, 94 (2024), eadn6844.
+[56] Lin-Sheng Wu, XiePeng Chen, JinLong Feng, and Jun-Fa Mao. 2023.
+     Broadband electrically tunable linear polarization converter based on
+     a graphene metasurface. Optics Express, Vol. 31, Issue 2, pp. 1420-1431
+     31, 2 (jan 2023), 1420–1431. https://doi.org/10.1364/OE.477907
+[57] Kai-kai Xu, Zhong-yin Xiao, and Jing-yao Tang. 2017. Linearly
+     polarized converters for reflected and transmitted waves based on
+     double-split ring resonator. Plasmonics 12 (2017), 1869–1874. https:
+     //doi.org/10.1007/s11468-016-0456-2
+[58] Wanchen Yang, Chenyu Zhou, Quan Xue, Qiye Wen, and Wenquan Che.
+     2021. Millimeter-wave frequency-reconfigurable metasurface antenna
+     based on vanadium dioxide films. IEEE Transactions on Antennas and
+     Propagation 69, 8 (2021), 4359–4369.
+[59] Xiaoying Yang, Jacob Sayono, and Yang Zhang. 2023. CubeSense++:
+     Smart Environment Sensing with Interaction-Powered Corner Reflec-
+     tor Mechanisms. In Proceedings of the 36th Annual ACM Symposium
+     on User Interface Software and Technology (San Francisco, CA, USA)
+     (UIST ’23). Association for Computing Machinery, New York, NY, USA,
+     Article 78, 12 pages. https://doi.org/10.1145/3586183.3606744
+[60] Xiaoying Yang and Yang Zhang. 2021. CubeSense: Wireless, Battery-
+     Free Interactivity through Low-Cost Corner Reflector Mechanisms.
+     In Extended Abstracts of the 2021 CHI Conference on Human Factors
+     in Computing Systems (Yokohama, Japan) (CHI EA ’21). Association
+     for Computing Machinery, New York, NY, USA, Article 386, 6 pages.
+     https://doi.org/10.1145/3411763.3451599
+[61] Zimeng Ye, Chao Tan, Xiaolei Huang, Yi Ouyang, Lei Yang, Zegao
+     Wang, and Mingdong Dong. 2023. Emerging MoS2 wafer-scale tech-
+     nique for integrated circuits. Nano-micro letters 15, 1 (2023), 38.
+[62] Hao Zhang, Binbin Wei, Jiduo Dong, Qing Zang, Chishen Huang,
+     Xiangxing Bai, Linlong Tang, Haofei Shi, Chunheng Liu, Yang Liu,
+     and Yueguang Lu. 2023. Tunable broadband transmissive terahertz
+     cross-polarization converter enabled by a hybrid metal-graphene meta-
+     surface. Results in Physics 44 (jan 2023), 106190. https://doi.org/10.
+     1016/J.RINP.2022.106190
+[63] Xueqian Zhang, Zhen Tian, Weisheng Yue, Jianqiang Gu, Shuang
+     Zhang, Jiaguang Han, and Weili Zhang. 2013. Broadband Terahertz
+     Wave Deflection Based on C-shape Complex Metamaterials with Phase
+
+
+
+
+                                                                               16
+

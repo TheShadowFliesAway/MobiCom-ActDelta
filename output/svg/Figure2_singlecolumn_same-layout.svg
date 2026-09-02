@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 145 1600 500" role="img" aria-labelledby="title desc">
+  <title id="title">Three-level evidence chain from reconstruction fidelity to refresh value</title>
+  <desc id="desc">A continuous unpanelled conceptual diagram linking visual reconstruction, policy decision relevance, and unresolved refresh value.</desc>
+  <defs>
+    <marker id="arrow-gray" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L9,3 L0,6 Z" fill="#5D6268"/>
+    </marker>
+    <marker id="arrow-blue" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L9,3 L0,6 Z" fill="#587A9B"/>
+    </marker>
+    <marker id="arrow-peach" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L9,3 L0,6 Z" fill="#B96F55"/>
+    </marker>
+    <style>
+      .serif{font-family:'Times New Roman',Times,serif;fill:#111315;font-weight:600}
+      .label{font-size:27px;font-weight:700}
+      .body{font-size:21px}
+      .small{font-size:18px}
+      .tiny{font-size:16px}
+      .math{font-style:italic}
+      .line{fill:none;stroke:#3F464C;stroke-width:2.7;stroke-linecap:round;stroke-linejoin:round}
+      .thin{fill:none;stroke:#596168;stroke-width:2.1;stroke-linecap:round;stroke-linejoin:round}
+    </style>
+  </defs>
+
+  <rect id="background" x="0" y="0" width="1600" height="680" fill="#FFFFFF"/>
+
+  <!-- Level 1: reconstruction fidelity -->
+  <g id="reconstruction-fidelity">
+    <circle cx="105" cy="102" r="24" fill="#E5E6E5" stroke="#565B60" stroke-width="2"/>
+    <text class="serif label" x="105" y="111" text-anchor="middle">1</text>
+    <text class="serif label" x="145" y="111">Reconstruction fidelity</text>
+    <path d="M94 135 H460" stroke="#8D9195" stroke-width="2"/>
+
+    <text class="serif small" x="165" y="170" text-anchor="middle">real camera observation</text>
+    <text class="serif small" x="386" y="170" text-anchor="middle">predicted observation</text>
+
+    <g id="real-observation" transform="translate(84,188)">
+      <rect x="0" y="0" width="170" height="125" rx="5" fill="#F4F4F2" stroke="#54595E" stroke-width="2"/>
+      <path d="M13 28 V12 H29 M141 12 H157 V28 M13 96 V112 H29 M141 112 H157 V96" class="thin"/>
+      <rect x="25" y="83" width="121" height="18" fill="#C6AE8E" stroke="#555A5E" stroke-width="1.4"/>
+      <line x1="42" y1="101" x2="42" y2="116" class="thin"/><line x1="128" y1="101" x2="128" y2="116" class="thin"/>
+      <circle cx="57" cy="41" r="12" fill="#8C9AA5" stroke="#444A50" stroke-width="2"/>
+      <path d="M57 53 L79 67 L105 49" stroke="#6E7F8E" stroke-width="11" fill="none" stroke-linecap="round"/>
+      <circle cx="79" cy="67" r="6" fill="#F0F0EE" stroke="#444A50" stroke-width="2"/>
+      <circle cx="105" cy="49" r="6" fill="#F0F0EE" stroke="#444A50" stroke-width="2"/>
+      <rect x="54" y="72" width="20" height="18" fill="#A7C4A1" stroke="#555A5E" stroke-width="1.2"/>
+      <rect x="82" y="70" width="20" height="20" fill="#D49A82" stroke="#555A5E" stroke-width="1.2"/>
+      <rect x="110" y="73" width="22" height="17" fill="#8FAAC1" stroke="#555A5E" stroke-width="1.2"/>
+    </g>
+
+    <g id="predicted-observation" transform="translate(301,188)">
+      <rect x="0" y="0" width="170" height="125" rx="5" fill="#F4F4F2" stroke="#54595E" stroke-width="2"/>
+      <path d="M13 28 V12 H29 M141 12 H157 V28 M13 96 V112 H29 M141 112 H157 V96" class="thin"/>
+      <rect x="25" y="83" width="121" height="18" fill="#C6AE8E" stroke="#555A5E" stroke-width="1.4"/>
+      <line x1="42" y1="101" x2="42" y2="116" class="thin"/><line x1="128" y1="101" x2="128" y2="116" class="thin"/>
+      <rect x="51" y="67" width="22" height="22" fill="#A7C4A1" stroke="#555A5E" stroke-width="1.2"/>
+      <rect x="79" y="55" width="23" height="34" fill="#D7B176" stroke="#555A5E" stroke-width="1.2"/>
+      <rect x="108" y="69" width="24" height="20" fill="#8FAAC1" stroke="#555A5E" stroke-width="1.2"/>
+    </g>
+
+    <g id="rms-comparison">
+      <line x1="257" y1="239" x2="295" y2="239" stroke="#666C72" stroke-width="2" marker-end="url(#arrow-gray)"/>
+      <line x1="297" y1="265" x2="259" y2="265" stroke="#666C72" stroke-width="2" marker-end="url(#arrow-gray)"/>
+    </g>
+
+    <text class="serif small" x="277" y="422" text-anchor="middle">pixel RMS · SSIM · LPIPS · latent RMS</text>
+    <g id="wrong-trigger-result">
+      <path d="M128 510 H426" stroke="#8D9195" stroke-width="1.6"/>
+      <circle cx="150" cy="541" r="15" fill="#E5E6E5" stroke="#555A5E" stroke-width="1.6"/>
+      <path d="M143 541 L148 546 L158 535" fill="none" stroke="#555A5E" stroke-width="2.2"/>
+      <text class="serif body" x="277" y="550" text-anchor="middle">Wrong trigger statistic</text>
+    </g>
+  </g>
+
+  <!-- Weak evidence connection -->
+  <g id="c1-weak-link">
+    <path d="M472 302 C510 302 515 277 547 277" fill="none" stroke="#8B8F93" stroke-width="2"
+          stroke-dasharray="7 8" marker-end="url(#arrow-gray)"/>
+    <text class="serif small" x="512" y="332" text-anchor="middle">C1: decoupled</text>
+    <text class="serif small math" x="512" y="355" text-anchor="middle">|ρₛ| ≤ 0.12</text>
+  </g>
+
+  <!-- Level 2: decision relevance -->
+  <g id="decision-relevance">
+    <circle cx="605" cy="102" r="24" fill="#D8E2EB" stroke="#587A9B" stroke-width="2"/>
+    <text class="serif label" x="605" y="111" text-anchor="middle">2</text>
+    <text class="serif label" x="645" y="111">Decision relevance</text>
+    <path d="M594 135 H1080" stroke="#6F8DAA" stroke-width="2"/>
+
+    <g id="observation-inputs">
+      <rect x="582" y="199" width="68" height="54" rx="5" fill="#F7F8F8" stroke="#587A9B" stroke-width="2"/>
+      <circle cx="616" cy="226" r="14" fill="none" stroke="#587A9B" stroke-width="2"/>
+      <rect x="596" y="210" width="40" height="29" rx="3" fill="none" stroke="#587A9B" stroke-width="2"/>
+      <circle cx="616" cy="226" r="6" fill="#D8E2EB" stroke="#587A9B" stroke-width="1.5"/>
+      <text class="serif small math" x="616" y="278" text-anchor="middle">ôₜ</text>
+
+      <rect x="582" y="322" width="68" height="54" rx="5" fill="#F7F8F8" stroke="#587A9B" stroke-width="2"/>
+      <circle cx="616" cy="349" r="14" fill="none" stroke="#587A9B" stroke-width="2"/>
+      <rect x="596" y="333" width="40" height="29" rx="3" fill="none" stroke="#587A9B" stroke-width="2"/>
+      <circle cx="616" cy="349" r="6" fill="#D8E2EB" stroke="#587A9B" stroke-width="1.5"/>
+      <text class="serif small math" x="616" y="401" text-anchor="middle">oₜ</text>
+    </g>
+
+    <path d="M650 226 C682 226 679 272 710 281" fill="none" stroke="#587A9B" stroke-width="2.2" marker-end="url(#arrow-blue)"/>
+    <path d="M650 349 C682 349 679 305 710 296" fill="none" stroke="#587A9B" stroke-width="2.2" marker-end="url(#arrow-blue)"/>
+
+    <g id="frozen-policy">
+      <circle cx="780" cy="288" r="68" fill="#EAF0F5" stroke="#587A9B" stroke-width="2.4"/>
+      <path d="M747 278 C739 250 769 238 784 253 C799 229 829 245 822 270 C842 279 832 310 810 306 C805 330 774 333 765 312 C742 321 727 296 747 278 Z"
+            fill="#C5D5E3" stroke="#587A9B" stroke-width="2"/>
+      <path d="M783 254 V314 M761 272 C776 275 776 288 765 292 M806 263 C791 273 792 289 807 296"
+            fill="none" stroke="#587A9B" stroke-width="1.7"/>
+      <circle cx="824" cy="240" r="16" fill="#FFFFFF" stroke="#587A9B" stroke-width="1.7"/>
+      <path d="M817 240 H831 M824 233 V247" stroke="#587A9B" stroke-width="1.6"/>
+      <text class="serif small" x="780" y="385" text-anchor="middle">same frozen robot policy</text>
+    </g>
+
+    <path d="M848 272 C878 249 892 232 917 224" fill="none" stroke="#587A9B" stroke-width="2.2" marker-end="url(#arrow-blue)"/>
+    <path d="M848 306 C878 329 892 346 917 354" fill="none" stroke="#587A9B" stroke-width="2.2" marker-end="url(#arrow-blue)"/>
+
+    <g id="action-comparison">
+      <text class="serif small math" x="984" y="199" text-anchor="middle">A(ôₜ)</text>
+      <rect x="925" y="214" width="118" height="31" rx="3" fill="#F8FAFB" stroke="#587A9B" stroke-width="1.8"/>
+      <rect x="929" y="218" width="18" height="23" fill="#C5D5E3"/><rect x="949" y="218" width="22" height="23" fill="#9EB7CC"/>
+      <rect x="973" y="218" width="15" height="23" fill="#D9E4EC"/><rect x="990" y="218" width="27" height="23" fill="#7899B5"/>
+      <rect x="1019" y="218" width="20" height="23" fill="#BDD0DF"/>
+
+      <text class="serif small math" x="984" y="333" text-anchor="middle">A(oₜ)</text>
+      <rect x="925" y="346" width="118" height="31" rx="3" fill="#F8FAFB" stroke="#587A9B" stroke-width="1.8"/>
+      <rect x="929" y="350" width="18" height="23" fill="#C5D5E3"/><rect x="949" y="350" width="22" height="23" fill="#9EB7CC"/>
+      <rect x="973" y="350" width="15" height="23" fill="#D9E4EC"/><rect x="990" y="350" width="27" height="23" fill="#A8BED1"/>
+      <rect x="1019" y="350" width="20" height="23" fill="#BDD0DF"/>
+
+      <line x1="1063" y1="245" x2="1063" y2="346" stroke="#587A9B" stroke-width="2"/>
+      <circle cx="1063" cy="295" r="25" fill="#FFFFFF" stroke="#587A9B" stroke-width="2"/>
+      <text class="serif label" x="1063" y="304" text-anchor="middle">Σ</text>
+      <text class="serif body math" x="1100" y="303">δₜ</text>
+    </g>
+
+    <text class="serif small" x="830" y="473" text-anchor="middle">action divergence δₜ, Equation (3)</text>
+    <g id="learnable-result">
+      <path d="M660 510 H1014" stroke="#6F8DAA" stroke-width="1.6"/>
+      <circle cx="684" cy="541" r="15" fill="#D8E2EB" stroke="#587A9B" stroke-width="1.6"/>
+      <path d="M677 541 L682 546 L692 535" fill="none" stroke="#587A9B" stroke-width="2.2"/>
+      <text class="serif body" x="830" y="550" text-anchor="middle">C2: learnable, ρₛ = 0.684</text>
+    </g>
+  </g>
+
+  <!-- Open causal gap -->
+  <g id="c3-open-gap">
+    <path d="M1115 300 H1164" stroke="#B96F55" stroke-width="3" stroke-dasharray="8 7"/>
+    <path d="M1208 300 H1248" stroke="#B96F55" stroke-width="3" stroke-dasharray="8 7" marker-end="url(#arrow-peach)"/>
+    <path d="M1176 279 L1188 292 L1179 304 L1192 317" fill="none" stroke="#B96F55" stroke-width="4"/>
+    <text class="serif small" x="1183" y="344" text-anchor="middle" fill="#9D5D49">C3: gap remains open</text>
+  </g>
+
+  <!-- Level 3: refresh value -->
+  <g id="refresh-value">
+    <circle cx="1275" cy="102" r="24" fill="#F0D8CD" stroke="#B96F55" stroke-width="2"/>
+    <text class="serif label" x="1275" y="111" text-anchor="middle">3</text>
+    <text class="serif label" x="1315" y="111">Refresh value</text>
+    <path d="M1264 135 H1525" stroke="#C78268" stroke-width="2"/>
+
+    <g id="send-suppress-switch">
+      <rect x="1255" y="241" width="68" height="93" rx="10" fill="#FAF0EC" stroke="#B96F55" stroke-width="2"/>
+      <circle cx="1281" cy="287" r="6" fill="#B96F55"/>
+      <line x1="1281" y1="287" x2="1306" y2="266" stroke="#B96F55" stroke-width="3"/>
+      <circle cx="1308" cy="265" r="5" fill="#FFFFFF" stroke="#B96F55" stroke-width="2"/>
+      <circle cx="1308" cy="310" r="5" fill="#FFFFFF" stroke="#B96F55" stroke-width="2"/>
+    </g>
+    <path d="M1323 264 C1350 225 1375 214 1405 214" fill="none" stroke="#B96F55" stroke-width="2.3" marker-end="url(#arrow-peach)"/>
+    <path d="M1323 311 C1350 350 1375 362 1405 362" fill="none" stroke="#B96F55" stroke-width="2.3" marker-end="url(#arrow-peach)"/>
+    <text class="serif small" x="1361" y="201" text-anchor="middle">Send now</text>
+    <text class="serif small" x="1361" y="390" text-anchor="middle">Suppress now</text>
+
+    <g id="unknown-send-outcome" transform="translate(1410,172)">
+      <rect x="0" y="20" width="62" height="58" rx="8" fill="#FAF0EC" stroke="#B96F55" stroke-width="2"/>
+      <circle cx="31" cy="12" r="10" fill="#F0D8CD" stroke="#B96F55" stroke-width="2"/>
+      <circle cx="18" cy="45" r="5" fill="#3F454A"/><circle cx="44" cy="45" r="5" fill="#3F454A"/>
+      <path d="M18 63 Q31 53 44 63" fill="none" stroke="#3F454A" stroke-width="2"/>
+      <text class="serif label" x="87" y="63">?</text>
+    </g>
+    <g id="unknown-suppress-outcome" transform="translate(1410,320)">
+      <rect x="0" y="20" width="62" height="58" rx="8" fill="#FAF0EC" stroke="#B96F55" stroke-width="2"/>
+      <circle cx="31" cy="12" r="10" fill="#F0D8CD" stroke="#B96F55" stroke-width="2"/>
+      <circle cx="18" cy="45" r="5" fill="#3F454A"/><circle cx="44" cy="45" r="5" fill="#3F454A"/>
+      <path d="M18 63 Q31 53 44 63" fill="none" stroke="#3F454A" stroke-width="2"/>
+      <text class="serif label" x="87" y="63">?</text>
+    </g>
+
+    <text class="serif small" x="1385" y="524" text-anchor="middle">systems objective, Equation (2)</text>
+    <path d="M1268 510 H1510" stroke="#C78268" stroke-width="1.6"/>
+    <text class="serif body" x="1389" y="550" text-anchor="middle">Not yet estimated</text>
+  </g>
+
+      <text class="serif small" x="277" y="335" text-anchor="middle">visual difference</text>
+    <text class="serif body" x="277" y="383" text-anchor="middle">Is ôₜ visually close to oₜ?</text>
+    <text class="serif tiny" x="512" y="245" text-anchor="middle">weak alignment</text>
+    <text class="serif body" x="830" y="435" text-anchor="middle">Does ôₜ change the next action chunk?</text>
+    <text class="serif tiny" x="1444" y="277" text-anchor="middle">episode outcome if sent?</text>
+    <text class="serif tiny" x="1444" y="425" text-anchor="middle">episode outcome if suppressed?</text>
+    <text class="serif body" x="1385" y="468" text-anchor="middle">Does sending now change</text>
+    <text class="serif body" x="1385" y="493" text-anchor="middle">episode success?</text>
+</svg>
