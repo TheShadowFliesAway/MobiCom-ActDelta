@@ -887,6 +887,13 @@ target itself fails. The next mechanism should therefore predict outcome
 impact, uncertainty, recovery opportunity, or silence risk rather than merely
 improve $\dth$.
 
+The oracle bounds the target, not the family. Observing $\dt$ exactly rules
+out every explanation that reduces to estimating it better: head capacity,
+calibration, seed, and regression tail. It does not rule out policy-aware
+scheduling in general, because $\dt$ is one policy-aware signal---the
+immediate displacement of the next chunk under substitution. A signal scoring that substitution by its effect on the rest of the episode
+would also be policy-aware, and none is tested here.
+
 \begin{figure}[t]
 \centering
 \includegraphics[width=\columnwidth]{fig8_effects.pdf}
@@ -918,13 +925,12 @@ adaptive from content-blind triggering; resolving the latter would need about
 a failure to separate rather than as a recovered fraction of a gap, which is
 the same standard applied to the learned-versus-periodic comparison above.
 
-We report this explicitly because it bounds the claim in both directions. The
-experiment cannot certify that the learned trigger is equal to periodic
-sampling, and it cannot certify a small advantage either. What it does
-establish is that a decision-relevance trigger does not produce an effect
-large enough to be visible at the scale at which such systems are normally
-evaluated---and the oracle arm shows that a larger sample would not rescue
-the target, because the oracle fails at the same scale with a perfect
+We report this explicitly because it bounds the claim in both directions: the
+experiment can certify neither equality with periodic sampling nor a small
+advantage. What it does establish is that a decision-relevance trigger
+produces no effect large enough to be visible at the scale at which such
+systems are normally evaluated---and the oracle shows a larger sample would
+not rescue the target, because it fails at the same scale with a perfect
 estimator.
 
 \begin{figure}[t]
@@ -1076,11 +1082,29 @@ These independent results require rate-matched periodic comparison, realized
 budgets, and an oracle before enlarging the estimator.
 
 ActDelta can retain prediction and resynchronization, but should replace
-next-action displacement with episode-level refresh value, learned through
-matched outcome supervision, risk-sensitive relevance/age/uncertainty, or
-constrained send-control. Periodic, Bernoulli, and oracle controls remain
-essential. This is a systems result because equal-resource feedback-loop tests
+next-action displacement with episode-level refresh value. Periodic,
+Bernoulli, and oracle controls remain essential. This is a systems result because equal-resource feedback-loop tests
 reveal where locally successful components fail to compose (\cref{fig:matrix}).
+
+The redirection is specific enough to act on. Instantaneous divergence answers
+whether this frame would change the next chunk, but \cref{fig:target} separates
+outcomes on age instead, and \cref{fig:agetail} shows age is what a threshold
+scheduler actually controls. A
+refresh-value target would therefore have to be supervised by outcomes rather
+than by displacement: label a suppression decision by the success of the
+episode that followed it under a fixed initial state, so that the label
+carries the consequence the displacement label discards. That supervision is expensive---one label costs a full rollout, not one paired
+policy call---which is why the displacement surrogate is attractive and, on
+this evidence, why it is not enough.
+
+Two cheaper substitutes are worth testing before paying that cost. The first
+keeps a per-step signal but schedules against predicted age risk instead of
+predicted displacement; periodic sampling already does this implicitly, and it
+is the arm nothing here beat. The second makes the scheduler
+uncertainty-aware, sending when the predictor's confidence in its own rollout
+collapses rather than when its output moves. Both stay inside the robot-side budget of \cref{sec:comm} and can be evaluated
+with the rate-matched protocol and oracle control used here. That protocol,
+rather than the trigger it rejected, is what we expect to outlast this result.
 
 % ===================================================================
 \section{Communication and On-Device Cost}
@@ -1091,6 +1115,14 @@ change-focused transmissions reduce prediction gain. \claimTBD{At 25\%, the
 learned one-second P95 is \burstRatio$\times$ periodic.} One 256$\times$256 view
 is below 1\,Mb/s, but multiple robots can exceed shared capacity
 (\cref{fig:uplink}).
+
+At that scale burstiness matters more than the mean. A fleet sharing an access link is provisioned against the aggregate peak, not
+the average, so a scheduler that lowers mean demand while concentrating its
+sends buys less headroom than its send fraction suggests---and
+\cref{fig:agetail} shows that concentration is intrinsic to threshold
+triggering. The age distribution therefore belongs in the accounting alongside
+the send fraction: the clustering that exposes the policy to long silences is
+what the link must absorb.
 
 \begin{figure}[t]
 \centering
@@ -1116,14 +1148,45 @@ cheaper than remote policy inference.}
 % ===================================================================
 \section{Related Work}
 
-Event-triggered control sends on estimate divergence
-\cite{arzen1999pid,astrom2002riemann,heemels2012intro,mamduhi2017error,miskowicz2006sod,miskowicz2007asymptotic,molin2013optimality,nguyen2008area,suh2007linear,tabuada2007event,nguyen2009packet}; semantic and generative systems optimize utility or model reliability
-\cite{bourtsoulatze2019djscc,gunduz2023beyond,kountouris2021semantics,li2025goal,yuan2025taskoriented,chen2025genvid,jiang2025semworld,liu2025residtok,wang2026worldtwin,yang2024agentdriven,yin2025genvideo}.
-Video and robot serving optimize filtering, inference, and representation cost
-\cite{chen2015glimpse,du2020serverdriven,li2020reducto,zhang2018awstream,cao2026edgeserving,dai2025actionflow,julg2026vlagents,li2026oxygen,peng2026latency,agouzoul2026async,black2025realtime,gao2025compressorvla,kim2026learnedcomp,tang2025vlash,xu2025vlacache,zhu2026dinolink},
-but not frame choice. ActDelta uses action-conditioned prediction
-\cite{bruce2024genie,hafner2023dreamerv3,ma2026pilworld,tang2026onetoken,wu2024ivideogpt}
-to ask \emph{when} to refresh inside the policy loop.
+\paragraph{Event-triggered control.}
+Event- and self-triggered control transmit when a local estimate of the plant
+drifts past a threshold, and the classical results bound stability and average
+rate for known
+dynamics~\cite{astrom2002riemann,tabuada2007event,heemels2012intro,molin2013optimality};
+practical variants threshold error area, level crossings, or loss
+\cite{arzen1999pid,miskowicz2006sod,miskowicz2007asymptotic,nguyen2008area,nguyen2009packet,suh2007linear,mamduhi2017error}.
+ActDelta evaluates the same mechanism but cannot inherit the guarantee: those
+results assume a controller whose response to estimate error is known in
+closed form. Here it is a frozen diffusion policy whose sensitivity to a
+substituted observation had to be measured (\cref{eq:div}), and \cref{sec:fidelity} shows no distance we tested orders it.
+
+\paragraph{Semantic and goal-oriented communication.}
+Semantic systems replace bit fidelity with a task-utility objective, either by
+learning a joint source--channel code or by scoring reconstructions with a
+downstream
+model~\cite{bourtsoulatze2019djscc,gunduz2023beyond,kountouris2021semantics,li2025goal,yuan2025taskoriented};
+generative variants synthesize the receiver's input outright
+\cite{chen2025genvid,jiang2025semworld,liu2025residtok,wang2026worldtwin,yang2024agentdriven,yin2025genvideo}.
+\textsf{C1} is a measurement in that programme's own terms: the utility such
+systems optimize is a per-sample score, and we find that no per-sample
+score---learned or latent---ranks what a closed loop pays for. \textsf{C3} adds that replacing the score is not sufficient either: the loop's
+cost accumulates over an episode, not at the frame.
+
+\paragraph{Serving systems for video and robot policies.}
+Video analytics pipelines filter frames, tune configurations, or split
+inference to spend bandwidth where accuracy is at
+risk~\cite{chen2015glimpse,du2020serverdriven,li2020reducto,zhang2018awstream};
+robot-serving work optimizes pipelining, caching, compression, and edge
+collaboration for
+VLA policies~\cite{cao2026edgeserving,dai2025actionflow,julg2026vlagents,li2026oxygen,peng2026latency,agouzoul2026async,black2025realtime,gao2025compressorvla,kim2026learnedcomp,tang2025vlash,xu2025vlacache,zhu2026dinolink}.
+Both decide \emph{how} to send a frame; the question here is whether to send
+one at all. It is harder in the same way \cref{eq:obj} is: a suppressed frame
+changes the executed action and therefore the observations the robot will
+later request, a coupling no per-frame cost model represents. The receiver differs too: in video
+analytics it is passive, whereas here it acts on what it receives, several
+steps before the cost of the drop appears. ActDelta uses action-conditioned
+prediction~\cite{bruce2024genie,hafner2023dreamerv3,ma2026pilworld,tang2026onetoken,wu2024ivideogpt}
+to ask \emph{when} to refresh inside that loop.
 
 % ===================================================================
 \section{Scope and Limitations}
