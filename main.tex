@@ -71,7 +71,9 @@
 
 \begin{document}
 
-\title[ActDelta: Decision Relevance Is Learnable Offline but Does Not Yet Beat Periodic Sampling Online]%
+% Short form for the running head. The full title collides with the venue
+% string that \acmConference puts on the same line of odd pages.
+\title[ActDelta: Decision Relevance Is Learnable Offline]%
       {ActDelta: Decision Relevance Is Learnable Offline\\
        but Does Not Yet Beat Periodic Sampling Online}
 \author{Anonymous Author(s)}
@@ -899,11 +901,16 @@ target itself fails. The next mechanism should therefore predict outcome
 impact, uncertainty, recovery opportunity, or silence risk rather than merely
 improve $\dth$.
 
-The oracle bounds the target, not the family. Observing $\dt$ exactly rules out
-every explanation that reduces to estimating it better: capacity, calibration,
-seed, and regression tail. It does not rule out policy-aware scheduling, because $\dt$ is one such
-signal---the immediate displacement of the next chunk. Scoring the same substitution by its effect on the episode as a whole would
-also be policy-aware, and no arm in this study does it.
+The oracle bounds the target, not the family. Observing $\dt$ exactly rules
+out every explanation that reduces to estimating it better: capacity,
+calibration, seed, and tail. It does not rule out policy-aware scheduling, because $\dt$ is one such
+signal---the immediate displacement of the next chunk. Scoring that substitution by its effect on the whole episode would also be
+policy-aware, and no arm here does it.
+
+The gates differ in kind, not only in size. Gate~A was exploratory, its tasks
+chosen after inspecting the pilot; Gate~B's panel, budgets and statistics were
+registered beforehand. Gate~A's 25-point margin is therefore reported as a task-specific
+opportunity rather than an effect.
 
 \begin{figure}[t]
 \centering
@@ -1027,8 +1034,8 @@ criterion, is what bounds the worst case: with it active the mean age is
 \ageMeanLearned{} steps against the coin's \ageMeanBern, and with it removed
 the same trigger runs to \ageMeanNoCap. This is what the mean send rate hides: two schedulers can spend the same
 budget and expose the policy to very different worst-case staleness. Matching the traffic's first moment is necessary for a fair comparison but
-not sufficient to make the arms equivalent.
-
+not sufficient to make the arms equivalent. Rate matching equalises the link,
+not what the policy sees.
 \begin{figure}[t]
 \centering
 \includegraphics[width=\columnwidth]{fig10_age_tail.pdf}
@@ -1105,11 +1112,11 @@ label carries the consequence displacement discards. That is expensive---one lab
 call---which is why the surrogate is attractive and why it fails.
 
 Two cheaper substitutes are worth testing first. One schedules against
-predicted age risk rather than displacement; periodic sampling already does
-this implicitly, and it is the arm nothing here beat. The other sends when the predictor's confidence in its own rollout collapses
-rather than when its output moves. Both fit the budget of \cref{sec:comm} and
-the protocol used here---which, rather than the trigger it rejected, is what we
-expect to outlast this result.
+predicted age risk rather than displacement, as periodic sampling implicitly
+does---the arm nothing here beat. The other sends when the predictor's confidence in its own rollout collapses
+rather than when its output moves. Both fit the budget of \cref{sec:comm} and the protocol used here---which,
+rather than the trigger it rejected, is the part of this study we expect to
+last.
 
 % ===================================================================
 \section{Communication and On-Device Cost}
@@ -1119,16 +1126,7 @@ Under fixed H.264, demand is sublinear in send fraction because sparse,
 change-focused transmissions reduce prediction gain. \claimTBD{At 25\%, the
 learned one-second P95 is \burstRatio$\times$ periodic.} One 256$\times$256 view
 is below 1\,Mb/s, but multiple robots can exceed shared capacity
-(\cref{fig:uplink}).
-
-At that scale burstiness matters more than the mean. A fleet sharing an
-access link is provisioned against the aggregate peak, not the average, so a
-scheduler that lowers mean demand while concentrating its sends buys less
-headroom than its send fraction suggests---and \cref{fig:agetail} shows that
-concentration is intrinsic to threshold triggering rather than an artifact of
-this trigger. The clustering that exposes the policy to long silences is what
-the link must absorb.
-
+(\cref{fig:uplink}), which is provisioned against aggregate peak, not mean.
 \begin{figure}[t]
 \centering
 \includegraphics[width=\columnwidth]{fig13_uplink.pdf}
@@ -1182,7 +1180,7 @@ Video analytics pipelines filter frames, tune configurations, or split
 inference to spend bandwidth where accuracy is at
 risk~\cite{chen2015glimpse,du2020serverdriven,li2020reducto,zhang2018awstream};
 robot-serving work optimizes pipelining, caching, compression, and edge
-collaboration for
+collaboration in
 VLA policies~\cite{cao2026edgeserving,dai2025actionflow,julg2026vlagents,li2026oxygen,peng2026latency,agouzoul2026async,black2025realtime,gao2025compressorvla,kim2026learnedcomp,tang2025vlash,xu2025vlacache,zhu2026dinolink}.
 Both decide \emph{how} to send a frame; the question here is whether to send
 one at all. It is harder in the same way \cref{eq:obj} is: a suppressed frame
