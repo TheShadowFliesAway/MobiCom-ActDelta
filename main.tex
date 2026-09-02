@@ -56,10 +56,11 @@
 
 \begin{document}
 
-\title{ActDelta: Decision Relevance Is Learnable Offline but Does Not Yet
-       Beat Periodic Sampling Online}
-\subtitle{A Measurement Study of Predictive Uplink Triggering for
-          Edge-Offloaded Robot Policies}
+\title[ActDelta: Decision Relevance Is Learnable Offline but Does Not Yet Beat Periodic Sampling Online]%
+      {ActDelta: Decision Relevance Is Learnable Offline\\
+       but Does Not Yet Beat Periodic Sampling Online}
+\subtitle{A Measurement Study of Predictive Uplink Triggering\\
+          for Edge-Offloaded Robot Policies}
 
 \author{Anonymous Author(s)}
 
@@ -190,7 +191,7 @@ relevance, rate, spacing, and estimation error, respectively
 (\cref{fig:matrix}). All act on time and can compose with spatial codecs.
 
 % ===================================================================
-\section{Problem Formulation and Claim Structure}
+\section{Problem Formulation and Claims}
 
 The robot produces an agent-view observation $o_t$ at control step $t$. The
 edge server either receives that observation or advances a shared predictor
@@ -284,7 +285,7 @@ separation.
 \label{fig:pipeline}
 \end{figure}
 
-\subsection{Environment, Policy, and Observation Model}
+\subsection{Environment and Observation Model}
 All experiments use LIBERO~\cite{liu2023libero}: Spatial, Object, Goal, and
 LIBERO-10, with ten tasks per suite. We run one frozen official $\pi_{0.5}$
 LIBERO checkpoint through OpenPI at a pinned revision. Paired policy
@@ -416,8 +417,8 @@ result warns that image appearance and one-step accuracy can select the wrong
 predictor for multi-step action-conditioned use.
 
 \begin{table}[t]
-\caption{Only removing the image objective improves action-conditioned rollout
-at the horizons used by the trigger.}
+\caption{Only removing the image objective improves rollout at the horizons
+the trigger uses.}
 \label{tab:wm}
 \small
 \begin{tabular}{p{0.30\columnwidth}p{0.44\columnwidth}l}
@@ -594,7 +595,7 @@ boundary does not affect the no-loss matched-budget comparison, but it
 prevents the current prototype from being presented as a complete transport.
 
 % ===================================================================
-\section{Fidelity Does Not Rank Decision Relevance}
+\section{Fidelity Does Not Rank Relevance}
 \label{sec:fidelity}
 
 The formal protocol contains four suites, ten tasks, seven horizons
@@ -991,7 +992,7 @@ explanations, leaving the scheduling target as the surviving diagnosis.}
 \label{fig:elim}
 \end{figure}
 
-\subsection{Scheduling Changes the Age Distribution}
+\subsection{Scheduling Changes the Age Tail}
 Periodic sampling bounds the maximum silence interval by construction,
 whereas threshold triggering concentrates transmissions around large
 predicted changes and leaves longer gaps elsewhere. \Cref{fig:agetail} logs
@@ -1033,7 +1034,7 @@ tail; the silence cap only truncates it.}
 \label{fig:agetail}
 \end{figure}
 
-\subsection{The Target Does Not Track the Outcome}
+\subsection{The Target Does Not Track Success}
 If action divergence were the right scheduling target, episodes containing
 large suppressed-step divergence should fail more often. We test this
 directly by binning the 160 blind-test episodes into quintiles on the mean
@@ -1060,11 +1061,11 @@ oracle for that signal cannot win.
 \centering
 \includegraphics[width=.90\columnwidth]{fig11_target_vs_outcome.pdf}
 \caption{\synthcap Observation age separates outcomes more sharply than action
-divergence ($n=32$ episodes per bin).}
+divergence ($n=32$ per bin).}
 \label{fig:target}
 \end{figure}
 
-\subsection{The Recovery Channel Absorbs the Cost}
+\subsection{Recovery Absorbs the Cost}
 \label{sec:recovery}
 Current wrist view and proprioception let the policy recover from stale agent
 views. Freezing and then removing wrist input tests this channel at 25\%:
@@ -1096,7 +1097,7 @@ essential. This is a systems result because equal-resource feedback-loop tests
 reveal where locally successful components fail to compose (\cref{fig:matrix}).
 
 % ===================================================================
-\section{Communication Accounting and On-Device Cost}
+\section{Communication and On-Device Cost}
 \label{sec:comm}
 
 Under fixed H.264, demand is sublinear in send fraction because sparse,
