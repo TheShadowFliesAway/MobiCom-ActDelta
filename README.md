@@ -1,7 +1,7 @@
 # ActDelta — revised paper package
 
-Read `AUDIT.md` first. It lists every numerical problem found in the draft,
-what was changed, and what was deliberately left unchanged.
+Read `PLACEHOLDERS.md` first. It lists which numbers are measured, which are
+still estimates, and what each estimate is anchored to.
 
 ## Build
 
@@ -32,8 +32,16 @@ figs/make_figs.py       12 figures + numbers_auto.tex
 figs/numbers_auto.tex   generated macros; \input by Table 2 and §5 so the
                         table and the prose cannot drift apart
 figs/data_orig.py       your uploaded file, unmodified, for diffing
+figs/Figure{1_v2,2,3}.pdf
+                        hand-drawn schematics (Figs. 1-3), included by name
+                        via \graphicspath{{figs/}}
 _offline/acmart.cls     fallback class. NOT for submission.
 ```
+
+Everything not needed to build the paper — reference PDFs, page renders, the
+unused TikZ figure set, Figma/SVG exports — lives outside the repo in
+`../ActDelta-archive/`. LaTeX build artifacts are gitignored; `make clean`
+removes them.
 
 ## Placeholder data
 
