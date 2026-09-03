@@ -79,20 +79,28 @@
 \author{Anonymous Author(s)}
 
 \begin{abstract}
-Edge-offloaded robot policies incur recurring camera-uplink cost. We test
-\emph{decision relevance}---the action change caused by replacing a true
-observation with its prediction---as an alternative to reconstruction
-fidelity. Across four LIBERO suites, four fidelity metrics correlate weakly
-with action divergence (pooled Spearman $-0.117$ to $-0.028$), while a frozen
-latent head reaches Spearman $0.684$ and AUROC $0.833$. This offline gain does
-not transfer online. Against rate-matched periodic sampling, the learned
-trigger changes success by $+3.13$\pp{} at a 25\% budget and $-3.75$\pp{} at
-50\%, with both intervals including zero; a true-divergence oracle also fails,
-and \claimTBD{Bernoulli sampling is not separated from the learned trigger
-across the sweep.} Threshold triggering instead creates a heavier
-observation-age tail, and outcomes track age more strongly than instantaneous
-divergence. Decision relevance is learnable but insufficient for closed-loop
-scheduling.
+Edge-offloaded robot policies pay a recurring camera-uplink cost on every
+control step, and compression reduces the bytes without answering which
+observations are worth sending at all. We test \emph{decision relevance}---the
+action change caused by replacing a true observation with its prediction---as
+an alternative to reconstruction fidelity, and evaluate it in closed loop
+rather than offline only.
+
+Across four LIBERO suites and seven horizons, four fidelity metrics correlate
+weakly with action divergence on 1{,}400 held-out pairs (pooled Spearman
+$-0.117$ to $-0.028$) and disagree with its median-threshold decision on
+48.9--53.9\% of frames, while a frozen latent head predicting divergence from
+robot-side state alone reaches Spearman $0.684$ and AUROC $0.833$ with no
+online policy call. This offline gain does not transfer. Against rate-matched
+periodic sampling in an 800-cell blind test, the learned trigger changes
+success by $+3.13$\pp{} at a 25\% budget and $-3.75$\pp{} at 50\%, with both
+intervals covering zero; a pre-registered oracle handed the true divergence
+fails at the same scale, so the fault lies in the target rather than the
+estimator. \claimTBD{Bernoulli sampling is not separated from the learned
+trigger across the sweep.} Threshold triggering instead creates a heavier
+observation-age tail, and episode outcomes separate on age far more sharply
+than on instantaneous divergence. Decision relevance is learnable offline but
+is the wrong quantity to schedule on.
 \end{abstract}
 
 \begin{CCSXML}
@@ -117,42 +125,90 @@ measurement, negative results}
 % ===================================================================
 \section{Introduction}
 
-Generalist robot policies remain difficult to host on constrained robots
-\cite{black2024pi0,kim2024openvla,pi2025pi05}. Edge deployments therefore
-upload observations and return future-action chunks while the previous chunk
-executes~\cite{cao2026edgeserving,dai2025actionflow,julg2026vlagents,li2026oxygen,peng2026latency}.
-Compression reduces bytes but not the question of which observations merit a
-shared, variable uplink (\cref{fig:system}).
+Generalist robot policies are large. A contemporary vision-language-action
+model carries billions of parameters and expects several camera views per
+control step, which is more than a mobile manipulator can
+host~\cite{black2024pi0,kim2024openvla,pi2025pi05}. The standard deployment
+therefore splits the loop across the network: the robot uploads an
+observation, an edge server runs the policy, and a chunk of future actions
+returns while the previous chunk is still
+executing~\cite{cao2026edgeserving,dai2025actionflow,julg2026vlagents,li2026oxygen,peng2026latency}.
+The asymmetry is severe: the downlink carries a few hundred numbers, the
+uplink carries images on every step for the length of the episode.
+Compression shrinks each frame but does not answer a prior question---which
+frames are worth sending at all (\cref{fig:system})?
 
-Event-triggered communication sends when receiver-side estimation error grows
-\cite{jiang2025semworld,miskowicz2006sod,nguyen2008area,suh2007linear}. A robot
-policy instead consumes observations to act: large visual error may preserve
-an action, while a small change may alter contact. We therefore learn offline
-the action-chunk divergence between true and predicted observations, estimate
-it from local world-model latents, and transmit when it is high.
+Networked control has a standard answer. Event-triggered and send-on-delta
+schemes hold a shared predictor at both ends and transmit only once the
+receiver's estimate has drifted too
+far~\cite{jiang2025semworld,miskowicz2006sod,nguyen2008area,suh2007linear}.
+The rule is fidelity-centered: send when reconstruction error grows. That is
+the right rule when the receiver is an estimator, because estimate error is
+what an estimator is judged on. A robot policy is not an estimator. It
+consumes an observation in order to act, and its action is a sharply
+non-linear function of the frame: a large visual change can leave the next
+action chunk untouched, while a small one---a gripper closing on a contact
+edge---can change it completely. Whether reconstruction error even correlates
+with the change that matters is an empirical question, and it has not been
+measured for a modern policy.
 
-The experiments reverse the expected success story. First, on 1{,}400 frozen
-test pairs covering four LIBERO suites and seven horizons, pixel RMS, SSIM
-error, LPIPS, and world-model latent distance correlate weakly with action
-divergence and disagree with its median-threshold decision on 48.9--53.9\% of
-frames. Second, decision relevance itself is learnable: a head that sees
-frozen latent features but no suite, task, or horizon identifier reaches test
-Spearman $0.684$ (95\% CI $[0.637, 0.726]$), AUROC $0.833$, and AUPRC
-$0.833$. Third, this offline skill does not establish a closed-loop
-advantage. At matched target budgets, the learned trigger differs from
-periodic sampling by $+3.13$\pp{} (CI $[-1.25, +7.50]$) at 25\% and
-$-3.75$\pp{} (CI $[-8.13, 0]$) at 50\%, and neither an oracle trigger that observes true divergence nor a full budget
-sweep moves the learned arm outside the control's confidence band.
+We measure it and then act on the answer. \emph{Decision relevance} is the
+action change caused by substituting a predicted observation for the true
+one: run the frozen policy twice under common noise, once on each, and take
+the RMS difference of the emitted action chunks. This is a property of the
+policy, not of the image. ActDelta learns it offline from robot-side state
+alone---a small action-conditioned world model supplies the latent, and a
+frozen head maps that latent to a predicted divergence---so the trigger costs
+no policy call on the robot and fits inside one control period.
 
-Two controls diagnose the gap. \claimTBD{Content-blind Bernoulli sampling tracks the learned arm within
-resolution while both beat a
-fidelity trigger,} and threshold triggering has a heavier age tail than
-periodic sampling at equal mean rate. The loop rewards refresh spacing over frame identity.
+The test is deliberately hostile to our own hypothesis. A scheduler that
+sends more frames will usually succeed more often, so every comparison is
+made against periodic sampling at a \emph{matched realized send rate} rather
+than at a matched threshold. Thresholds, code, and statistics are frozen
+before the closed-loop runs, and initial states are shared across arms so the
+comparison is paired. Two controls bracket the result: an unbiased coin at
+the same rate, which removes content awareness but keeps the budget, and an
+oracle handed the true divergence at run time, which removes estimator error
+entirely. The oracle is what turns a negative result into a diagnosis rather than a
+dead end.
 
-We contribute a multi-suite fidelity measurement, a frozen-latent relevance
-predictor, a matched-rate closed-loop test with an oracle, and age-tail and
-outcome diagnostics. Together they show that per-frame relevance ranking and
-transmission scheduling are different problems.
+The experiments reverse the expected success story. First, fidelity does not
+rank relevance. On 1{,}400 held-out pairs covering four LIBERO suites and
+seven horizons, pixel RMS, SSIM error, LPIPS, and world-model latent distance
+all correlate weakly with action divergence (pooled Spearman $-0.117$ to
+$-0.028$) and disagree with its median-threshold decision on 48.9--53.9\% of
+frames. Substituting a learned perceptual distance for a pixel one does not
+help, so this is not a matter of picking a better image metric.
+
+Second, decision relevance itself is learnable. A head that sees frozen
+latent features but no suite, task, or horizon identifier reaches test
+Spearman $0.684$ (95\% CI $[0.637, 0.726]$), AUROC $0.833$, and AUPRC $0.833$
+on episode-disjoint data. The quantity fidelity fails to rank is predictable
+from what the robot already holds.
+
+Third, that offline skill does not become a closed-loop advantage. At matched
+budgets the learned trigger differs from periodic sampling by $+3.13$\pp{}
+(CI $[-1.25, +7.50]$) at 25\% and $-3.75$\pp{} (CI $[-8.13, 0]$) at 50\%.
+Neither the oracle nor a full budget sweep moves the learned arm outside the
+control's confidence band, and \claimTBD{content-blind Bernoulli sampling
+tracks it within resolution while both beat a fidelity trigger.} Because the
+oracle sees the exact quantity the head was trained to predict and still
+fails, the estimator is not the bottleneck; the target is.
+
+Two diagnostics indicate what the right target looks like. Threshold
+triggering has a heavier observation-age tail than periodic sampling at equal
+mean rate, because divergence is clustered in time and a trigger that chases
+it bunches its sends and pays with longer silences elsewhere. And when the
+same episodes are binned on mean divergence and on mean observation age, age
+separates outcomes far more sharply. The loop rewards refresh spacing over
+frame identity.
+
+We contribute a multi-suite fidelity--relevance measurement, a frozen-latent
+relevance predictor needing no online policy call, a rate-matched closed-loop
+test with pre-registered gates and an oracle control, and diagnostics that
+locate the failure in the scheduling target rather than the estimator.
+Per-frame relevance ranking and transmission scheduling are different
+problems, and a transmitter optimizing the first can lose on the second.
 
 % ------------------------------------------------------------ FIGURE 1
 \begin{figure}[t]
@@ -163,7 +219,7 @@ transmission scheduling are different problems.
 \end{figure}
 
 % ===================================================================
-\section{Background and Motivation}
+\section{Background and Related Work}
 
 \paragraph{Edge-offloaded robot policies.}
 A chunked vision-language-action policy maps camera observations,
@@ -172,23 +228,55 @@ actions~\cite{black2024pi0,chi2023diffusion,zhao2023aloha}. In an
 asynchronous deployment, the robot uploads an observation, receives an action
 chunk, and overlaps execution with the next request. The uplink carries
 high-dimensional images, whereas the downlink carries compact action vectors.
-Remote-policy systems optimize compression, pipelining, caching, and edge
-collaboration~\cite{cao2026edgeserving,dai2025actionflow,julg2026vlagents,li2026oxygen,peng2026latency},
-but rarely decide whether a frame is needed. Because cellular capacity varies
+Because cellular capacity varies
 \cite{narayanan2020lumos5g,narayanan2021variegated,raca2020beyond}, we study
 visual-budget allocation rather than end-to-end throughput.
 
-\paragraph{Predictive transmission.}
-Send-on-delta and event-triggered control suppress updates while a shared
-estimate remains sufficiently
-accurate~\cite{arzen1999pid,astrom2002riemann,heemels2012intro,miskowicz2006sod,miskowicz2007asymptotic,tabuada2007event}.
-Recent semantic-communication systems extend this idea with learned
+\paragraph{Event-triggered transmission.}
+Event- and self-triggered control transmit when a local estimate drifts past a
+threshold; classical results bound stability and average rate for known
+dynamics~\cite{astrom2002riemann,tabuada2007event,heemels2012intro,molin2013optimality};
+practical variants threshold error area, level crossings, or loss
+\cite{arzen1999pid,miskowicz2006sod,miskowicz2007asymptotic,nguyen2008area,nguyen2009packet,suh2007linear,mamduhi2017error}.
+ActDelta evaluates the same mechanism but cannot inherit the guarantee: those
+results assume a controller whose response to estimate error is known in closed
+form. Here it is a frozen diffusion policy whose sensitivity had to be measured
+(\cref{eq:div}), and \cref{sec:fidelity} shows no distance we tested orders it.
+Recent semantic-communication systems extend the idea with learned
 predictors or generative world
-models~\cite{jiang2025semworld,wang2026worldtwin,yang2024agentdriven,yin2025genvideo}.
-Although their predictors differ, the triggering rule remains
-fidelity-centered: transmit when observation error grows. This transfers an
-estimator objective to a policy receiver without asking whether observation
-error predicts action change.
+models~\cite{jiang2025semworld,wang2026worldtwin,yang2024agentdriven,yin2025genvideo},
+but their triggering rule stays fidelity-centered: transmit when observation
+error grows.
+
+\paragraph{Semantic and goal-oriented communication.}
+Semantic systems replace bit fidelity with a task-utility objective, either by
+learning a joint source--channel code or by scoring reconstructions with a
+downstream
+model~\cite{bourtsoulatze2019djscc,gunduz2023beyond,kountouris2021semantics,li2025goal,yuan2025taskoriented};
+generative variants synthesize the receiver's input outright
+\cite{chen2025genvid,jiang2025semworld,liu2025residtok,wang2026worldtwin,yang2024agentdriven,yin2025genvideo}.
+\textsf{C1} is a measurement in that programme's own terms: the utility such
+systems optimize is a per-sample score, and no per-sample score---learned or
+latent---ranks what a closed loop pays for. \textsf{C3} adds that replacing the
+score is not sufficient: the loop's cost accumulates over an episode, not at
+the frame.
+
+\paragraph{Serving systems for video and robot policies.}
+Video analytics pipelines filter frames, tune configurations, or split
+inference to spend bandwidth where accuracy is at
+risk~\cite{chen2015glimpse,du2020serverdriven,li2020reducto,zhang2018awstream};
+robot-serving work optimizes pipelining, caching, compression, and edge
+collaboration in
+VLA policies~\cite{cao2026edgeserving,dai2025actionflow,julg2026vlagents,li2026oxygen,peng2026latency,agouzoul2026async,black2025realtime,gao2025compressorvla,kim2026learnedcomp,tang2025vlash,xu2025vlacache,zhu2026dinolink}.
+Both decide \emph{how} to send a frame; the question here is whether to send
+one at all. It is harder in the same way \cref{eq:obj} is: a suppressed frame
+changes the executed action and therefore the observations the robot will later
+request. The receiver differs too---in video analytics it is passive, whereas here it
+acts on what it receives. ActDelta uses action-conditioned
+prediction~\cite{bruce2024genie,hafner2023dreamerv3,ma2026pilworld,tang2026onetoken,wu2024ivideogpt}
+to ask \emph{when} to refresh inside that loop.
+
+% ===================================================================
 
 \paragraph{Compute asymmetry and the proposed correction.}
 The frozen policy has billions of parameters while the predictor has 13.5M
@@ -201,7 +289,6 @@ Always-send and fixed horizons define the frontier. Fidelity, learned,
 periodic, Bernoulli, and oracle arms isolate trigger statistic, deployable
 relevance, rate, spacing, and estimation error, respectively
 (\cref{fig:matrix}). All act on time and can compose with spatial codecs.
-
 % ===================================================================
 \section{Problem Formulation and Claims}
 
@@ -401,29 +488,25 @@ grid their episode count can emit, that both binnings in
 \cref{fig:target} partition the same episodes, and that age distributions integrate to the send fraction.
 
 % ===================================================================
-\section{Selecting the Shared Predictor}
+\subsection{Selecting the Shared Predictor}
 
 The predictor is measurement infrastructure rather than an architectural
 contribution, so we report only the choices that affect the conclusions. An
 initial twenty-episode gate exposed an action-blind solution: shuffling the
-action sequence increased latent MSE by only 3.85\%. Freezing the encoder and
-decoder and training a horizon-weighted rollout objective increased action
-sensitivity to 11.0\% and improved five-step error by 46.3\%, establishing
-that the pipeline could learn action-conditioned dynamics. Because this gate
-uses twenty episodes, it establishes feasibility rather than generalization.
+action sequence raised latent MSE by only 3.85\%. Freezing the encoder and
+decoder and training a horizon-weighted rollout objective raised action
+sensitivity to 11.0\% and improved five-step error by 46.3\%.
 
-Full four-suite selection compared three variants (\cref{tab:wm}). Joint
-image and rollout objectives improved one-step reconstruction while worsening
-five-step rollout by 33--99\% and weakening action dependence. We therefore
-adopt the variant trained only on \wmWindows{} randomized latent-rollout
-windows. Its improvement grows from \wmImpOne\% at $h=1$ to \wmImpTwelve\% at
-$h=12$ (\cref{fig:wm}), although five-step gains remain heterogeneous across
-suites (4.3--33.4\%). At the longest horizon, the shuffled-to-true ratio
-rises from 1.088 to 1.114 and the zero-to-true ratio from 1.036 to 1.087: the
-adopted model improves rollout while becoming more dependent on the executed
-actions, which is the property the counterfactual trigger requires. The
-result warns that image appearance and one-step accuracy can select the wrong
-predictor for multi-step action-conditioned use.
+Full four-suite selection compared three variants (\cref{tab:wm}). Joint image
+and rollout objectives improved one-step reconstruction while worsening
+five-step rollout by 33--99\% and weakening action dependence, so we adopt the
+variant trained only on \wmWindows{} randomized latent-rollout windows. Its
+improvement grows from \wmImpOne\% at $h=1$ to \wmImpTwelve\% at $h=12$
+(\cref{fig:wm}), and at the longest horizon the shuffled-to-true ratio rises
+from 1.088 to 1.114: the adopted model improves rollout while becoming more
+dependent on the executed actions, which is what the counterfactual trigger
+requires. Image appearance and one-step accuracy select the wrong predictor
+for multi-step action-conditioned use.
 
 \begin{table}[t]
 \caption{Only removing the image objective improves rollout at the horizons
@@ -454,6 +537,32 @@ $h12$ $-\wmImpTwelve$\%; \wmWindows{} windows & \textbf{adopt} \\
 horizon; one-step reconstruction selects the wrong predictor.}
 \label{fig:wm}
 \end{figure}
+
+\subsection{Implementation and Evaluation Matrix}
+
+ActDelta is evaluated through four separately frozen pipelines, which matters
+because the experiments ran in multiple rounds and, in some records, on
+different devices. The trajectory collector runs the pinned policy on five
+fixed initial states per task across the four suites, recording successes and
+failures (\cref{tab:data}), with the 120/40/40 split assigned before predictor
+and head selection. The label job builds a predicted observation for each
+observation--horizon pair and evaluates the policy twice under the same
+diffusion noise, validating alignment, chunk shape, finiteness, and recomputed
+RMS before accepting a cell; the 500-pair pilot is a separate diagnostic and
+never merges with formal results. The head is trained with three seeds,
+selected on validation Spearman alone, and reported once on the frozen test
+split. The closed-loop runner replaces only the agent view and logs the
+trigger score, send decision, observation age, outcome, and payload.
+
+The panels are kept apart. The Spatial frontier, Spatial exploratory
+comparison, Object blind test, budget sweep, and four-suite oracle gate run on
+different suites and task subsets, so the exploratory $+3.75$\pp{} Spatial
+point is not pooled with the blind $+3.13$\pp{} Object point, Gate~A is not
+averaged with Gate~B, and---as \cref{fig:frontier} makes explicit---the
+Spatial forced-horizon sweep is not reused as the periodic arm of the Object
+sweep. Two records are treated as conflicting only when suite, task subset,
+seed, horizon, device, checkpoint, and run type all match; where they do, main-text claims take the most controlled experiment, and
+earlier values stay visible as diagnostics rather than being discarded.
 
 % ===================================================================
 \section{ActDelta Trigger Design}
@@ -602,7 +711,9 @@ boundary does not affect the no-loss matched-budget comparison, but it
 prevents the current prototype from being presented as a complete transport.
 
 % ===================================================================
-\section{Fidelity Does Not Rank Relevance}
+\section{Offline Results: Fidelity and Relevance}
+
+\subsection{Fidelity Does Not Rank Relevance}
 \label{sec:fidelity}
 
 The formal protocol has four suites, ten tasks, seven horizons
@@ -611,15 +722,12 @@ episode-disjoint train, validation, and test split. Pixel RMS, SSIM error,
 LPIPS, and world-model latent RMS are evaluated against \cref{eq:div}; thresholds come from validation.
 
 Before the formal study, a 500-pair pilot over 30 held-out episodes checks
-label quality and statistical power. Its divergence distribution spans
-$0.0481$--$0.9675$, with quartiles $0.3146$ and $0.7989$, median $0.5515$, and
-95th percentile $0.8825$. Thresholds fixed on the first 200 pairs and
-evaluated on the remaining 300 yield correlations of $-0.00013$ for pixel
-RMS, $-0.02335$ for SSIM error, and $-0.07605$ for latent RMS; every
-episode-cluster interval includes zero. High/low disagreement is 46.0, 52.0,
-and 48.7\%. LPIPS is absent only from this pilot because a verified
-pretrained dependency was unavailable; the formal study includes it. Pilot
-values are never pooled into the final result.
+label quality and statistical power. Thresholds fixed on the first 200 pairs and evaluated on the remaining 300
+give correlations of $-0.00013$ for pixel RMS, $-0.02335$ for SSIM error, and
+$-0.07605$ for latent RMS, with every episode-cluster interval covering zero
+and high/low disagreement of 46.0--52.0\%. LPIPS is absent only here, for want
+of a verified pretrained dependency. Pilot values never pool into the final
+result.
 
 \Cref{fig:fidelity} gives the central result. Pooled test Spearman
 correlations range from $-0.1165$ to $-0.0282$; per-episode median
@@ -629,15 +737,11 @@ suites, tasks, and horizons have different marginal distributions. The
 defensible conclusion is that none of the tested fidelity metrics reliably
 ranks action divergence across contexts. Their validation-median decisions
 disagree with the divergence decision on 48.86--53.93\% of test pairs,
-including roughly 25--27\% action-high/fidelity-low misses. For pixel RMS,
-pooled and per-episode Spearman are $-0.0282$ and $0.0742$, with 48.86\%
-disagreement. SSIM gives $-0.0736$, $0.0756$, and 50.79\%; LPIPS gives
-$-0.1165$, $0.1595$, and 53.93\%; latent RMS gives $-0.0744$, $0.0377$, and
-49.93\%.
+including roughly 25--27\% action-high/fidelity-low misses; \cref{fig:fidelity}
+gives the per-metric values.
 
-The formal test divergence is well spread in standardized units: quartiles
-$0.814$ and $1.268$, median $1.076$, 95th percentile $1.713$, and maximum
-$3.455$. Weak association is not caused by a collapsed target distribution.
+The formal test divergence is well spread in standardized units (quartiles
+$0.814$ and $1.268$, maximum $3.455$). Weak association is not caused by a collapsed target distribution.
 Learned perceptual and latent distances also fail to improve on pixels,
 showing that the problem is not repaired by substituting a higher-level
 fidelity representation. These measurements do not show that each missed
@@ -654,28 +758,24 @@ lies well outside their band.}
 \end{figure}
 
 % ===================================================================
-\section{Decision Relevance Is Learnable Offline}
+\subsection{Decision Relevance Is Learnable Offline}
 \label{sec:head}
 
-Direct evaluation of $\dt$ requires two forward passes through the remote
-policy. We instead fit the lightweight head $\Phi$ of \cref{eq:head} to
-features already produced by the local predictor, where $z_t$ and $\hat z_t$
-are pooled true and predicted latents. The head receives no suite, task, or
-horizon identifier. It is trained on 1{,}400 offline pairs, selected by
-validation Spearman on a disjoint 1{,}400 pairs, and reported once on the
-1{,}400-pair test split.
+Direct evaluation of $\dt$ needs two forward passes through the remote policy.
+We instead fit the lightweight head $\Phi$ of \cref{eq:head} to features the
+local predictor already produces, with $z_t$ and $\hat z_t$ the pooled true and
+predicted latents. The head sees no suite, task, or horizon identifier, is
+trained on 1{,}400 offline pairs, selected by validation Spearman on a disjoint
+1{,}400, and reported once on the 1{,}400-pair test split.
 
-The head reaches test Spearman $0.6839$. Suite-stratified,
-episode-clustered resampling gives a 95\% CI from $0.6365$ to $0.7257$. Its
-per-episode median is $0.6340$; AUROC, AUPRC, and standardized MAE are
-$0.8332$, $0.8326$, and $0.2052$. Three training seeds yield validation
-Spearman $0.6537$--$0.6605$ and test Spearman $0.6839$--$0.6875$. Absolute
-standardized error has median $0.158$, P95 $0.539$, P99 $0.786$, and P99.9
-$1.170$. By suite, correlation is $0.507$ on LIBERO-10, $0.664$ on Goal,
-$0.683$ on Object, and $0.724$ on Spatial. At horizons $1,2,3,4,5,8,12$ it is
-$0.619$, $0.701$, $0.701$, $0.718$, $0.604$, $0.721$, and $0.710$
-(\cref{fig:strata}). The evidence supports offline predictability across
-every reported stratum, but not uniform accuracy.
+The head reaches test Spearman $0.6839$ (95\% CI $0.6365$--$0.7257$ under
+suite-stratified, episode-clustered resampling), per-episode median $0.6340$,
+AUROC $0.8332$, AUPRC $0.8326$, and standardized MAE $0.2052$. Three training
+seeds give test Spearman $0.6839$--$0.6875$; absolute standardized error has
+median $0.158$ and P99 $0.786$. Predictability holds in every stratum without
+being uniform: correlation ranges from $0.507$ on LIBERO-10 to $0.724$ on
+Spatial across suites, and from $0.604$ to $0.721$ across the seven horizons
+(\cref{fig:strata}).
 
 \begin{figure}[t]
 \centering
@@ -717,60 +817,6 @@ Fidelity fails because displacement magnitude discards decision structure,
 not because the world model contains no such information. Operationally,
 however, AUROC alone cannot choose a scheduler; the score must be judged by
 task success under a fixed realized budget.
-
-% ===================================================================
-\section{Implementation and Evaluation Matrix}
-
-ActDelta is evaluated through four linked but separately frozen pipelines.
-This separation matters because the experiments ran in multiple rounds and, in some records, on different devices. A numerical difference is
-interpreted only after identifying the pipeline, split, panel, and
-runner that produced it. Results from distinct protocols are reported side by
-side, never averaged into a synthetic number.
-
-\paragraph{Trajectory and predictor pipeline.}
-The trajectory collector runs the pinned policy on five fixed initial states
-for every task in the four LIBERO suites, recording both successful and
-failed episodes (\cref{tab:data}). The 120/40/40 episode split is assigned
-before predictor and head selection. Predictor feasibility experiments use a
-small twenty-episode gate, while the adopted model uses globally randomized
-windows from the full training base; their error values are not
-interchangeable.
-
-\paragraph{Counterfactual label pipeline.}
-For each observation--horizon pair, the label job constructs a
-predicted observation and evaluates the policy twice with the same diffusion
-noise. The validator checks observation alignment, action chunk shape, noise
-shape, finiteness, metadata, and recomputed RMS before accepting a cell. The 500-pair pilot is a separate diagnostic with a 200/300 threshold
-split; pilot and formal results never merge.
-
-\paragraph{Head and threshold pipeline.}
-The decision head is trained with three seeds. Checkpoint selection uses
-validation Spearman only; the chosen configuration is then evaluated on the
-frozen test split. Median-rate, 95\%-recall, and 99\%-recall thresholds
-answer different operational questions and are all retained. None is chosen
-after observing closed-loop success.
-
-\paragraph{Closed-loop pipeline.}
-The closed-loop runner replaces only the agent view and logs the real
-observation, predicted observation, trigger score, send decision, observation
-age, task outcome, and payload. The Spatial frontier, Spatial exploratory
-comparison, Object blind test, budget sweep, and four-suite oracle gate are
-separate experimental panels, run on different suites and different task
-subsets. For this reason the exploratory $+3.75$\pp{} Spatial point is not
-pooled with the blind $+3.13$\pp{} Object point, the two-task Gate~A oracle
-result is not averaged with Gate~B, and---as \cref{fig:frontier} makes
-explicit---the Spatial forced-horizon sweep is \emph{not} reused as the
-periodic arm of the Object budget sweep.
-
-\paragraph{Conflict and provenance rules.}
-When two records report different values, we first condition on suite, task
-subset, environment seed, prediction horizon, device, checkpoint, and whether
-the run is pilot, validation, exploratory, blind, or oracle. Values are
-treated as conflicting only if all these keys match. Main-text claims use the
-most controlled compatible experiment: formal test over pilot for offline
-correlations, frozen blind over exploratory runs for learned scheduling, and
-Gate~B over Gate~A for oracle generality. Earlier values remain visible as
-diagnostics.
 
 % ===================================================================
 \section{Closed-Loop Evaluation}
@@ -867,15 +913,12 @@ A coin flip at the same rate is therefore not distinguishable from the
 adaptive arm by this design, and the closed loop is responding to \emph{when}
 refreshes occur rather than to \emph{which} frames are selected.
 
-We state this as a null rather than as a recovered fraction, and the
-distinction is not cosmetic. With 160 episodes per arm the McNemar half-width
-is 2.3--5.2\pp{} across the sweep. A learned-versus-LPIPS gap of that order or
-larger is resolvable; a learned-versus-Bernoulli gap of two or three episodes
-is not. Reporting "the Bernoulli arm recovers $x\%$ of the gap" would quote a
-ratio whose numerator this design cannot measure, and the ratio would move
-between reruns while the null it is built from stayed put. \Cref{sec:limits}
-gives the sample size a version of this experiment would need to estimate that
-fraction rather than bound it.
+We state this as a null rather than as a recovered fraction. With 160 episodes
+per arm the McNemar half-width is 2.3--5.2\pp{} across the sweep, so a
+learned-versus-LPIPS gap of that order is resolvable while a
+learned-versus-Bernoulli gap of two or three episodes is not; reporting a
+recovered percentage would quote a ratio whose numerator this design cannot
+measure (\cref{sec:limits}).
 
 \subsection{Oracle Diagnostic}
 \label{sec:oracle}
@@ -960,7 +1003,7 @@ estimator.
 \end{figure}
 
 % ===================================================================
-\section{Interpreting the Offline-to-Online Gap}
+\section{Interpreting the Gap and System Cost}
 \label{sec:interp}
 
 The oracle removes estimator capacity as a sufficient explanation.
@@ -1119,7 +1162,7 @@ rather than the trigger it rejected, is the part of this study we expect to
 last.
 
 % ===================================================================
-\section{Communication and On-Device Cost}
+\subsection{Communication and On-Device Cost}
 \label{sec:comm}
 
 Under fixed H.264, demand is sublinear in send fraction because sparse,
@@ -1148,50 +1191,9 @@ cheaper than remote policy inference.}
 \label{fig:device}
 \end{figure}
 
-% ===================================================================
-\section{Related Work}
+\section{Limitations and Conclusion}
 
-\paragraph{Event-triggered control.}
-Event- and self-triggered control transmit when a local estimate drifts past a
-threshold; classical results bound stability and average rate for known
-dynamics~\cite{astrom2002riemann,tabuada2007event,heemels2012intro,molin2013optimality};
-practical variants threshold error area, level crossings, or loss
-\cite{arzen1999pid,miskowicz2006sod,miskowicz2007asymptotic,nguyen2008area,nguyen2009packet,suh2007linear,mamduhi2017error}.
-ActDelta evaluates the same mechanism but cannot inherit the guarantee: those
-results assume a controller whose response to estimate error is known in closed
-form. Here it is a frozen diffusion policy whose sensitivity had to be measured
-(\cref{eq:div}), and \cref{sec:fidelity} shows no distance we tested orders it.
-
-\paragraph{Semantic and goal-oriented communication.}
-Semantic systems replace bit fidelity with a task-utility objective, either by
-learning a joint source--channel code or by scoring reconstructions with a
-downstream
-model~\cite{bourtsoulatze2019djscc,gunduz2023beyond,kountouris2021semantics,li2025goal,yuan2025taskoriented};
-generative variants synthesize the receiver's input outright
-\cite{chen2025genvid,jiang2025semworld,liu2025residtok,wang2026worldtwin,yang2024agentdriven,yin2025genvideo}.
-\textsf{C1} is a measurement in that programme's own terms: the utility such
-systems optimize is a per-sample score, and no per-sample score---learned or
-latent---ranks what a closed loop pays for. \textsf{C3} adds that replacing the
-score is not sufficient: the loop's cost accumulates over an episode, not at
-the frame.
-
-\paragraph{Serving systems for video and robot policies.}
-Video analytics pipelines filter frames, tune configurations, or split
-inference to spend bandwidth where accuracy is at
-risk~\cite{chen2015glimpse,du2020serverdriven,li2020reducto,zhang2018awstream};
-robot-serving work optimizes pipelining, caching, compression, and edge
-collaboration in
-VLA policies~\cite{cao2026edgeserving,dai2025actionflow,julg2026vlagents,li2026oxygen,peng2026latency,agouzoul2026async,black2025realtime,gao2025compressorvla,kim2026learnedcomp,tang2025vlash,xu2025vlacache,zhu2026dinolink}.
-Both decide \emph{how} to send a frame; the question here is whether to send
-one at all. It is harder in the same way \cref{eq:obj} is: a suppressed frame
-changes the executed action and therefore the observations the robot will later
-request. The receiver differs too---in video analytics it is passive, whereas here it
-acts on what it receives. ActDelta uses action-conditioned
-prediction~\cite{bruce2024genie,hafner2023dreamerv3,ma2026pilworld,tang2026onetoken,wu2024ivideogpt}
-to ask \emph{when} to refresh inside that loop.
-
-% ===================================================================
-\section{Scope and Limitations}
+\subsection{Scope and Limitations}
 
 Results cover one frozen $\pi_{0.5}$ checkpoint, LIBERO, one seed, 1{,}400
 offline pairs, and current wrist/proprioceptive recovery. Wide or missing
@@ -1202,7 +1204,7 @@ oracle rejects this target, not all policy-aware signals. Staged data still
 requires one manifested end-to-end rerun on identical hardware and software.
 
 % ===================================================================
-\section{Conclusion}
+\subsection{Conclusion}
 
 ActDelta predicts action impact offline (Spearman $0.684$, AUROC $0.833$), but
 learned and oracle triggers do not beat rate-matched periodic sampling, and
