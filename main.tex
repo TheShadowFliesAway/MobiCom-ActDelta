@@ -278,7 +278,7 @@ to ask \emph{when} to refresh inside that loop.
 
 % ===================================================================
 
-\paragraph{Compute asymmetry and the proposed correction.}
+\paragraph{Compute asymmetry and the correction.}
 The frozen policy has billions of parameters while the predictor has 13.5M
 \cite{black2024pi0,kim2024openvla,pi2025pi05}. ActDelta distills the expensive
 true-versus-predicted action comparison into a latent head; the test is whether
@@ -494,15 +494,16 @@ The predictor is measurement infrastructure rather than an architectural
 contribution, so we report only the choices that affect the conclusions. An
 initial twenty-episode gate exposed an action-blind solution: shuffling the
 action sequence raised latent MSE by only 3.85\%. Freezing the encoder and
-decoder and training a horizon-weighted rollout objective raised action
-sensitivity to 11.0\% and improved five-step error by 46.3\%.
+decoder and training a horizon-weighted rollout objective raised action sensitivity to 11.0\% and improved five-step error by 46.3\%.
+Because that gate uses twenty episodes, it establishes feasibility rather than
+generalization.
 
 Full four-suite selection compared three variants (\cref{tab:wm}). Joint image
 and rollout objectives improved one-step reconstruction while worsening
 five-step rollout by 33--99\% and weakening action dependence, so we adopt the
-variant trained only on \wmWindows{} randomized latent-rollout windows. Its
-improvement grows from \wmImpOne\% at $h=1$ to \wmImpTwelve\% at $h=12$
-(\cref{fig:wm}), and at the longest horizon the shuffled-to-true ratio rises
+variant trained only on \wmWindows{} randomized latent-rollout windows. Its improvement grows from \wmImpOne\% at $h=1$ to \wmImpTwelve\% at $h=12$
+(\cref{fig:wm}), although five-step gains stay heterogeneous across suites
+(4.3--33.4\%). At the longest horizon the shuffled-to-true ratio rises
 from 1.088 to 1.114: the adopted model improves rollout while becoming more
 dependent on the executed actions, which is what the counterfactual trigger
 requires. Image appearance and one-step accuracy select the wrong predictor
@@ -540,8 +541,9 @@ horizon; one-step reconstruction selects the wrong predictor.}
 
 \subsection{Implementation and Evaluation Matrix}
 
-ActDelta is evaluated through four separately frozen pipelines, which matters
-because the experiments ran in multiple rounds and, in some records, on
+The evaluation runs through four pipelines, each frozen on its own. This
+matters
+because the experiments ran in several rounds and, in some records, on
 different devices. The trajectory collector runs the pinned policy on five
 fixed initial states per task across the four suites, recording successes and
 failures (\cref{tab:data}), with the 120/40/40 split assigned before predictor
@@ -737,8 +739,11 @@ suites, tasks, and horizons have different marginal distributions. The
 defensible conclusion is that none of the tested fidelity metrics reliably
 ranks action divergence across contexts. Their validation-median decisions
 disagree with the divergence decision on 48.86--53.93\% of test pairs,
-including roughly 25--27\% action-high/fidelity-low misses; \cref{fig:fidelity}
-gives the per-metric values.
+including roughly 25--27\% action-high/fidelity-low misses. For pixel RMS,
+pooled and per-episode Spearman are $-0.0282$ and $0.0742$, with 48.86\%
+disagreement; SSIM gives $-0.0736$, $0.0756$ and 50.79\%; LPIPS gives
+$-0.1165$, $0.1595$ and 53.93\%; latent RMS gives $-0.0744$, $0.0377$ and
+49.93\%.
 
 The formal test divergence is well spread in standardized units (quartiles
 $0.814$ and $1.268$, maximum $3.455$). Weak association is not caused by a collapsed target distribution.
@@ -772,10 +777,10 @@ The head reaches test Spearman $0.6839$ (95\% CI $0.6365$--$0.7257$ under
 suite-stratified, episode-clustered resampling), per-episode median $0.6340$,
 AUROC $0.8332$, AUPRC $0.8326$, and standardized MAE $0.2052$. Three training
 seeds give test Spearman $0.6839$--$0.6875$; absolute standardized error has
-median $0.158$ and P99 $0.786$. Predictability holds in every stratum without
-being uniform: correlation ranges from $0.507$ on LIBERO-10 to $0.724$ on
-Spatial across suites, and from $0.604$ to $0.721$ across the seven horizons
-(\cref{fig:strata}).
+median $0.158$ and P99 $0.786$. Predictability holds in every stratum without being uniform. By suite,
+correlation is $0.507$ on LIBERO-10, $0.664$ on Goal, $0.683$ on Object and
+$0.724$ on Spatial; at horizons $1,2,3,4,5,8,12$ it is $0.619$, $0.701$,
+$0.701$, $0.718$, $0.604$, $0.721$ and $0.710$ (\cref{fig:strata}).
 
 \begin{figure}[t]
 \centering
@@ -916,9 +921,10 @@ refreshes occur rather than to \emph{which} frames are selected.
 We state this as a null rather than as a recovered fraction. With 160 episodes
 per arm the McNemar half-width is 2.3--5.2\pp{} across the sweep, so a
 learned-versus-LPIPS gap of that order is resolvable while a
-learned-versus-Bernoulli gap of two or three episodes is not; reporting a
+learned-versus-Bernoulli gap of two or three episodes is not. Reporting a
 recovered percentage would quote a ratio whose numerator this design cannot
-measure (\cref{sec:limits}).
+measure, and that ratio would move between reruns while the null it is built
+from stayed put (\cref{sec:limits}).
 
 \subsection{Oracle Diagnostic}
 \label{sec:oracle}
@@ -1088,7 +1094,7 @@ tail; the silence cap only truncates it.}
 \end{figure}
 
 \subsection{The Target Does Not Track Success}
-If action divergence were the right scheduling target, episodes containing
+If action divergence were the right scheduling target, then episodes with
 large suppressed-step divergence should fail more often. We test this
 directly by binning the 160 blind-test episodes into quintiles on the mean
 standardized $\dt$ observed at suppressed steps, and separately on the mean
@@ -1169,7 +1175,11 @@ Under fixed H.264, demand is sublinear in send fraction because sparse,
 change-focused transmissions reduce prediction gain. \claimTBD{At 25\%, the
 learned one-second P95 is \burstRatio$\times$ periodic.} One 256$\times$256 view
 is below 1\,Mb/s, but multiple robots can exceed shared capacity
-(\cref{fig:uplink}), which is provisioned against aggregate peak, not mean.
+(\cref{fig:uplink}). At that scale burstiness matters more than the mean: a
+shared link is provisioned against the aggregate peak, so a scheduler that
+lowers mean demand while concentrating its sends buys less headroom than its
+send fraction suggests, and \cref{fig:agetail} shows that concentration is
+intrinsic to threshold triggering rather than to this particular trigger.
 \begin{figure}[t]
 \centering
 \includegraphics[width=\columnwidth]{fig13_uplink.pdf}
