@@ -85,7 +85,6 @@ observations are worth sending at all. We test \emph{decision relevance}---the
 action change caused by replacing a true observation with its prediction---as
 an alternative to reconstruction fidelity, and evaluate it in closed loop
 rather than offline only.
-
 Across four LIBERO suites and seven horizons, four fidelity metrics correlate
 weakly with action divergence on 1{,}400 held-out pairs (pooled Spearman
 $-0.117$ to $-0.028$) and disagree with its median-threshold decision on
@@ -99,8 +98,8 @@ fails at the same scale, so the fault lies in the target rather than the
 estimator. Bernoulli sampling is not separated from the learned
 trigger across the sweep. Threshold triggering instead creates a heavier
 observation-age tail, and episode outcomes separate on age far more sharply
-than on instantaneous divergence. Decision relevance is learnable offline but
-is the wrong quantity to schedule on.
+than on instantaneous divergence. Decision relevance is learnable offline, but it is not the quantity a
+scheduler should be optimising.
 \end{abstract}
 
 \begin{CCSXML}
@@ -135,8 +134,8 @@ returns while the previous chunk is still
 executing~\cite{cao2026edgeserving,dai2025actionflow,julg2026vlagents,li2026oxygen,peng2026latency}.
 The asymmetry is severe: the downlink carries a few hundred numbers, the
 uplink carries images on every step for the length of the episode.
-Compression shrinks each frame but does not answer a prior question---which
-frames are worth sending at all (\cref{fig:system})?
+Compression shrinks each frame, but \cref{fig:system} shows the prior question it
+leaves open: which frames are worth sending in the first place.
 
 Networked control has a standard answer. Event-triggered and send-on-delta
 schemes hold a shared predictor at both ends and transmit only once the
@@ -475,9 +474,8 @@ Experiment records contain repository revisions and SHA-256 digests.
 Validators check shapes, action--observation alignment, metadata, episode
 keys, and recomputed metrics. The formal offline study contains 4{,}200 pairs
 in total: 1{,}400 per split, formed by four suites $\times$ ten tasks
-$\times$ seven horizons $\times$ five pairs. The closed-loop runner fixes
-initial states across arms and records success, send decisions, observation
-age, and payload.
+$\times$ seven horizons $\times$ five pairs. The closed-loop runner fixes initial states across arms and records success,
+send decisions, observation age, and per-step payload.
 
 \paragraph{Reproducibility of the figures.}
 Every figure is generated from a single tagged data module. No
@@ -739,11 +737,8 @@ suites, tasks, and horizons have different marginal distributions. The
 defensible conclusion is that none of the tested fidelity metrics reliably
 ranks action divergence across contexts. Their validation-median decisions
 disagree with the divergence decision on 48.86--53.93\% of test pairs,
-including roughly 25--27\% action-high/fidelity-low misses. For pixel RMS,
-pooled and per-episode Spearman are $-0.0282$ and $0.0742$, with 48.86\%
-disagreement; SSIM gives $-0.0736$, $0.0756$ and 50.79\%; LPIPS gives
-$-0.1165$, $0.1595$ and 53.93\%; latent RMS gives $-0.0744$, $0.0377$ and
-49.93\%.
+including roughly 25--27\% action-high/fidelity-low misses; \cref{fig:fidelity}
+gives the per-metric values.
 
 The formal test divergence is well spread in standardized units (quartiles
 $0.814$ and $1.268$, maximum $3.455$). Weak association is not caused by a collapsed target distribution.
@@ -777,10 +772,9 @@ The head reaches test Spearman $0.6839$ (95\% CI $0.6365$--$0.7257$ under
 suite-stratified, episode-clustered resampling), per-episode median $0.6340$,
 AUROC $0.8332$, AUPRC $0.8326$, and standardized MAE $0.2052$. Three training
 seeds give test Spearman $0.6839$--$0.6875$; absolute standardized error has
-median $0.158$ and P99 $0.786$. Predictability holds in every stratum without being uniform. By suite,
-correlation is $0.507$ on LIBERO-10, $0.664$ on Goal, $0.683$ on Object and
-$0.724$ on Spatial; at horizons $1,2,3,4,5,8,12$ it is $0.619$, $0.701$,
-$0.701$, $0.718$, $0.604$, $0.721$ and $0.710$ (\cref{fig:strata}).
+median $0.158$ and P99 $0.786$. Predictability holds in every stratum without being uniform: correlation ranges
+from $0.507$ on LIBERO-10 to $0.724$ on Spatial across suites, and from $0.604$
+to $0.721$ across the seven horizons (\cref{fig:strata}).
 
 \begin{figure}[t]
 \centering
@@ -819,9 +813,8 @@ This result has a representation-level and an operational reading. The same
 frozen latent space whose RMS distance correlates at only $-0.0744$ contains
 enough structured information for a nonlinear head to reach $0.6839$.
 Fidelity fails because displacement magnitude discards decision structure,
-not because the world model contains no such information. Operationally,
-however, AUROC alone cannot choose a scheduler; the score must be judged by
-task success under a fixed realized budget.
+not because the world model contains no such information. Operationally, however, AUROC alone cannot choose a scheduler: the score has
+to be judged by task success at a fixed realized budget.
 
 % ===================================================================
 \section{Closed-Loop Evaluation}
@@ -899,9 +892,8 @@ unlucky operating points. We therefore extend the Object panel to eight
 target budgets from 10\% to 100\% and add two controls that the original
 protocol lacked: an LPIPS-thresholded arm, which brings the conventional
 fidelity criterion into the closed loop, and a Bernoulli arm at the same
-target rate. \Cref{fig:frontier}(b) shows the resulting frontier. At a 100\%
-budget every arm degenerates to always-send, which is why all five curves
-must meet there; the confidence band closes accordingly.
+target rate. \Cref{fig:frontier}(b) shows the resulting frontier. At a 100\% budget every arm degenerates to always-send, which is why all five
+curves must meet there and the confidence band closes with them.
 
 Three observations follow. First, the learned trigger never leaves the
 confidence band of rate-matched periodic sampling; the crossing between the
@@ -923,8 +915,8 @@ per arm the McNemar half-width is 2.3--5.2\pp{} across the sweep, so a
 learned-versus-LPIPS gap of that order is resolvable while a
 learned-versus-Bernoulli gap of two or three episodes is not. Reporting a
 recovered percentage would quote a ratio whose numerator this design cannot
-measure, and that ratio would move between reruns while the null it is built
-from stayed put (\cref{sec:limits}).
+measure, and that would move between reruns while the null stayed put
+(\cref{sec:limits}).
 
 \subsection{Oracle Diagnostic}
 \label{sec:oracle}
@@ -941,14 +933,15 @@ opportunity that does not replicate in the broader panel, while Gate~B shows
 that perfect knowledge of instantaneous divergence is still insufficient to
 establish a scheduling advantage under this protocol.
 
-\Cref{fig:effects} collects every closed-loop effect on one axis. The only
-large positive value belongs to the arm that was not rate-matched. The oracle
+\Cref{fig:effects} collects every closed-loop effect on one axis. Two values sit outside the resolvable band, and both are exploratory: the
+Spatial arm was not rate-matched, and Gate~A's 25-point margin rests on two tasks with no
+interval. Every pre-registered comparison falls inside it. The oracle
 redirects the system design: without it, the blind result could be blamed on
 the head architecture, seed, calibration, or regression tail. Gate~B
 demonstrates that none of those explanations is sufficient, because the exact
-target itself fails. The next mechanism should therefore predict outcome
-impact, uncertainty, recovery opportunity, or silence risk rather than merely
-improve $\dth$.
+target itself fails. The next mechanism should therefore predict outcome impact, uncertainty,
+recovery opportunity, or silence risk, rather than merely sharpen the estimate
+of $\dth$.
 
 The oracle bounds the target, not the family. Observing $\dt$ exactly rules
 out every explanation that reduces to estimating it better: capacity,
@@ -964,8 +957,8 @@ opportunity rather than an effect.
 \begin{figure}[t]
 \centering
 \includegraphics[width=\columnwidth]{fig8_effects.pdf}
-\caption{No rate-matched arm beats periodic sampling; the only large effect
-spends 3.95 additional send-rate points.}
+\caption{Every pre-registered comparison sits inside the resolvable band; the
+two exploratory values outside it spend extra send rate or rest on two tasks.}
 \label{fig:effects}
 \end{figure}
 
