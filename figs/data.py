@@ -62,16 +62,25 @@ def n_for_effect(delta_pp, pi_d, z=Z_95 + Z_80POW):
     return int(math.ceil(pi_d * (100.0 * z / delta_pp) ** 2))
 
 
-def pi_d_at(p, kappa=0.2235):
-    """Discordance rate as a function of arm success p.
+def pi_d_at(b, A=0.088490, beta=0.362510):
+    """Discordance rate as a function of the target send budget b.
 
-    derived: pi_d must vanish as arms become identical (at a 100% budget
-    every arm is always-send), so we scale the measured pi_d with the
-    outcome variance, pi_d = kappa * 2p(1-p). kappa is fixed by the single
-    measured point (p = 0.775, pi_d = 0.078). Replace with the per-budget
-    discordance counts once the sweep logs exist.
+    AUDIT FIX. This was pi_d = kappa * 2p(1-p) in arm success p, with kappa
+    fitted to the 25% budget alone. Scaling with outcome variance made pi_d
+    collapse far too fast: the blind test measures half-widths of 4.375 pp at
+    25% and 4.065 pp at 50% (pi_d = 0.0797 and 0.0688, a fall of 1.16x),
+    whereas 2p(1-p) falls 2.55x between those budgets. The band it produced
+    was 2.83 pp at 50% against a measured 4.065, so the learned arm was drawn
+    outside a band that the blind test puts it inside -- contradicting both
+    Sec. 10.1 and Fig. 10's own caption.
+
+    The discordance is a property of the budget, not of the success rate:
+    at b = 1 every arm is always-send and cannot disagree. Fitting
+    pi_d = A (1-b)^beta through both measured budgets reproduces each
+    half-width exactly and still vanishes at b = 1. Replace with the
+    per-budget discordance counts once the sweep logs expose them.
     """
-    return max(kappa * 2.0 * p * (1.0 - p), 1e-4)
+    return max(A * (1.0 - b) ** beta, 1e-6)
 
 
 def snap(pct, n):
@@ -289,8 +298,8 @@ REAL["frontier_object"] = {
 # McNemar model so it agrees with the blind test by construction and
 # correctly collapses to ~0 at a 100% budget, where all arms coincide.
 REAL["frontier_object"]["half_ci"] = [
-    round(mcnemar_hw(pi_d_at(p / 100.0), 160), 3)
-    for p in REAL["frontier_object"]["periodic"]
+    round(mcnemar_hw(pi_d_at(r / 100.0), 160), 3)
+    for r in REAL["frontier_object"]["rate"]
 ]
 
 # AUDIT FIX (was: erratic recovery fraction).

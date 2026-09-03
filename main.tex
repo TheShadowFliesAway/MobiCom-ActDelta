@@ -905,7 +905,8 @@ ranking to a closed-loop statement about scheduling: the conventional
 criterion is not merely a poor proxy for $\dt$, it also allocates a fixed
 budget worse. Third, the Bernoulli arm---which has no access to
 scene content at all---stays within one confidence half-width of the learned
-arm at every budget, while both remain clearly separated from the LPIPS arm.
+arm at every budget, and both stay clearly separated from the LPIPS arm up to
+the 50\% budget, above which every arm converges on always-send.
 A coin flip at the same rate is therefore not distinguishable from the
 adaptive arm by this design, and the closed loop is responding to \emph{when}
 refreshes occur rather than to \emph{which} frames are selected.
