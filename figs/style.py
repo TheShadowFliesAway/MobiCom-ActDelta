@@ -10,7 +10,7 @@ Conventions taken from recent MobiCom best-paper figures:
   * Exact column geometry, so nothing is ever rescaled by \\includegraphics.
     Rescaling is the single most common cause of illegibly small axis text.
   * Label text never below 6 pt at final size.
-  * One semantic colour per experimental arm, held fixed across ALL figures,
+  * One desaturated colour per experimental arm, held fixed across ALL figures,
     plus a distinct marker and dash pattern per arm so the figures survive
     greyscale printing and the two most common colour-vision deficiencies.
   * Two spines, hairline gridlines, no legend frame, no chartjunk.
@@ -42,20 +42,31 @@ def figsize(width="col", h=1.85):
 
 
 # ------------------------------------------------------------------ colour
-# One colour per arm. Held fixed everywhere.
+# One desaturated colour per arm, held fixed everywhere.
+#
+# Chosen after extracting the palettes actually used in recent MobiCom
+# papers. Most of them (Asteroid'24, Soar'24, Uirapuru'25) simply ship
+# matplotlib tab10 or ColorBrewer Set1 -- saturated blue/red/orange/green.
+# AquaScan'25 is the exception and uses a muted set; these values follow it
+# in spirit while staying dark enough for hairline strokes on white.
+#
+# The arms are also separated in GREYSCALE, because these papers are read
+# printed. Luminance ladder, 0-255 after gamma:
+#     periodic  75 | learned  94 | oracle 112 | random 126 | lpips 139
+# with a 13/255 minimum gap, on top of the per-arm marker and dash below.
 C = {
     "periodic":  "#4A4A4A",   # the control: neutral dark grey, never colour
-    "learned":   "#1F5FA9",   # ActDelta learned trigger
-    "oracle":    "#C1272D",   # oracle delta_t
-    "lpips":     "#E08214",   # conventional fidelity criterion
-    "random":    "#2E8B74",   # content-blind Bernoulli
+    "learned":   "#35618A",   # ActDelta learned trigger
+    "oracle":    "#AF5551",   # oracle delta_t
+    "lpips":     "#A08A5B",   # conventional fidelity criterion
+    "random":    "#6B8578",   # content-blind Bernoulli
     "baseline":  "#9A9A9A",   # rejected world-model variant
-    "adopted":   "#1F5FA9",
+    "adopted":   "#35618A",
     "band":      "#D8D8D8",   # confidence band fill
-    "hi":        "#B02418",   # annotation / warning
+    "hi":        "#8C3B36",   # annotation / warning
     "muted":     "#7A7A7A",
     "rule":      "#BFBFBF",
-    "synth":     "#C8102E",
+    "synth":     "#AF5551",
 }
 
 # Marker + dash per arm, so the figures read in greyscale.
