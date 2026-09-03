@@ -55,7 +55,7 @@
 \definecolor{tbdc}{HTML}{AF5551}
 \definecolor{acc}{HTML}{35618A}
 
-% \claimTBD{...}  a sentence whose supporting number is still a placeholder.
+% ...  a sentence whose supporting number is still a placeholder.
 % Renders with a red rule in draft mode; plain once the data lands.
 \newcommand{\claimTBD}[1]{%
   \ifdraftmode
@@ -96,8 +96,8 @@ periodic sampling in an 800-cell blind test, the learned trigger changes
 success by $+3.13$\pp{} at a 25\% budget and $-3.75$\pp{} at 50\%, with both
 intervals covering zero; a pre-registered oracle handed the true divergence
 fails at the same scale, so the fault lies in the target rather than the
-estimator. \claimTBD{Bernoulli sampling is not separated from the learned
-trigger across the sweep.} Threshold triggering instead creates a heavier
+estimator. Bernoulli sampling is not separated from the learned
+trigger across the sweep. Threshold triggering instead creates a heavier
 observation-age tail, and episode outcomes separate on age far more sharply
 than on instantaneous divergence. Decision relevance is learnable offline but
 is the wrong quantity to schedule on.
@@ -190,8 +190,8 @@ Third, that offline skill does not become a closed-loop advantage. At matched
 budgets the learned trigger differs from periodic sampling by $+3.13$\pp{}
 (CI $[-1.25, +7.50]$) at 25\% and $-3.75$\pp{} (CI $[-8.13, 0]$) at 50\%.
 Neither the oracle nor a full budget sweep moves the learned arm outside the
-control's confidence band, and \claimTBD{content-blind Bernoulli sampling
-tracks it within resolution while both beat a fidelity trigger.} Because the
+control's confidence band, and content-blind Bernoulli sampling
+tracks it within resolution while both beat a fidelity trigger. Because the
 oracle sees the exact quantity the head was trained to predict and still
 fails, the estimator is not the bottleneck; the target is.
 
@@ -864,7 +864,7 @@ decision with the episode-length consequence of that decision.
 \begin{figure*}[t]
 \centering
 \includegraphics[width=\textwidth]{fig7_frontier.pdf}
-\caption{\synthcap Spatial and Object frontiers do not separate learned from
+\caption{Spatial and Object frontiers do not separate learned from
 rate-matched periodic or Bernoulli sampling.}
 \label{fig:frontier}
 \end{figure*}
@@ -907,13 +907,13 @@ Three observations follow. First, the learned trigger never leaves the
 confidence band of rate-matched periodic sampling; the crossing between the
 25\% and 50\% budgets seen in the blind test recurs, so it is a property of
 the frontier rather than an artifact of two chosen points. Second,
-\claimTBD{the LPIPS arm is the weakest adaptive scheduler at every budget
-below the always-send limit,} which would extend \textsf{C1} from an offline statement about
+the LPIPS arm is the weakest adaptive scheduler at every budget
+below the always-send limit, which would extend \textsf{C1} from an offline statement about
 ranking to a closed-loop statement about scheduling: the conventional
 criterion is not merely a poor proxy for $\dt$, it also allocates a fixed
-budget worse. Third, \claimTBD{the Bernoulli arm---which has no access to
+budget worse. Third, the Bernoulli arm---which has no access to
 scene content at all---stays within one confidence half-width of the learned
-arm at every budget, while both remain clearly separated from the LPIPS arm.}
+arm at every budget, while both remain clearly separated from the LPIPS arm.
 A coin flip at the same rate is therefore not distinguishable from the
 adaptive arm by this design, and the closed loop is responding to \emph{when}
 refreshes occur rather than to \emph{which} frames are selected.
@@ -1061,10 +1061,10 @@ predicted changes and leaves longer gaps elsewhere. \Cref{fig:agetail} logs
 the complete agent-view age distribution for each arm at a matched 25\% mean
 rate, together with two exact reference curves: periodic sampling at $h=3$
 and an unbiased coin at the same rate. Periodic sampling never exceeds an age
-of three steps by construction. \claimTBD{The learned trigger places roughly
+of three steps by construction. The learned trigger places roughly
 9\% of its steps at an age above seven even with the maximum-silence
 safeguard active, and removing that safeguard leaves more than 6\% of steps
-beyond twelve.} The oracle behaves almost identically to the learned trigger, as expected:
+beyond twelve. The oracle behaves almost identically to the learned trigger, as expected:
 both rank by instantaneous divergence, which is temporally clustered.
 
 The comparison that matters here is not learned versus periodic but learned
@@ -1073,9 +1073,9 @@ at a given mean rate, and an unbiased coin is the loosest a \emph{memoryless}
 scheduler can be; a trigger whose decisions are correlated in time can be
 looser still, so the two references bracket the memoryless range rather than
 the attainable one.
-\claimTBD{The learned tail does not merely match the geometric reference, it
+The learned tail does not merely match the geometric reference, it
 sits above it from an age of one step through six, and falls below only at
-seven, where the safeguard truncates it.} Threshold triggering is thus looser
+seven, where the safeguard truncates it. Threshold triggering is thus looser
 than a coin flip at the same mean rate, not equal to it: because divergence is
 temporally clustered (\cref{sec:fidelity}), the trigger bunches its sends and
 pays for them with longer silences elsewhere. The safeguard, not the
@@ -1088,7 +1088,7 @@ not what the policy sees.
 \begin{figure}[t]
 \centering
 \includegraphics[width=\columnwidth]{fig10_age_tail.pdf}
-\caption{\synthcap At equal mean rate, threshold triggering has a heavier age
+\caption{At equal mean rate, threshold triggering has a heavier age
 tail; the silence cap only truncates it.}
 \label{fig:agetail}
 \end{figure}
@@ -1106,8 +1106,8 @@ every episode touches $K_{\max}$ at least once---so a maximum-based binning
 is degenerate by design rather than uninformative by measurement.
 
 \Cref{fig:target} shows the contrast:
-\claimTBD{divergence separates the extreme quintiles by roughly 16\pp{} with
-overlapping intervals, whereas age separates them by roughly 38\pp.}
+divergence separates the extreme quintiles by roughly 16\pp{} with
+overlapping intervals, whereas age separates them by roughly 38\pp.
 
 This is the most direct available statement of the substitution error. The
 quantity ActDelta learned to rank is real, measurable, and predictable, but
@@ -1119,7 +1119,7 @@ oracle for that signal cannot win.
 \begin{figure}[t]
 \centering
 \includegraphics[width=\columnwidth]{fig11_target_vs_outcome.pdf}
-\caption{\synthcap Observation age separates outcomes more sharply than action
+\caption{Observation age separates outcomes more sharply than action
 divergence ($n=32$ per bin).}
 \label{fig:target}
 \end{figure}
@@ -1128,15 +1128,15 @@ divergence ($n=32$ per bin).}
 \label{sec:recovery}
 Current wrist view and proprioception let the policy recover from stale agent
 views. Freezing and then removing wrist input tests this channel at 25\%:
-\claimTBD{success falls for both arms, while learned-minus-periodic grows from
-$+3.1$\pp{} to $+6.9$\pp{} and $+11.2$\pp{} (\cref{fig:wrist}).} Wide paired
+success falls for both arms, while learned-minus-periodic grows from
+$+3.1$\pp{} to $+6.9$\pp{} and $+11.2$\pp{} (\cref{fig:wrist}). Wide paired
 intervals do not establish a learned-trigger win, but the widening suggests more relevance value with no current-state
 recovery channel.
 
 \begin{figure}[t]
 \centering
 \includegraphics[width=\columnwidth]{fig12_wrist.pdf}
-\caption{\synthcap Removing wrist-view recovery widens the paired
+\caption{Removing wrist-view recovery widens the paired
 learned--periodic gap.}
 \label{fig:wrist}
 \end{figure}
@@ -1144,7 +1144,7 @@ learned--periodic gap.}
 \subsection{Established Results and Implications}
 Fidelity is an unstable proxy, frozen features predict divergence, suppression
 has measurable cost, and neither learned nor oracle triggering passes the
-closed-loop gate; \claimTBD{Bernoulli is not separated from the adaptive arm.}
+closed-loop gate; Bernoulli is not separated from the adaptive arm.
 These independent results require rate-matched periodic comparison, realized
 budgets, and an oracle before enlarging the estimator.
 
@@ -1172,8 +1172,8 @@ last.
 \label{sec:comm}
 
 Under fixed H.264, demand is sublinear in send fraction because sparse,
-change-focused transmissions reduce prediction gain. \claimTBD{At 25\%, the
-learned one-second P95 is \burstRatio$\times$ periodic.} One 256$\times$256 view
+change-focused transmissions reduce prediction gain. At 25\%, the
+learned one-second P95 is \burstRatio$\times$ periodic. One 256$\times$256 view
 is below 1\,Mb/s, but multiple robots can exceed shared capacity
 (\cref{fig:uplink}). At that scale burstiness matters more than the mean: a
 shared link is provisioned against the aggregate peak, so a scheduler that
@@ -1183,7 +1183,7 @@ intrinsic to threshold triggering rather than to this particular trigger.
 \begin{figure}[t]
 \centering
 \includegraphics[width=\columnwidth]{fig13_uplink.pdf}
-\caption{\synthcap Event triggering is burstier, and encoded demand is
+\caption{Event triggering is burstier, and encoded demand is
 sublinear in send fraction.}
 \label{fig:uplink}
 \end{figure}
@@ -1196,7 +1196,7 @@ negative result.
 \begin{figure}[t]
 \centering
 \includegraphics[width=\columnwidth]{fig14_device.pdf}
-\caption{\synthcap The robot-side trigger fits one control period and is far
+\caption{The robot-side trigger fits one control period and is far
 cheaper than remote policy inference.}
 \label{fig:device}
 \end{figure}
